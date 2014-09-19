@@ -3,11 +3,14 @@ package org.analysis.rserve.manager;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.analysis.rserve.manager.test.OutlierParametersModel;
 import org.analysis.rserve.manager.test.SingleTrialParametersModel;
 import org.analysis.util.InputTransform;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
+
+import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
 
 public class RServeManager {
 	private RConnection rConnection;
@@ -88,7 +91,7 @@ public class RServeManager {
 		String outFileName = outPutFolder.replace(BSLASH, FSLASH) + "SEA_output.txt";
 		String dataFileName = dataInputFolder.replace(BSLASH, FSLASH) + "RCB_Multi.csv";
 		String env="NULL";
-		String respvars[] = {"Y1","Y2"};
+		String respvars[] = {"Y1"};
 		String[] environmentLevels={};
 		int design = 0;
 		String genotype = "Gen";
@@ -109,7 +112,7 @@ public class RServeManager {
 		String pairwiseAlpha = "0.05";
 		boolean compareControl = false;
 		boolean performAllPairwise = false;
-		boolean genotypeRandom = false;
+		boolean genotypeRandom = true;
 		boolean excludeControls = false;
 		boolean genoPhenoCorrelation = false;
 
@@ -1627,7 +1630,71 @@ public class RServeManager {
 
 		return envtLevels;
 	}
-	
-	
 
+
+	public void doOutlierDetection(OutlierParametersModel param ) {
+		String dataFileName=param.getDataFileName();
+		String outputPath=param.getResultFolderName();
+		String respvar=param.getRespvar();
+		String trmt=param.getTrmt();
+		String replicate=param.getRep();
+		
+		
+		
+		try {
+			String readData = "dataRead <- read.csv(\"" + dataFileName.replace(BSLASH, FSLASH) + "\", header = TRUE, na.strings = c(\"NA\",\".\", \"\", \" \"), blank.lines.skip=TRUE, sep = \",\")";
+			String funcStmt = "result <- try(";
+//			String command = "OutlierDetection(data = \"dataRead\", var = "+ inputTransform.createRVector(respvar);
+			String command = "OutlierDetection(data = \"dataRead\", var = \""+ respvar + "\"";
+			if (trmt != null) {
+				command = command + ", grp = \""+ trmt + "\"";
+			}
+			if (replicate != null) {
+				command = command + ", rep = \""+ replicate + "\"";
+			}
+
+			command = command + ", path = \""+ outputPath.replace(BSLASH, FSLASH) + "\", method = \"method2\")";
+			funcStmt = funcStmt + command + ", silent = TRUE)";
+			String saveData = "write.csv(result[[1]]$outlier, file = \""+ outputPath.replace(BSLASH, FSLASH) +"Outlier.csv\", row.names = FALSE)";
+
+			System.out.println(readData);
+			System.out.println(funcStmt);
+			System.out.println(saveData);
+
+			rConnection.eval(readData);
+			rConnection.eval(funcStmt);
+			rConnection.eval(saveData);
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			rConnection.close();
+		}
+	}
+	
+	public void  testOutlierDetection(String outPutFolder, String dataInputFolder) {
+		
+		OutlierParametersModel param= new OutlierParametersModel();
+
+		String resultFolderName = outPutFolder.replace(BSLASH, FSLASH);
+		String dataFileName = dataInputFolder.replace(BSLASH, FSLASH) + "2013DSRYT_rowcol.csv";
+		
+//		String resultFolderPath = resultFolderName.replace(BSLASH, FSLASH);
+//		String outFileName = outPutFolder.replace(BSLASH, FSLASH);
+		dataFileName = dataFileName.replace(BSLASH, FSLASH);
+		//specify parameters
+		String respvar = "GRNYLD.Y.ha.";
+		String trmt = "ENTRY.";
+		String rep = "REP.";
+		
+		param.setResultFolderName(resultFolderName);
+		param.setDataFileName(dataFileName);
+		param.setRespvar(respvar);
+		param.setTrmt(trmt);
+		param.setRep(rep);
+		
+		
+		doOutlierDetection(param);
+	}
 }

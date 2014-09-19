@@ -1,16 +1,48 @@
 package org.analysis.rserve.manager.test;
 
+import java.util.Date;
 import java.util.List;
 
 public class ResultAnalysisModel {
 	
+	private String AnalyticalWebServiceVersion="AWS 1.0";
+	private String Rversion="R version 3.0.2";
 	private String[] summaryStatsHeader;
 	private List<String[]> summaryStatsData;
+	private String[] predictedMeansHeader;
+	private List<String[]> predicatedMeansData;
+	
+	
+	
 	private String[] sed;
 	private double heritability;
 	
-	
-	
+
+
+	public String getAnalyticalWebServiceVersion() {
+		return AnalyticalWebServiceVersion;
+	}
+	public void setAnalyticalWebServiceVersion(String analyticalWebServiceVersion) {
+		AnalyticalWebServiceVersion = analyticalWebServiceVersion;
+	}
+	public String getRversion() {
+		return Rversion;
+	}
+	public void setRversion(String rversion) {
+		Rversion = rversion;
+	}
+	public String[] getPredictedMeansHeader() {
+		return predictedMeansHeader;
+	}
+	public void setPredictedMeansHeader(String[] predictedMeansHeader) {
+		this.predictedMeansHeader = predictedMeansHeader;
+	}
+	public List<String[]> getPredicatedMeansData() {
+		return predicatedMeansData;
+	}
+	public void setPredicatedMeansData(List<String[]> predicatedMeansData) {
+		this.predicatedMeansData = predicatedMeansData;
+	}
 	public String[] getSummaryStatsHeader() {
 		return summaryStatsHeader;
 	}

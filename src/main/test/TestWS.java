@@ -1,3 +1,4 @@
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,7 +98,7 @@ public class TestWS {
 			data.add(new String[]{"Env2","4","7","42.8","18.5"});
 			data.add(new String[]{"Env2","4","8","41.8","19.5"});
 
-			int design = 0;
+/*			int design = 0;
 			String respvars[] = {"Y1"};
 			String env="NULL";
 			String[] environmentLevels = {};
@@ -106,10 +107,39 @@ public class TestWS {
 			String block = "Blk";
 			String rep ="NULL";
 			String row = "NULL";
+			String column = "NULL";*/
+			
+			
+			String env="NULL";
+			String respvars[] = {"Y1"};
+			String[] environmentLevels={};
+			int design = 0;
+			String genotype = "Gen";
+			String block = "Blk";
+			String rep = "NULL";
+			String row = "NULL";
 			String column = "NULL";
+			boolean descriptiveStat = true; 
+			boolean varianceComponents = true;
+			boolean boxplotRawData = true;
+			boolean histogramRawData = true;
+			boolean heatmapResiduals = false;
+			String heatmapRow = "NULL";
+			String heatmapColumn = "NULL";
+			boolean diagnosticPlot = true;
+			boolean genotypeFixed = true;
+			boolean performPairwise = false;
+			String pairwiseAlpha = "0.05";
+			boolean compareControl = false;
+			boolean performAllPairwise = false;
+			boolean genotypeRandom = true;
+			boolean excludeControls = false;
+			boolean genoPhenoCorrelation = false;
+			String[] genotypeLevels = {};
+			String[] controlLevels = {};
 
 		
-			boolean genotypeFixed = true;
+/*			boolean genotypeFixed = true;
 			boolean genotypeRandom = false;
 			
 			boolean boxplotRawData = true;
@@ -131,13 +161,15 @@ public class TestWS {
 			boolean genoPhenoCorrelation = true;
 			
 			boolean descriptiveStat = true; 
-			boolean varianceComponents = true;
+			boolean varianceComponents = true;*/
 			
 
-			params.setUserAccount("study1");
-			params.setAnalysisResultFolder("study1");
+			params.setUserAccount("study3");
+			params.setAnalysisResultFolder("study3");
 			params.setDataHeader(dataHeader);
 			params.setData(data);
+			
+			
 			params.setDesign(design);
 			params.setRespvars(respvars);
 			params.setEnvironment(env);
@@ -157,13 +189,15 @@ public class TestWS {
 			params.setHeatmapColumn(heatmapColumn);
 			
 			params.setGenotypeFixed(genotypeFixed);
+			params.setGenotypeRandom(genotypeRandom);
+			
 			params.setPerformPairwise(performPairwise);
 			params.setPairwiseAlpha(pairwiseAlpha);
 			params.setGenotypeLevels(genotypeLevels);
 			params.setControlLevels(controlLevels);
 			params.setCompareControl(compareControl);
 			params.setPerformAllPairwise(performAllPairwise);
-			params.setGenotypeRandom(genotypeRandom);
+		
 			params.setExcludeControls(excludeControls);
 			params.setGenoPhenoCorrelation(genoPhenoCorrelation);
 			
@@ -196,5 +230,6 @@ public class TestWS {
 
 	}
 
+	
 
 }
