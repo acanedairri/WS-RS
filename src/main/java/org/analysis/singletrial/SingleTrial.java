@@ -88,27 +88,83 @@ public class SingleTrial {
 		return Response.status(320).entity(toreturn).build();
 
 	}
-	
+
 	@GET
 	@Path("outlier/{name}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces("application/json")
 	public Response getOutlierDetectionTest(@PathParam("name") String name) {
 		String toreturn = null;
+		FileResourceOutlierModel toreturnObject=new FileResourceOutlierModel();
 		try{
 			String realpath=ctx.getRealPath("/");
 			outputFolderPath=createOutputFolder(ctx,name);
 			dataFolderPath=realpath+separator+"temp"+separator;
 			RServeManager rserve= new RServeManager();
 			rserve.testOutlierDetection(outputFolderPath,dataFolderPath);
-			fileList=getOutputFolderFileResources(name);
-			Gson gson = new Gson();
-			toreturn=gson.toJson(fileList);
+			
+			toreturnObject=getOutputFolderFileOutlierResources(name);
 
+			String path=null;
+			String filenameOutlier="Outlier.csv";
+
+
+			path= realpath+separator+"output"+separator+name+separator;
+
+			dataFolderPath=path+separator;
+			String dataFileNameOutlier = dataFolderPath.replace(BSLASH, FSLASH) + filenameOutlier;
+			BufferedReader readerOutlier = new BufferedReader(new FileReader(dataFileNameOutlier));
+
+			String line = null;
+			Scanner scanner = null;
+			int index = 0;
+			int hindex=0;
+			ArrayList<String> headerArray = new ArrayList<String>();
+			List<String[]> dataRow=new ArrayList<String[]>();
+
+
+			// read summary stats
+			while ((line = readerOutlier.readLine()) != null) {
+
+				scanner = new Scanner(line);
+				scanner.useDelimiter(",");
+				ArrayList<String> rowDataArray = new ArrayList<String>();
+
+
+				List<String> s= new ArrayList<String>(); 
+				while (scanner.hasNext()) {
+					String data = scanner.next();
+					if(hindex==0){
+						headerArray.add(data.replace("\"", ""));
+						System.out.println(data.replace("\"", ""));
+					}else{
+						rowDataArray.add(data.replace("\"", ""));
+					}
+
+					index++;
+				}
+				if(hindex==0){
+					String[] header= new String[headerArray.size()];
+					header=headerArray.toArray(header);
+					toreturnObject.setDataHeader(header);
+				}else{
+					String[] rowData= new String[rowDataArray.size()];
+					rowData=rowDataArray.toArray(rowData);
+					dataRow.add(rowData);
+				}
+				hindex=1;
+				index = 0;
+			}
+			toreturnObject.setData(dataRow);
+			Gson gson = new Gson();
+			toreturn=gson.toJson(toreturnObject);
+			
 
 		}catch(Exception e){
 
 		}
+	
+
 		return Response.status(320).entity(toreturn).build();
 
 	}
@@ -133,7 +189,7 @@ public class SingleTrial {
 			dataFolderPath=path+separator;
 			dataFileNameSummaryStats = dataFolderPath.replace(BSLASH, FSLASH) + filenameSummaryStats;
 			dataFileNamePredictedMeans= dataFolderPath.replace(BSLASH, FSLASH) + filenamePredictedMeans;
-			
+
 			ResultAnalysisModel result=new ResultAnalysisModel();
 			BufferedReader readerSummaryStats = new BufferedReader(new FileReader(dataFileNameSummaryStats));
 			BufferedReader readerPredictedMeans = new BufferedReader(new FileReader(dataFileNamePredictedMeans));
@@ -145,7 +201,7 @@ public class SingleTrial {
 			ArrayList<String> headerArray = new ArrayList<String>();
 			List<String[]> dataRow=new ArrayList<String[]>();
 
-			
+
 			// read summary stats
 			while ((line = readerSummaryStats.readLine()) != null) {
 
@@ -179,15 +235,15 @@ public class SingleTrial {
 				index = 0;
 			}
 			result.setSummaryStatsData(dataRow);
-			
-			
+
+
 			String lineP = null;
 			Scanner scannerP = null;
 			int indexP = 0;
 			int hindexP=0;
 			ArrayList<String> headerArrayP = new ArrayList<String>();
 			List<String[]> dataRowP=new ArrayList<String[]>();
-			
+
 			// Read Predicted Means
 			while ((lineP = readerPredictedMeans.readLine()) != null) {
 
@@ -232,8 +288,8 @@ public class SingleTrial {
 		return Response.status(320).entity(toreturn).build();
 
 	}
-	
-	
+
+
 
 
 
@@ -464,33 +520,82 @@ public class SingleTrial {
 		/*	return Response.status(302).entity(toreturn).build().toString();*/
 
 	}
-	
+
 	@POST
 	@Path("/outlier")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces("application/json")
 	public String postOutlierDetection(String json) {
 		String toreturn="";
+		FileResourceOutlierModel toreturnObject=new FileResourceOutlierModel();
 		try{
 			assembleOutlierParameters(json);
 			RServeManager rserve= new RServeManager();
 			rserve.doOutlierDetection(paramsOutlier);
-			
+
 			System.out.println(paramsOutlier.getAnalysisResultFolder());
-			fileList=getOutputFolderFileResources(paramsOutlier.getAnalysisResultFolder());
-			//removeDataFile();
-	
+			toreturnObject=getOutputFolderFileOutlierResources(paramsOutlier.getAnalysisResultFolder());
+
+			String path=null;
+			String filenameOutlier="Outlier.csv";
+
+			String realpath=ctx.getRealPath("/");
+
+			path= realpath+separator+"output"+separator+paramsOutlier.getAnalysisResultFolder()+separator;
+
+			dataFolderPath=path+separator;
+			String dataFileNameOutlier = dataFolderPath.replace(BSLASH, FSLASH) + filenameOutlier;
+			BufferedReader readerOutlier = new BufferedReader(new FileReader(dataFileNameOutlier));
+
+			String line = null;
+			Scanner scanner = null;
+			int index = 0;
+			int hindex=0;
+			ArrayList<String> headerArray = new ArrayList<String>();
+			List<String[]> dataRow=new ArrayList<String[]>();
+
+
+			// read summary stats
+			while ((line = readerOutlier.readLine()) != null) {
+
+				scanner = new Scanner(line);
+				scanner.useDelimiter(",");
+				ArrayList<String> rowDataArray = new ArrayList<String>();
+
+
+				List<String> s= new ArrayList<String>(); 
+				while (scanner.hasNext()) {
+					String data = scanner.next();
+					if(hindex==0){
+						headerArray.add(data.replace("\"", ""));
+						System.out.println(data.replace("\"", ""));
+					}else{
+						rowDataArray.add(data.replace("\"", ""));
+					}
+
+					index++;
+				}
+				if(hindex==0){
+					String[] header= new String[headerArray.size()];
+					header=headerArray.toArray(header);
+					toreturnObject.setDataHeader(header);
+				}else{
+					String[] rowData= new String[rowDataArray.size()];
+					rowData=rowDataArray.toArray(rowData);
+					dataRow.add(rowData);
+				}
+				hindex=1;
+				index = 0;
+			}
+			toreturnObject.setData(dataRow);
 			Gson gson = new Gson();
-			toreturn=gson.toJson(fileList);
+			toreturn=gson.toJson(toreturnObject);
 			return toreturn;
 
 		}catch(Exception e){
 
 		}
 		return toreturn;
-
-
-		/*	return Response.status(302).entity(toreturn).build().toString();*/
 
 	}
 
@@ -553,31 +658,57 @@ public class SingleTrial {
 		return fileResourceModel;
 	}
 
+
+	private FileResourceOutlierModel getOutputFolderFileOutlierResources(String name){
+		String path = null;
+		FileResourceOutlierModel fileResourceModel= new FileResourceOutlierModel();
+		try{
+
+			String realpath=ctx.getRealPath("/");
+			path= realpath+separator+"output"+separator+name+separator;
+			File f = new File (path);
+			File directory = new File(path);
+			File[] fList = directory.listFiles();
+			String url=ctx.getContextPath()+"/output"+separator+name+separator;
+			fileResourceModel.setFolderResource(url.replace(BSLASH, FSLASH));
+			List<String> fileList= new ArrayList<String>();
+			for (File file : fList){
+				fileList.add(file.getName());
+				System.out.println();
+			}
+			fileResourceModel.setFileListResource(fileList);
+			return fileResourceModel;
+		}catch(Exception e){
+
+		}
+		return fileResourceModel;
+	}
+
 	private void assembleOutlierParameters(String json){
 		Gson jsonInput= new Gson();
 		OutlierParametersModel jsonField=jsonInput.fromJson(json, OutlierParametersModel.class);
 		paramsOutlier = new OutlierParametersModel();
-		
+
 		String realpath=ctx.getRealPath("/");
 		outputFolderPath=createOutputFolder(ctx,jsonField.getAnalysisResultFolder()); //jsonField.getAnalysisResultFolder()
 		dataFolderPath=realpath+separator+"temp"+separator;
 
 		FileUtilities fileUtil = new FileUtilities();
-		
+
 		String timestamp =  new  SimpleDateFormat("yyyyMMddhhmmss").format(new Date());
 		String fileName=jsonField.getUserAccount()+timestamp;
 		csvDataFileOutlier=dataFolderPath.replace(BSLASH, FSLASH)+ File.separator+ fileName+".csv";
 		fileUtil.createCSVFile(Arrays.asList(jsonField.getDataHeader()),jsonField.getData(), csvDataFileOutlier);
 		String dataFileName = dataFolderPath.replace(BSLASH, FSLASH) +fileName +".csv";
-		
+
 		paramsOutlier.setAnalysisResultFolder(jsonField.getAnalysisResultFolder());
 		paramsOutlier.setResultFolderName(outputFolderPath.replace(BSLASH, FSLASH));
 		paramsOutlier.setDataFileName(dataFileName);
 		paramsOutlier.setRespvar(jsonField.getRespvar());
-		paramsOutlier.setTrmt(jsonField.getTrmt());
+		paramsOutlier.setGenotype(jsonField.getGenotype());
 		paramsOutlier.setRep(jsonField.getRep());
-		
-		
+
+
 	}
 
 	private void assembleSingleTrialParameters(String json){
@@ -625,7 +756,7 @@ public class SingleTrial {
 		paramsSingleTrial.setPairwiseAlpha(jsonField.getPairwiseAlpha());
 		paramsSingleTrial.setCompareControl(jsonField.isCompareControl());
 		paramsSingleTrial.setPerformAllPairwise(jsonField.isPerformAllPairwise());
-		
+
 		paramsSingleTrial.setExcludeControls(jsonField.isExcludeControls());
 		paramsSingleTrial.setGenoPhenoCorrelation(jsonField.isGenoPhenoCorrelation());
 		paramsSingleTrial.setControlLevels(jsonField.getControlLevels());
@@ -676,7 +807,7 @@ public class SingleTrial {
 	@Path("getImageByte/{folder}/{filename}")
 	@Consumes("text/plain")
 	@Produces("image/png")
-//	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	//	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response getImage(@PathParam("folder") final String folder,@PathParam("filename") final String filename) throws IOException
 	{
 		// fetch the file to download from file system or database, or wherever...
@@ -695,7 +826,7 @@ public class SingleTrial {
 			throw new WebApplicationException(Status.NOT_FOUND);
 
 		return Response.ok(new ByteArrayInputStream(imageInByte)).build();
-//		return Response.ok(imageInByte).build();
+		//		return Response.ok(imageInByte).build();
 
 	}
 

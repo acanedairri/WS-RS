@@ -1636,7 +1636,7 @@ public class RServeManager {
 		String dataFileName=param.getDataFileName();
 		String outputPath=param.getResultFolderName();
 		String respvar=param.getRespvar();
-		String trmt=param.getTrmt();
+		String trmt=param.getGenotype();
 		String replicate=param.getRep();
 		
 		
@@ -1685,13 +1685,13 @@ public class RServeManager {
 		dataFileName = dataFileName.replace(BSLASH, FSLASH);
 		//specify parameters
 		String respvar = "GRNYLD.Y.ha.";
-		String trmt = "ENTRY.";
+		String genotype = "ENTRY.";
 		String rep = "REP.";
 		
 		param.setResultFolderName(resultFolderName);
 		param.setDataFileName(dataFileName);
 		param.setRespvar(respvar);
-		param.setTrmt(trmt);
+		param.setGenotype(genotype);
 		param.setRep(rep);
 		
 		

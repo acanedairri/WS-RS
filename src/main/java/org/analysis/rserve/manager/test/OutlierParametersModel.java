@@ -13,7 +13,7 @@ public class OutlierParametersModel {
 	private String[] dataHeader;
 	private List<String[]> data;
 	private String respvar;
-	private String trmt;
+	private String genotype;
 	private String rep;
 	
 	
@@ -67,11 +67,12 @@ public class OutlierParametersModel {
 	public void setRespvar(String respvar) {
 		this.respvar = respvar;
 	}
-	public String getTrmt() {
-		return trmt;
+
+	public String getGenotype() {
+		return genotype;
 	}
-	public void setTrmt(String trmt) {
-		this.trmt = trmt;
+	public void setGenotype(String genotype) {
+		this.genotype = genotype;
 	}
 	public String getRep() {
 		return rep;

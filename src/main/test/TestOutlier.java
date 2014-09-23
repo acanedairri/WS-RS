@@ -25,7 +25,7 @@ public class TestOutlier {
 
 			OutlierParametersModel params = new OutlierParametersModel();
 			String respvar = "GRNYLD.Y.ha.";
-			String trmt = "ENTRY.";
+			String genotype = "ENTRY.";
 			String rep = "REP.";
 			
 			String[] dataHeader={"GID","ENTRY!","DESIGNATION","PARENTS","ENTRYNO","PLOT","SOURCE","MATGP!","REP!","ROW","COLUMN","FLW","MATURITY","PLTHGT","TILLER","14MC","PLOTYIELD","MISSHILL","CPY","GRNYLD(Y/ha)","BLAST","BB1","BPH","GLH","HARVESTDATE"};
@@ -58,7 +58,7 @@ public class TestOutlier {
 			params.setData(data);
 			
 			params.setRespvar(respvar);
-			params.setTrmt(trmt);
+			params.setGenotype(genotype);
 			params.setRep(rep);
 			
 		
