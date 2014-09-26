@@ -43,7 +43,7 @@ import com.google.gson.Gson;
 
 
 @Path("/SingleTrial")
-public class SingleTrial {
+public class SingleTrial  implements Runnable{
 
 	@Context
 	private UriInfo context;
@@ -52,9 +52,10 @@ public class SingleTrial {
 	static String separator=java.nio.file.FileSystems.getDefault().getSeparator();
 	private  String outputFolderPath;
 	public  String dataFolderPath ;
-	public FileResourceModel fileList= new FileResourceModel();
-	private String csvDataFileSingleTrial;
+
+	//	private String csvDataFileSingleTrial;
 	private String csvDataFileOutlier;
+	private String json;
 
 	@Context 
 	ServletContext ctx;
@@ -63,6 +64,15 @@ public class SingleTrial {
 	private SingleTrialParametersModel paramsSingleTrial;
 	private OutlierParametersModel	paramsOutlier;
 
+
+	public SingleTrial(String json,ServletContext ctx){
+		this.json=json;
+		this.ctx=ctx;
+	}
+
+	public SingleTrial(){
+
+	}
 
 
 	@GET
@@ -77,7 +87,7 @@ public class SingleTrial {
 			dataFolderPath=realpath+separator+"temp"+separator;
 			RServeManager rserve= new RServeManager();
 			rserve.testSingleEnvironment(outputFolderPath,dataFolderPath);
-			fileList=getOutputFolderFileResources(name);
+			FileResourceModel fileList = getOutputFolderFileResources(name);
 			Gson gson = new Gson();
 			toreturn=gson.toJson(fileList);
 
@@ -102,7 +112,7 @@ public class SingleTrial {
 			dataFolderPath=realpath+separator+"temp"+separator;
 			RServeManager rserve= new RServeManager();
 			rserve.testOutlierDetection(outputFolderPath,dataFolderPath);
-			
+
 			toreturnObject=getOutputFolderFileOutlierResources(name);
 
 			String path=null;
@@ -158,12 +168,12 @@ public class SingleTrial {
 			toreturnObject.setData(dataRow);
 			Gson gson = new Gson();
 			toreturn=gson.toJson(toreturnObject);
-			
+
 
 		}catch(Exception e){
 
 		}
-	
+
 
 		return Response.status(320).entity(toreturn).build();
 
@@ -501,12 +511,13 @@ public class SingleTrial {
 	@Produces("application/json")
 	public String postSingleTrial(String json) {
 		String toreturn="";
+
 		try{
-			assembleSingleTrialParameters(json);
+			SingleTrialParametersModel paramsSingleTrial= assembleSingleTrialParameters(json);
 			RServeManager rserve= new RServeManager();
 			rserve.doSingleEnvironmentAnalysis(paramsSingleTrial);
-			fileList=getOutputFolderFileResources(paramsSingleTrial.getAnalysisResultFolder());
-			removeDataFile();
+			FileResourceModel fileList = getOutputFolderFileResources(paramsSingleTrial.getAnalysisResultFolder());
+			//			removeDataFile();
 			Gson gson = new Gson();
 			toreturn=gson.toJson(fileList);
 			return toreturn;
@@ -519,6 +530,68 @@ public class SingleTrial {
 
 		/*	return Response.status(302).entity(toreturn).build().toString();*/
 
+	}
+
+
+	@GET
+	@Path("getResultFiles/{name}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces("application/json")
+	public Response getAnalysisResultFiles(@PathParam("name") String name) {
+		String toreturn = null;
+		try{
+			FileResourceModel fileList = getOutputFolderFileResources(name);
+			Gson gson = new Gson();
+			if(fileList.fileListResource.size() > 0){
+				toreturn=gson.toJson(fileList);
+			}else{
+				toreturn="Analysis is not yet done....";
+			}
+		}catch(Exception e){
+		}
+		return Response.status(320).entity(toreturn).build();
+
+	}
+
+
+	@POST
+	@Path("/analyze")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces("application/json")
+	public String postSingleTrial2(String json) {
+		String toreturn="";
+		String errorMsg;
+		try{
+			errorMsg=validateInputSingleTrial(json);
+			if(errorMsg.length() > 0){
+				return errorMsg;
+			}else{
+				errorMsg="Data has been received and started processing";
+				(new Thread(new SingleTrial(json,ctx))).start();
+				return errorMsg;
+			}
+
+		}catch(Exception e){
+
+		}
+		return null;
+
+
+
+	}
+
+	@Override
+	public void run() {
+		RServeManager rserve= new RServeManager();
+		rserve.doSingleEnvironmentAnalysis(assembleSingleTrialParameters(json));
+
+		//		fileList=getOutputFolderFileResources(paramsSingleTrial.getAnalysisResultFolder());
+
+	}
+
+	private String validateInputSingleTrial(String json) {
+		String errorMsg="No response variable defined";
+		return errorMsg;
 	}
 
 	@POST
@@ -599,8 +672,8 @@ public class SingleTrial {
 
 	}
 
-	private void removeDataFile() {
-		File f= new File(csvDataFileSingleTrial);
+	private void removeDataFile(String filename) {
+		File f= new File(filename);
 		try {
 			Files.delete(f.toPath());
 		} catch (NoSuchFileException x) {
@@ -711,21 +784,21 @@ public class SingleTrial {
 
 	}
 
-	private void assembleSingleTrialParameters(String json){
+	private SingleTrialParametersModel assembleSingleTrialParameters(String json){
 
+		SingleTrialParametersModel paramsSingleTrial=new SingleTrialParametersModel(); 	
 		Gson jsonInput= new Gson();
 		SingleTrialParametersModel jsonField=jsonInput.fromJson(json, SingleTrialParametersModel.class);
-		paramsSingleTrial= new SingleTrialParametersModel(); 	
 
 		String realpath=ctx.getRealPath("/");
-		outputFolderPath=createOutputFolder(ctx,jsonField.getAnalysisResultFolder()); //jsonField.getAnalysisResultFolder()
-		dataFolderPath=realpath+separator+"temp"+separator;
+		String outputFolderPath=createOutputFolder(ctx,jsonField.getAnalysisResultFolder()); //jsonField.getAnalysisResultFolder()
+		String dataFolderPath=realpath+separator+"temp"+separator;
 
 		FileUtilities fileUtil = new FileUtilities();
 
 		String timestamp =  new  SimpleDateFormat("yyyyMMddhhmmss").format(new Date());
 		String fileName=jsonField.getUserAccount()+timestamp;
-		csvDataFileSingleTrial=dataFolderPath.replace(BSLASH, FSLASH)+ File.separator+ fileName+".csv";
+		String csvDataFileSingleTrial = dataFolderPath.replace(BSLASH, FSLASH)+ File.separator+ fileName+".csv";
 		fileUtil.createCSVFile(Arrays.asList(jsonField.getDataHeader()),jsonField.getData(), csvDataFileSingleTrial);
 
 		paramsSingleTrial.setResultFolderName(outputFolderPath.replace(BSLASH, FSLASH));
@@ -771,6 +844,8 @@ public class SingleTrial {
 			System.out.println("row" +i +":" +Arrays.toString(s));
 			i++;
 		}
+
+		return paramsSingleTrial;
 
 	}
 
@@ -829,6 +904,8 @@ public class SingleTrial {
 		//		return Response.ok(imageInByte).build();
 
 	}
+
+
 
 
 

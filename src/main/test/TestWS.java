@@ -164,8 +164,8 @@ public class TestWS {
 			boolean varianceComponents = true;*/
 			
 
-			params.setUserAccount("study3");
-			params.setAnalysisResultFolder("study3");
+			params.setUserAccount("studyAlex");
+			params.setAnalysisResultFolder("studyAlex");
 			params.setDataHeader(dataHeader);
 			params.setData(data);
 			
@@ -211,7 +211,8 @@ public class TestWS {
 
 			Client c = ClientBuilder.newClient();
 //			WebTarget target= c.target("http://172.29.4.166:8080/WS-RS/rest/SingleTrial/run");
-			WebTarget target= c.target("http://localhost:8080/WS-RS/rest/SingleTrial/run");
+//			WebTarget target= c.target("http://localhost:8080/WS-RS/rest/SingleTrial/run");
+			WebTarget target= c.target("http://localhost:8080/WS-RS/rest/SingleTrial/analyze");
 			Response response = target.request().post(Entity.json(json));
 
 			if (response.getStatus() != 200) {

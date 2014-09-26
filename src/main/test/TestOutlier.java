@@ -22,7 +22,7 @@ public class TestOutlier {
 
 		try {
 			
-
+/*
 			OutlierParametersModel params = new OutlierParametersModel();
 			String respvar = "GRNYLD.Y.ha.";
 			String genotype = "ENTRY.";
@@ -36,7 +36,7 @@ public class TestOutlier {
 			data.add(new String[]{"3426751","IR12N183","IR 91070-73-1-3-2","IR05N128/IR06M139","B3393","1","B5344","1","1","1","1","86","116","119","14","12.5","6080","1","6112","10000","0","1","3","3","2013-04-11"});
 			data.add(new String[]{"3426267","IR12A232","IR 91104-9-2-2-1","IR06F434/IR07F289","A3293","2","A5212","1","1","1","2","86","116","117","15","11.6","6680","","","100000","3","1","3","5","2013-04-11"});
 			data.add(new String[]{"3426611","IR12A166","IR 91028-123-3-3-3","IR01A111/MTU 1010","A3264","3","A5146","1","1","1","3","82","112","108","21","9.1","6047","","","8454","3","1","9","5","2013-04-08"});
-			data.add(new String[]{"2433014","IR09N531","IR 83704-18-3-2-2","IR04N114/IR 73459-120-2-2-3//KHAO KHAE","B3343","4","B2783","1","1","1","4","84","114","107","18","9.1","6042","","","20000","2","1","7","5","2013-04-08"});
+			data.add(new String[]{"2433014","IR09N531","IR 83704-18-3-2-2","IR04N114/IR 73459-120-2-2-3//KHAO KHAE","B3343","4","B2783","1","1","1","4","84","114","107","18","9.1","6042","","","20000","2","1","7","5","2013-04-08"});*/
 //			data.add(new String[]{"2524953","IR09A131","IR 83850-4-3-3-2","IR 77080-B-34-3/IRRI 135","A3230","5","A2717","1","1","1","5","81","111","101","16","11.8","4411","3","4482","6080","3","1","5","3","2013-04-04"});
 //			data.add(new String[]{"3426287","IR12A236","IR 91106-59-3-1-3","MTU 1010/IR06M139","A3294","6","A5216","1","1","1","6","83","113","128","12","11.7","6256","","","15000","3","1","3","3","2013-04-04"});
 //			data.add(new String[]{"2432999","IR09N533","IR 83704-78-2-3-2","IR04N114/IR 73459-120-2-2-3//KHAO KHAE","B3345","7","B2830","1","1","1","7","82","112","98","18","9.9","6468","","","8963","2","1","5","3","2013-04-08"});
@@ -52,25 +52,25 @@ public class TestOutlier {
 
 
 
-			params.setUserAccount("studyOutlier");
+/*			params.setUserAccount("studyOutlier");
 			params.setAnalysisResultFolder("myOutlier20");
 			params.setDataHeader(dataHeader);
 			params.setData(data);
 			
 			params.setRespvar(respvar);
 			params.setGenotype(genotype);
-			params.setRep(rep);
+			params.setRep(rep);*/
 			
 		
 
 			Gson gson = new Gson();
-			String json = gson.toJson(params);
-		
+	//		String json = "{ "analysisResultFolder": "IRSEA-IRRIHQ-AGR-2014-DS-5_HT_CONT_4", "username": "j.lagare", "dataHeader": [ "Site", "Designation", "HT_CONT", "Blk" ], "data": [ [ "Env1", "IR12A256", "102", "1" ], [ "Env1", "IR12A200", "122", "1" ], [ "Env1", "IR07A107", "92", "1" ], [ "Env1", "IRRI 154", "98", "2" ], [ "Env1", "IRRI 154", "98", "1" ], [ "Env1", "IRRI 146", "83", "2" ], [ "Env1", "(SITU BAGENDIT*3/NIL-C443 5)-204", "102", "1" ], [ "Env1", "(SITU BAGENDIT*3/KASALATH 5)-72", "155", "1" ], [ "Env1", "SITU BAGENDIT", "92", "1" ], [ "Env1", "IR 64-Pup1-M", "94", "1" ], [ "Env1", "IR 74-Pup1-D", "84", "1" ], [ "Env1", "IR 74-Pup1-A", "86", "2" ], [ "Env1", "IR 64", "86", "2" ], [ "Env1", "IR08N180", "101", "2" ], [ "Env1", "IR 84636-13-12-2-2-2-2-4-2-2-2-B", "93", "2" ], [ "Env1", "IR 84636-13-12-2-2-2-2-4-2-2-2-B", "97", "1" ], [ "Env1", "IR 64", "126", "1" ], [ "Env1", "IR07A253", "111", "2" ], [ "Env1", "IR07A253", "106", "1" ], [ "Env1", "IR06A144", "89", "1" ], [ "Env1", "IR09N536", "92", "1" ], [ "Env1", "IR12A108", "99", "1" ], [ "Env1", "IR11N121", "102", "1" ], [ "Env1", "IRRI 168", "99", "1" ], [ "Env1", "IRRI 123", "83", "2" ], [ "Env1", "IRRI 104", "72", "1" ], [ "Env1", "(SITU BAGENDIT*3/NIL-C443 5)-204", "103", "2" ], [ "Env1", "(SITU BAGENDIT*3/KASALATH 5)-72", "155", "2" ], [ "Env1", "(BATUR*3/NIL-C443 5)-376", "137", "2" ], [ "Env1", "IR 64-PUP1-H", "102", "1" ], [ "Env1", "IR 64-Pup1-M", "94", "2" ], [ "Env1", "IR 74-Pup1-C", "76", "1" ], [ "Env1", "IR 74-Pup1-B", "83", "2" ], [ "Env1", "IR64-NIL5", "92", "2" ], [ "Env1", "IR 84636-13-12-2-6-3-3-2-2-B", "91", "1" ], [ "Env1", "IR 82355-5-1-3", "103", "1" ], [ "Env1", "IR10N285", "89", "2" ], [ "Env1", "(BATUR*3/KASALATH)-1830", "136", "2" ], [ "Env1", "IR12N125", "87", "1" ], [ "Env1", "IR09A128", "105", "2" ], [ "Env1", "IR 64", "88", "1" ], [ "Env1", "BATUR", "121", "2" ], [ "Env1", "IR12A256", "97", "2" ], [ "Env1", "IR12A200", "118", "2" ], [ "Env1", "IR09A128", "105", "1" ], [ "Env1", "IR09A130", "103", "2" ], [ "Env1", "IR06A144", "100", "2" ], [ "Env1", "IR09N536", "89", "2" ], [ "Env1", "IR07A107", "87", "2" ], [ "Env1", "IRRI 156", "97", "2" ], [ "Env1", "IRRI 123", "93", "1" ], [ "Env1", "IRRI 104", "73", "2" ], [ "Env1", "(BATUR*3/NIL-C443 5)-376", "136", "1" ], [ "Env1", "(BATUR*3/KASALATH)-1830", "137", "1" ], [ "Env1", "IR 64-PUP1-H", "95", "2" ], [ "Env1", "IR74", "84", "2" ], [ "Env1", "IR64-NIL5", "92", "1" ], [ "Env1", "IR 82355-5-1-3", "100", "2" ], [ "Env1", "IR08N180", "99", "1" ], [ "Env1", "IR12A108", "101", "2" ], [ "Env1", "IR12N125", "91", "2" ], [ "Env1", "IR09A130", "104", "1" ], [ "Env1", "IRRI 146", "88", "1" ], [ "Env1", "IRRI 156", "102", "1" ], [ "Env1", "SITU BAGENDIT", "95", "2" ], [ "Env1", "BATUR", "133", "1" ], [ "Env1", "IR 64", "132", "2" ], [ "Env1", "IR 74-Pup1-D", "80", "2" ], [ "Env1", "IR 74-Pup1-C", "82", "2" ], [ "Env1", "IR 74-Pup1-B", "75", "1" ], [ "Env1", "IR 74-Pup1-A", "81", "1" ], [ "Env1", "IR74", "86", "1" ], [ "Env1", "IR 84636-13-12-2-6-3-3-2-2-B", "88", "2" ], [ "Env1", "IR10N285", "91", "1" ], [ "Env1", "IRRI 168", "95", "2" ], [ "Env1", "IR11N121", "99", "2" ] ], "respvar" : "HT_CONT", "genotype" :"Designation", "rep" : "Blk", }";//'// gson.toJson(params);
+			String json="{ 'analysisResultFolder': 'IRSEA-IRRIHQ-AGR-2014-DS-5_HT_CONT_4', 'username': 'j.lagare', 'dataHeader': [ 'Site', 'Designation', 'HT_CONT', 'Blk' ], 'data': [ [ 'Env1', 'IR12A256', '102', '1' ], [ 'Env1', 'IR12A200', '122', '1' ], [ 'Env1', 'IR07A107', '92', '1' ], [ 'Env1', 'IRRI 154', '98', '2' ], [ 'Env1', 'IRRI 154', '98', '1' ], [ 'Env1', 'IRRI 146', '83', '2' ], [ 'Env1', '(SITU BAGENDIT*3/NIL-C443 5)-204', '102', '1' ], [ 'Env1', '(SITU BAGENDIT*3/KASALATH 5)-72', '155', '1' ], [ 'Env1', 'SITU BAGENDIT', '92', '1' ], [ 'Env1', 'IR 64-Pup1-M', '94', '1' ], [ 'Env1', 'IR 74-Pup1-D', '84', '1' ], [ 'Env1', 'IR 74-Pup1-A', '86', '2' ], [ 'Env1', 'IR 64', '86', '2' ], [ 'Env1', 'IR08N180', '101', '2' ], [ 'Env1', 'IR 84636-13-12-2-2-2-2-4-2-2-2-B', '93', '2' ], [ 'Env1', 'IR 84636-13-12-2-2-2-2-4-2-2-2-B', '97', '1' ], [ 'Env1', 'IR 64', '126', '1' ], [ 'Env1', 'IR07A253', '111', '2' ], [ 'Env1', 'IR07A253', '106', '1' ], [ 'Env1', 'IR06A144', '89', '1' ], [ 'Env1', 'IR09N536', '92', '1' ], [ 'Env1', 'IR12A108', '99', '1' ], [ 'Env1', 'IR11N121', '102', '1' ], [ 'Env1', 'IRRI 168', '99', '1' ], [ 'Env1', 'IRRI 123', '83', '2' ], [ 'Env1', 'IRRI 104', '72', '1' ], [ 'Env1', '(SITU BAGENDIT*3/NIL-C443 5)-204', '103', '2' ], [ 'Env1', '(SITU BAGENDIT*3/KASALATH 5)-72', '155', '2' ], [ 'Env1', '(BATUR*3/NIL-C443 5)-376', '137', '2' ], [ 'Env1', 'IR 64-PUP1-H', '102', '1' ], [ 'Env1', 'IR 64-Pup1-M', '94', '2' ], [ 'Env1', 'IR 74-Pup1-C', '76', '1' ], [ 'Env1', 'IR 74-Pup1-B', '83', '2' ], [ 'Env1', 'IR64-NIL5', '92', '2' ], [ 'Env1', 'IR 84636-13-12-2-6-3-3-2-2-B', '91', '1' ], [ 'Env1', 'IR 82355-5-1-3', '103', '1' ], [ 'Env1', 'IR10N285', '89', '2' ], [ 'Env1', '(BATUR*3/KASALATH)-1830', '136', '2' ], [ 'Env1', 'IR12N125', '87', '1' ], [ 'Env1', 'IR09A128', '105', '2' ], [ 'Env1', 'IR 64', '88', '1' ], [ 'Env1', 'BATUR', '121', '2' ], [ 'Env1', 'IR12A256', '97', '2' ], [ 'Env1', 'IR12A200', '118', '2' ], [ 'Env1', 'IR09A128', '105', '1' ], [ 'Env1', 'IR09A130', '103', '2' ], [ 'Env1', 'IR06A144', '100', '2' ], [ 'Env1', 'IR09N536', '89', '2' ], [ 'Env1', 'IR07A107', '87', '2' ], [ 'Env1', 'IRRI 156', '97', '2' ], [ 'Env1', 'IRRI 123', '93', '1' ], [ 'Env1', 'IRRI 104', '73', '2' ], [ 'Env1', '(BATUR*3/NIL-C443 5)-376', '136', '1' ], [ 'Env1', '(BATUR*3/KASALATH)-1830', '137', '1' ], [ 'Env1', 'IR 64-PUP1-H', '95', '2' ], [ 'Env1', 'IR74', '84', '2' ], [ 'Env1', 'IR64-NIL5', '92', '1' ], [ 'Env1', 'IR 82355-5-1-3', '100', '2' ], [ 'Env1', 'IR08N180', '99', '1' ], [ 'Env1', 'IR12A108', '101', '2' ], [ 'Env1', 'IR12N125', '91', '2' ], [ 'Env1', 'IR09A130', '104', '1' ], [ 'Env1', 'IRRI 146', '88', '1' ], [ 'Env1', 'IRRI 156', '102', '1' ], [ 'Env1', 'SITU BAGENDIT', '95', '2' ], [ 'Env1', 'BATUR', '133', '1' ], [ 'Env1', 'IR 64', '132', '2' ], [ 'Env1', 'IR 74-Pup1-D', '80', '2' ], [ 'Env1', 'IR 74-Pup1-C', '82', '2' ], [ 'Env1', 'IR 74-Pup1-B', '75', '1' ], [ 'Env1', 'IR 74-Pup1-A', '81', '1' ], [ 'Env1', 'IR74', '86', '1' ], [ 'Env1', 'IR 84636-13-12-2-6-3-3-2-2-B', '88', '2' ], [ 'Env1', 'IR10N285', '91', '1' ], [ 'Env1', 'IRRI 168', '95', '2' ], [ 'Env1', 'IR11N121', '99', '2' ] ], 'respvar' : 'HT_CONT', 'genotype' :'Designation', 'rep' : 'Blk' }";
 			System.out.println(json);
 
 			Client c = ClientBuilder.newClient();
-//			WebTarget target= c.target("http://172.29.4.166:8080/WS-RS/rest/SingleTrial/run");
-			WebTarget target= c.target("http://localhost:8080/WS-RS/rest/SingleTrial/outlier");
+			WebTarget target= c.target("http://172.29.4.166:8080/WS-RS/rest/SingleTrial/outlier");
+//			WebTarget target= c.target("http://localhost:8080/WS-RS/rest/SingleTrial/outlier");
 			Response response = target.request().post(Entity.json(json));
 
 			if (response.getStatus() != 200) {
