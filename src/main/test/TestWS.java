@@ -112,6 +112,7 @@ public class TestWS {
 			
 			String env="NULL";
 			String respvars[] = {"Y1"};
+//			String respvars[] = {""};
 			String[] environmentLevels={};
 			int design = 0;
 			String genotype = "Gen";
@@ -162,6 +163,8 @@ public class TestWS {
 			
 			boolean descriptiveStat = true; 
 			boolean varianceComponents = true;*/
+			
+
 			
 
 			params.setUserAccount("studyAlex");

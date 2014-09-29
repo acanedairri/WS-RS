@@ -590,10 +590,97 @@ public class SingleTrial  implements Runnable{
 	}
 
 	private String validateInputSingleTrial(String json) {
-		String errorMsg="No response variable defined";
-		return errorMsg;
+		SingleTrialParametersModel paramsSingleTrial=new SingleTrialParametersModel(); 	
+		Gson jsonInput= new Gson();
+		SingleTrialParametersModel param=jsonInput.fromJson(json, SingleTrialParametersModel.class);
+		
+		StringBuffer errorMsg= new StringBuffer();
+		
+		if(String.valueOf(param.getDesign()).trim().length() <=0){
+			errorMsg.append("No Design Specified\n");
+		}else{
+			
+			if(param.getDesign()==0 || param.getDesign()==1){
+				
+				if((param.getBlock().length()==0 || param.getBlock()==null || param.getBlock().toLowerCase().equals("null"))  ){
+					errorMsg.append("No Rep Variable Specified\n");
+				}
+				
+/*				if(!param.getDataHeader().toString().contains(param.getBlock())){
+					errorMsg.append("Wrong Data Header defined for Block\n");
+				}*/
+				
+			}else if(param.getDesign()==3){
+				
+				if(param.getRep().length()==0 || param.getRep()==null || param.getRep().toLowerCase().equals("null")){
+					errorMsg.append("No Rep Variable Specified\n");
+				}
+				
+				if(!Arrays.toString(param.getDataHeader()).contains(param.getRep())){
+					errorMsg.append("Wrong Data Header defined for Rep\n");
+				}
+				
+				if(param.getBlock().length()==0 || param.getBlock()==null || param.getBlock().toLowerCase().equals("null")){
+					errorMsg.append("No Block Variable Specified\n");
+				}
+				
+				if(!Arrays.toString(param.getDataHeader()).contains(param.getBlock())){
+					errorMsg.append("Wrong Data Header defined for Block\n");
+				}
+				
+				
+			}else if(param.getDesign()==4){
+				if(param.getRep().length()==0 || param.getRep()==null || param.getRep().toLowerCase().equals("null")){
+					errorMsg.append("No Rep Variable Specified\n");
+				}
+				
+				if(!param.getDataHeader().toString().contains(param.getRep())){
+					errorMsg.append("Wrong Data Header defined for Rep\n");
+				}
+				
+				
+				if(param.getRow().length()==0 || param.getRow()==null || param.getRow().toLowerCase().equals("null")){
+					errorMsg.append("No Row Block Variable Specified\n");
+				}
+				if(!Arrays.toString(param.getDataHeader()).contains(param.getRow())){
+					errorMsg.append("Wrong Data Header defined for Row\n");
+				}
+				
+				
+				if(param.getColumn().length()==0 || param.getColumn()==null || param.getColumn().toLowerCase().equals("null")){
+					errorMsg.append("No Column Block Variable Specified\n");
+				}
+				
+				if(!Arrays.toString(param.getDataHeader()).contains(param.getColumn())){
+					errorMsg.append("Wrong Data Header defined for Column\n");
+				}
+				
+			}
+		}
+		
+		if(param.getDataHeader()==null || param.getDataHeader().toString().length()==0){
+			errorMsg.append("No Data Header Specified\n");
+		}
+		
+		if(param.getData()==null || param.getData().toString().length()==0){
+			errorMsg.append("No Data  Specified\n");
+		}
+		
+		if(param.getRespvars()[0]==null || param.getRespvars()[0].length()==0){
+			errorMsg.append("No Response Variable  specified\n");
+		}
+		
+		System.out.println(Arrays.toString(param.getDataHeader()));
+		System.out.println(param.getRespvars()[0]);
+		if(!Arrays.toString(param.getDataHeader()).contains(param.getRespvars()[0])){
+			errorMsg.append("Wrong Data Header defined for Response Variable\n");
+		}
+		
+		
+		return errorMsg.toString();
 	}
 
+	
 	@POST
 	@Path("/outlier")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -812,7 +899,7 @@ public class SingleTrial  implements Runnable{
 		paramsSingleTrial.setRespvars(jsonField.getRespvars());
 		paramsSingleTrial.setGenotype(jsonField.getGenotype());
 		paramsSingleTrial.setBlock(jsonField.getBlock());
-		paramsSingleTrial.setRep(jsonField.getRow());
+		paramsSingleTrial.setRep(jsonField.getRep());
 		paramsSingleTrial.setRow(jsonField.getRow());
 		paramsSingleTrial.setColumn(jsonField.getColumn());
 		paramsSingleTrial.setDescriptiveStat(jsonField.isDescriptiveStat()); 
