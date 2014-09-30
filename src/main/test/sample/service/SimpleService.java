@@ -1,4 +1,4 @@
-package org.analysis.singletrial;
+package sample.service;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;

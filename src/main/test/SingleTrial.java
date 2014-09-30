@@ -13,8 +13,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
+import org.analysis.model.SingleTrialParametersModel;
 import org.analysis.rserve.manager.RServeManager;
-import org.analysis.rserve.manager.test.SingleTrialParametersModel;
 
 import com.google.gson.Gson;
 

@@ -1,4 +1,4 @@
-package org.analysis.rserve.manager.test;
+package org.analysis.model;
 
 import java.util.List;
 

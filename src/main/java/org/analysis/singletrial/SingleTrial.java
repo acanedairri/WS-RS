@@ -6,6 +6,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
@@ -32,11 +33,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import org.analysis.model.CsvToJsonModel;
+import org.analysis.model.SingleTrialFileResourceModel;
+import org.analysis.model.OutlierFileResourceModel;
+import org.analysis.model.OutlierParametersModel;
+import org.analysis.model.SingleTrialResultModel;
+import org.analysis.model.SingleTrialParametersModel;
 import org.analysis.rserve.manager.RServeManager;
-import org.analysis.rserve.manager.test.CsvToJsonModel;
-import org.analysis.rserve.manager.test.OutlierParametersModel;
-import org.analysis.rserve.manager.test.ResultAnalysisModel;
-import org.analysis.rserve.manager.test.SingleTrialParametersModel;
 import org.analysis.util.FileUtilities;
 
 import com.google.gson.Gson;
@@ -79,7 +82,7 @@ public class SingleTrial  implements Runnable{
 	@Path("/{name}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces("application/json")
-	public Response postSingleTrialTest(@PathParam("name") String name) {
+	public Response testGetSingleTrial(@PathParam("name") String name) {
 		String toreturn = null;
 		try{
 			String realpath=ctx.getRealPath("/");
@@ -87,10 +90,9 @@ public class SingleTrial  implements Runnable{
 			dataFolderPath=realpath+separator+"temp"+separator;
 			RServeManager rserve= new RServeManager();
 			rserve.testSingleEnvironment(outputFolderPath,dataFolderPath);
-			FileResourceModel fileList = getOutputFolderFileResources(name);
+			SingleTrialFileResourceModel singleTrialFileResourceModel = fetchOutputFolderFileResources(name);
 			Gson gson = new Gson();
-			toreturn=gson.toJson(fileList);
-
+			toreturn=gson.toJson(singleTrialFileResourceModel);
 
 		}catch(Exception e){
 
@@ -103,9 +105,9 @@ public class SingleTrial  implements Runnable{
 	@Path("outlier/{name}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces("application/json")
-	public Response getOutlierDetectionTest(@PathParam("name") String name) {
+	public Response testGetOutlierDetection(@PathParam("name") String name) {
 		String toreturn = null;
-		FileResourceOutlierModel toreturnObject=new FileResourceOutlierModel();
+		OutlierFileResourceModel toreturnObject=new OutlierFileResourceModel();
 		try{
 			String realpath=ctx.getRealPath("/");
 			outputFolderPath=createOutputFolder(ctx,name);
@@ -113,7 +115,7 @@ public class SingleTrial  implements Runnable{
 			RServeManager rserve= new RServeManager();
 			rserve.testOutlierDetection(outputFolderPath,dataFolderPath);
 
-			toreturnObject=getOutputFolderFileOutlierResources(name);
+			toreturnObject=fetchOutlierFileResources(name);
 
 			String path=null;
 			String filenameOutlier="Outlier.csv";
@@ -188,9 +190,12 @@ public class SingleTrial  implements Runnable{
 		String toreturn = null;
 		String dataFileNameSummaryStats = null;
 		String dataFileNamePredictedMeans = null;
+		String dataFileNameElapsedTime=null;
 		String path=null;
 		String filenameSummaryStats="summaryStats.csv";
 		String filenamePredictedMeans="predictedMeans.csv";
+		String fileElapsedTime="elapsed-time.txt";
+		SingleTrialResultModel result=new SingleTrialResultModel();
 		try{
 			String realpath=ctx.getRealPath("/");
 
@@ -199,13 +204,25 @@ public class SingleTrial  implements Runnable{
 			dataFolderPath=path+separator;
 			dataFileNameSummaryStats = dataFolderPath.replace(BSLASH, FSLASH) + filenameSummaryStats;
 			dataFileNamePredictedMeans= dataFolderPath.replace(BSLASH, FSLASH) + filenamePredictedMeans;
-
-			ResultAnalysisModel result=new ResultAnalysisModel();
+			dataFileNameElapsedTime=dataFolderPath.replace(BSLASH, FSLASH) + fileElapsedTime;
 			BufferedReader readerSummaryStats = new BufferedReader(new FileReader(dataFileNameSummaryStats));
 			BufferedReader readerPredictedMeans = new BufferedReader(new FileReader(dataFileNamePredictedMeans));
+			BufferedReader readerElapsedTime=new BufferedReader(new FileReader(dataFileNameElapsedTime));
+
+			Scanner scanner = null;
+			String lineElapsed = null;
+			String elapseTime = null;
+
+			while ((lineElapsed = readerElapsedTime.readLine()) != null) {
+				elapseTime=lineElapsed;
+			}
+			
+			System.out.println("Time" +elapseTime);
+
+			result.setElapsedtime(elapseTime);
 
 			String line = null;
-			Scanner scanner = null;
+
 			int index = 0;
 			int hindex=0;
 			ArrayList<String> headerArray = new ArrayList<String>();
@@ -288,7 +305,7 @@ public class SingleTrial  implements Runnable{
 			}
 			result.setPredicatedMeansData(dataRowP);
 
-			ResultAnalysisModel finalResult =retreivedOtherResultOutput(folder,result);
+			SingleTrialResultModel finalResult =retreivedOtherResultOutput(folder,result);
 			Gson gson = new Gson();
 			toreturn=gson.toJson(finalResult);
 
@@ -304,7 +321,7 @@ public class SingleTrial  implements Runnable{
 
 
 	//GET STANDARD ERROR OF THE DIFFERENCE (SED)
-	public ResultAnalysisModel retreivedOtherResultOutput(String folder,ResultAnalysisModel result) {
+	public SingleTrialResultModel retreivedOtherResultOutput(String folder,SingleTrialResultModel result) {
 		String toreturn = null;
 		String dataFileName = null;
 		String path=null;
@@ -516,7 +533,7 @@ public class SingleTrial  implements Runnable{
 			SingleTrialParametersModel paramsSingleTrial= assembleSingleTrialParameters(json);
 			RServeManager rserve= new RServeManager();
 			rserve.doSingleEnvironmentAnalysis(paramsSingleTrial);
-			FileResourceModel fileList = getOutputFolderFileResources(paramsSingleTrial.getAnalysisResultFolder());
+			SingleTrialFileResourceModel fileList = fetchOutputFolderFileResources(paramsSingleTrial.getAnalysisResultFolder());
 			//			removeDataFile();
 			Gson gson = new Gson();
 			toreturn=gson.toJson(fileList);
@@ -537,12 +554,12 @@ public class SingleTrial  implements Runnable{
 	@Path("getResultFiles/{name}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces("application/json")
-	public Response getAnalysisResultFiles(@PathParam("name") String name) {
+	public Response getResultFiles(@PathParam("name") String name) {
 		String toreturn = null;
 		try{
-			FileResourceModel fileList = getOutputFolderFileResources(name);
+			SingleTrialFileResourceModel fileList = fetchOutputFolderFileResources(name);
 			Gson gson = new Gson();
-			if(fileList.fileListResource.size() > 0){
+			if(fileList.getFileListResource().size() > 0){
 				toreturn=gson.toJson(fileList);
 			}else{
 				toreturn="Analysis is not yet done....";
@@ -558,7 +575,7 @@ public class SingleTrial  implements Runnable{
 	@Path("/analyze")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces("application/json")
-	public String postSingleTrial2(String json) {
+	public String postSingleTrialAnalyze(String json) {
 		String toreturn="";
 		String errorMsg;
 		try{
@@ -575,17 +592,37 @@ public class SingleTrial  implements Runnable{
 
 		}
 		return null;
-
-
-
 	}
 
 	@Override
 	public void run() {
-		RServeManager rserve= new RServeManager();
-		rserve.doSingleEnvironmentAnalysis(assembleSingleTrialParameters(json));
 
-		//		fileList=getOutputFolderFileResources(paramsSingleTrial.getAnalysisResultFolder());
+		long startTime=System.nanoTime();
+		RServeManager rserve= new RServeManager();
+		SingleTrialParametersModel param=assembleSingleTrialParameters(json);
+		rserve.doSingleEnvironmentAnalysis(param);
+		long elapsedTime = System.nanoTime() - startTime;
+		String elapsedTimeResult=((double) elapsedTime / 1000000000) + " sec";
+		System.out.println("#####" + ": Elapsed Time = " + elapsedTime + " ns = " + ((double) elapsedTime / 1000000000) + " sec");
+		createElapseTimeFile(elapsedTimeResult,param.getAnalysisResultFolder());
+
+	}
+
+	private void createElapseTimeFile(String elapsedTimeResult,
+			String analysisResultFolder) {
+		String realpath=ctx.getRealPath("/");
+		String dataFolderPath=realpath+separator+"output/"+analysisResultFolder+separator;
+		String filePath=dataFolderPath.replace(BSLASH, FSLASH)+ File.separator+ "elapsed-time.txt";
+		FileWriter writer = null;
+		try {
+			writer = new FileWriter(filePath);
+			writer.write(elapsedTimeResult);
+			if (writer != null) {
+				writer.close();
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 
 	}
 
@@ -593,108 +630,108 @@ public class SingleTrial  implements Runnable{
 		SingleTrialParametersModel paramsSingleTrial=new SingleTrialParametersModel(); 	
 		Gson jsonInput= new Gson();
 		SingleTrialParametersModel param=jsonInput.fromJson(json, SingleTrialParametersModel.class);
-		
+
 		StringBuffer errorMsg= new StringBuffer();
-		
+
 		if(String.valueOf(param.getDesign()).trim().length() <=0){
 			errorMsg.append("No Design Specified\n");
 		}else{
-			
+
 			if(param.getDesign()==0 || param.getDesign()==1){
-				
+
 				if((param.getBlock().length()==0 || param.getBlock()==null || param.getBlock().toLowerCase().equals("null"))  ){
 					errorMsg.append("No Rep Variable Specified\n");
 				}
-				
-/*				if(!param.getDataHeader().toString().contains(param.getBlock())){
+
+				/*				if(!param.getDataHeader().toString().contains(param.getBlock())){
 					errorMsg.append("Wrong Data Header defined for Block\n");
 				}*/
-				
+
 			}else if(param.getDesign()==3){
-				
+
 				if(param.getRep().length()==0 || param.getRep()==null || param.getRep().toLowerCase().equals("null")){
 					errorMsg.append("No Rep Variable Specified\n");
 				}
-				
+
 				if(!Arrays.toString(param.getDataHeader()).contains(param.getRep())){
 					errorMsg.append("Wrong Data Header defined for Rep\n");
 				}
-				
+
 				if(param.getBlock().length()==0 || param.getBlock()==null || param.getBlock().toLowerCase().equals("null")){
 					errorMsg.append("No Block Variable Specified\n");
 				}
-				
+
 				if(!Arrays.toString(param.getDataHeader()).contains(param.getBlock())){
 					errorMsg.append("Wrong Data Header defined for Block\n");
 				}
-				
-				
+
+
 			}else if(param.getDesign()==4){
 				if(param.getRep().length()==0 || param.getRep()==null || param.getRep().toLowerCase().equals("null")){
 					errorMsg.append("No Rep Variable Specified\n");
 				}
-				
+
 				if(!param.getDataHeader().toString().contains(param.getRep())){
 					errorMsg.append("Wrong Data Header defined for Rep\n");
 				}
-				
-				
+
+
 				if(param.getRow().length()==0 || param.getRow()==null || param.getRow().toLowerCase().equals("null")){
 					errorMsg.append("No Row Block Variable Specified\n");
 				}
 				if(!Arrays.toString(param.getDataHeader()).contains(param.getRow())){
 					errorMsg.append("Wrong Data Header defined for Row\n");
 				}
-				
-				
+
+
 				if(param.getColumn().length()==0 || param.getColumn()==null || param.getColumn().toLowerCase().equals("null")){
 					errorMsg.append("No Column Block Variable Specified\n");
 				}
-				
+
 				if(!Arrays.toString(param.getDataHeader()).contains(param.getColumn())){
 					errorMsg.append("Wrong Data Header defined for Column\n");
 				}
-				
+
 			}
 		}
-		
+
 		if(param.getDataHeader()==null || param.getDataHeader().toString().length()==0){
 			errorMsg.append("No Data Header Specified\n");
 		}
-		
+
 		if(param.getData()==null || param.getData().toString().length()==0){
 			errorMsg.append("No Data  Specified\n");
 		}
-		
+
 		if(param.getRespvars()[0]==null || param.getRespvars()[0].length()==0){
 			errorMsg.append("No Response Variable  specified\n");
 		}
-		
+
 		System.out.println(Arrays.toString(param.getDataHeader()));
 		System.out.println(param.getRespvars()[0]);
 		if(!Arrays.toString(param.getDataHeader()).contains(param.getRespvars()[0])){
 			errorMsg.append("Wrong Data Header defined for Response Variable\n");
 		}
-		
-		
+
+
 		return errorMsg.toString();
 	}
 
-	
+
 	@POST
 	@Path("/outlier")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces("application/json")
 	public String postOutlierDetection(String json) {
 		String toreturn="";
-		FileResourceOutlierModel toreturnObject=new FileResourceOutlierModel();
+		OutlierFileResourceModel toreturnObject=new OutlierFileResourceModel();
 		try{
 			assembleOutlierParameters(json);
 			RServeManager rserve= new RServeManager();
 			rserve.doOutlierDetection(paramsOutlier);
 
 			System.out.println(paramsOutlier.getAnalysisResultFolder());
-			toreturnObject=getOutputFolderFileOutlierResources(paramsOutlier.getAnalysisResultFolder());
+			toreturnObject=fetchOutlierFileResources(paramsOutlier.getAnalysisResultFolder());
 
 			String path=null;
 			String filenameOutlier="Outlier.csv";
@@ -793,9 +830,9 @@ public class SingleTrial  implements Runnable{
 	}
 
 
-	private FileResourceModel getOutputFolderFileResources(String name){
+	public SingleTrialFileResourceModel fetchOutputFolderFileResources(String name){
 		String path = null;
-		FileResourceModel fileResourceModel= new FileResourceModel();
+		SingleTrialFileResourceModel fileResourceModel= new SingleTrialFileResourceModel();
 		try{
 
 			String realpath=ctx.getRealPath("/");
@@ -819,9 +856,9 @@ public class SingleTrial  implements Runnable{
 	}
 
 
-	private FileResourceOutlierModel getOutputFolderFileOutlierResources(String name){
+	private OutlierFileResourceModel fetchOutlierFileResources(String name){
 		String path = null;
-		FileResourceOutlierModel fileResourceModel= new FileResourceOutlierModel();
+		OutlierFileResourceModel fileResourceModel= new OutlierFileResourceModel();
 		try{
 
 			String realpath=ctx.getRealPath("/");
@@ -944,7 +981,7 @@ public class SingleTrial  implements Runnable{
 	public Response getFile(@PathParam("folder") final String folder,@PathParam("filename") final String filename)
 	{
 		// fetch the file to download from file system or database, or wherever...
-		File file = getFileToDownload(folder,filename);
+		File file = fetchFileToDownload(folder,filename);
 
 		if(file == null || !file.exists())
 			throw new WebApplicationException(Status.NOT_FOUND);
@@ -954,7 +991,7 @@ public class SingleTrial  implements Runnable{
 	}
 
 
-	private File getFileToDownload(String folder,String filename) {
+	private File fetchFileToDownload(String folder,String filename) {
 		String realpath=ctx.getRealPath("/");
 		String path = null;
 		path= realpath+separator+"output"+separator+folder+separator+filename;
@@ -973,7 +1010,7 @@ public class SingleTrial  implements Runnable{
 	public Response getImage(@PathParam("folder") final String folder,@PathParam("filename") final String filename) throws IOException
 	{
 		// fetch the file to download from file system or database, or wherever...
-		File file = getFileToDownload(folder,filename);
+		File file = fetchFileToDownload(folder,filename);
 
 		BufferedImage originalImage = ImageIO.read(file);
 

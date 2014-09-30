@@ -8,7 +8,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
-import org.analysis.rserve.manager.test.SingleTrialParametersModel;
+import org.analysis.model.SingleTrialParametersModel;
 
 import com.google.gson.Gson;
 
@@ -167,8 +167,8 @@ public class TestWS {
 
 			
 
-			params.setUserAccount("studyAlex");
-			params.setAnalysisResultFolder("studyAlex");
+			params.setUserAccount("study");
+			params.setAnalysisResultFolder("study");
 			params.setDataHeader(dataHeader);
 			params.setData(data);
 			

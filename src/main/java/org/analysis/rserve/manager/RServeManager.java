@@ -3,8 +3,8 @@ package org.analysis.rserve.manager;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.analysis.rserve.manager.test.OutlierParametersModel;
-import org.analysis.rserve.manager.test.SingleTrialParametersModel;
+import org.analysis.model.OutlierParametersModel;
+import org.analysis.model.SingleTrialParametersModel;
 import org.analysis.util.InputTransform;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RConnection;

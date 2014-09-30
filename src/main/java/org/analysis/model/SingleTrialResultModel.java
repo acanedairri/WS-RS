@@ -1,24 +1,29 @@
-package org.analysis.rserve.manager.test;
+package org.analysis.model;
 
-import java.util.Date;
 import java.util.List;
 
-public class ResultAnalysisModel {
+public class SingleTrialResultModel {
 	
 	private String AnalyticalWebServiceVersion="AWS 1.0";
 	private String Rversion="R version 3.0.2";
+	private String elapsedtime;
 	private String[] summaryStatsHeader;
 	private List<String[]> summaryStatsData;
 	private String[] predictedMeansHeader;
 	private List<String[]> predicatedMeansData;
-	
-	
-	
 	private String[] sed;
 	private double heritability;
 	
 
 
+	
+	
+	public String getElapsedtime() {
+		return elapsedtime;
+	}
+	public void setElapsedtime(String elapsedtime) {
+		this.elapsedtime = elapsedtime;
+	}
 	public String getAnalyticalWebServiceVersion() {
 		return AnalyticalWebServiceVersion;
 	}

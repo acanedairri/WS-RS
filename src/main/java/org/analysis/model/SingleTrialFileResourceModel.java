@@ -1,8 +1,8 @@
-package org.analysis.singletrial;
+package org.analysis.model;
 
 import java.util.List;
 
-public class FileResourceModel {
+public class SingleTrialFileResourceModel {
 	
 	String folderResource;
 	List<String> fileListResource;

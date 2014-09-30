@@ -1,10 +1,8 @@
-package org.analysis.singletrial;
+package org.analysis.model;
 
 import java.util.List;
 
-import org.analysis.rserve.manager.test.CsvToJsonModel;
-
-public class FileResourceOutlierModel  {
+public class OutlierFileResourceModel  {
 	
 	String folderResource;
 	List<String> fileListResource;
