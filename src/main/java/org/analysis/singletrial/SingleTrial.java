@@ -559,7 +559,15 @@ public class SingleTrial  implements Runnable{
 		try{
 			SingleTrialFileResourceModel fileList = fetchOutputFolderFileResources(name);
 			Gson gson = new Gson();
-			if(fileList.getFileListResource().size() > 0){
+			boolean finished=false;
+			
+			for(String f:fileList.getFileListResource()){
+				if(f.contains("elapsed")){
+					finished=true;
+				}
+			}
+			
+			if(fileList.getFileListResource().size() > 0 && finished){
 				toreturn=gson.toJson(fileList);
 			}else{
 				toreturn="Analysis is not yet done....";
