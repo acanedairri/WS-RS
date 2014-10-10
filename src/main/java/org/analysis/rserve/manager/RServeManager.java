@@ -89,14 +89,14 @@ public class RServeManager {
 
 		String resultFolderName = outPutFolder.replace(BSLASH, FSLASH);
 		String outFileName = outPutFolder.replace(BSLASH, FSLASH) + "SEA_output.txt";
-		String dataFileName = dataInputFolder.replace(BSLASH, FSLASH) + "RCB_Multi.csv";
+		String dataFileName = dataInputFolder.replace(BSLASH, FSLASH) + "test.csv";
 		String env="NULL";
-		String respvars[] = {"Y1"};
+		String respvars[] = {"HT_CONT"};
 		String[] environmentLevels={};
-		int design = 0;
-		String genotype = "Gen";
-		String block = "Blk";
-		String rep = "NULL";
+		int design = 3;
+		String genotype = "Designation";
+		String block = "block";
+		String rep = "rep";
 		String row = "NULL";
 		String column = "NULL";
 		boolean descriptiveStat = true; 
@@ -1678,15 +1678,15 @@ public class RServeManager {
 		OutlierParametersModel param= new OutlierParametersModel();
 
 		String resultFolderName = outPutFolder.replace(BSLASH, FSLASH);
-		String dataFileName = dataInputFolder.replace(BSLASH, FSLASH) + "2013DSRYT_rowcol.csv";
+		String dataFileName = dataInputFolder.replace(BSLASH, FSLASH) + "test.csv";
 		
 //		String resultFolderPath = resultFolderName.replace(BSLASH, FSLASH);
 //		String outFileName = outPutFolder.replace(BSLASH, FSLASH);
 		dataFileName = dataFileName.replace(BSLASH, FSLASH);
 		//specify parameters
-		String respvar = "GRNYLD.Y.ha.";
-		String genotype = "ENTRY.";
-		String rep = "REP.";
+		String respvar = "HT_CONT";
+		String genotype = "Designation";
+		String rep = "Blk";
 		
 		param.setResultFolderName(resultFolderName);
 		param.setDataFileName(dataFileName);

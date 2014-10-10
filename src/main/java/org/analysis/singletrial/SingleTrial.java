@@ -216,7 +216,7 @@ public class SingleTrial  implements Runnable{
 			while ((lineElapsed = readerElapsedTime.readLine()) != null) {
 				elapseTime=lineElapsed;
 			}
-			
+
 			System.out.println("Time" +elapseTime);
 
 			result.setElapsedtime(elapseTime);
@@ -560,17 +560,17 @@ public class SingleTrial  implements Runnable{
 			SingleTrialFileResourceModel fileList = fetchOutputFolderFileResources(name);
 			Gson gson = new Gson();
 			boolean finished=false;
-			
+
 			for(String f:fileList.getFileListResource()){
 				if(f.contains("elapsed")){
 					finished=true;
 				}
 			}
-			
+
 			if(fileList.getFileListResource().size() > 0 && finished){
 				toreturn=gson.toJson(fileList);
 			}else{
-				toreturn="Analysis is not yet done....";
+				toreturn="Analysis is not yet done";
 			}
 		}catch(Exception e){
 		}
@@ -591,7 +591,7 @@ public class SingleTrial  implements Runnable{
 			if(errorMsg.length() > 0){
 				return errorMsg;
 			}else{
-				errorMsg="Data has been received and started processing";
+				errorMsg="Data has been received and started analyzing";
 				(new Thread(new SingleTrial(json,ctx))).start();
 				return errorMsg;
 			}
@@ -605,14 +605,19 @@ public class SingleTrial  implements Runnable{
 	@Override
 	public void run() {
 
-		long startTime=System.nanoTime();
-		RServeManager rserve= new RServeManager();
-		SingleTrialParametersModel param=assembleSingleTrialParameters(json);
-		rserve.doSingleEnvironmentAnalysis(param);
-		long elapsedTime = System.nanoTime() - startTime;
-		String elapsedTimeResult=((double) elapsedTime / 1000000000) + " sec";
-		System.out.println("#####" + ": Elapsed Time = " + elapsedTime + " ns = " + ((double) elapsedTime / 1000000000) + " sec");
-		createElapseTimeFile(elapsedTimeResult,param.getAnalysisResultFolder());
+		try{
+
+			long startTime=System.nanoTime();
+			RServeManager rserve= new RServeManager();
+			SingleTrialParametersModel param=assembleSingleTrialParameters(json);
+			rserve.doSingleEnvironmentAnalysis(param);
+			long elapsedTime = System.nanoTime() - startTime;
+			String elapsedTimeResult=((double) elapsedTime / 1000000000) + " sec";
+			System.out.println("#####" + ": Elapsed Time = " + elapsedTime + " ns = " + ((double) elapsedTime / 1000000000) + " sec");
+			createElapseTimeFile(elapsedTimeResult,param.getAnalysisResultFolder());
+		}catch(Exception e){
+
+		}
 
 	}
 

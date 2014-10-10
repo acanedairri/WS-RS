@@ -167,8 +167,8 @@ public class TestWS {
 
 			
 
-			params.setUserAccount("study");
-			params.setAnalysisResultFolder("study");
+			params.setUserAccount("lina");
+			params.setAnalysisResultFolder("lina");
 			params.setDataHeader(dataHeader);
 			params.setData(data);
 			
