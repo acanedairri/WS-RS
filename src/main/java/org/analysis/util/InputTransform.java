@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class InputTransform {
 
 	public InputTransform() {
-		
+
 	}
 
 	/**
@@ -17,82 +17,113 @@ public class InputTransform {
 	 */
 	public String createRVector(String[] stringArrayInput) {
 		String stringVectorR = "c(";
-		
+
 		for (int i = 0; i < stringArrayInput.length; i++) {
 			if (i > 0)
 				stringVectorR = stringVectorR + "," + "\"" + stringArrayInput[i] + "\"";
 			else
 				stringVectorR = stringVectorR + "\"" + stringArrayInput[i] + "\"";
 		}
-		
+
 		stringVectorR = stringVectorR + ")";
-		
+
 		return stringVectorR; 
 	}
-	
+
 	public String createRNumVector(int[] intArrayInput) {
 		String stringNumVectorR = "c(";
-		
+
 		for (int i = 0; i < intArrayInput.length; i++) {
 			if (i > 0)
 				stringNumVectorR = stringNumVectorR + ", " + intArrayInput[i];
 			else
 				stringNumVectorR = stringNumVectorR + intArrayInput[i];
 		}
-		
+
 		stringNumVectorR = stringNumVectorR + ")";
-		
+
 		return stringNumVectorR; 
 	}
-	
+
+
+	public String createRNumVector(Integer[] intArrayInput) {
+		String stringNumVectorR = "c(";
+
+		for (int i = 0; i < intArrayInput.length; i++) {
+			if (i > 0)
+				stringNumVectorR = stringNumVectorR + ", " + intArrayInput[i];
+			else
+				stringNumVectorR = stringNumVectorR + intArrayInput[i];
+		}
+
+		stringNumVectorR = stringNumVectorR + ")";
+
+		return stringNumVectorR; 
+	}
+
 	public String createRNumVector(double[] doubleArrayInput) {
 		String stringNumVectorR = "c(";
-		
+
 		for (int i = 0; i < doubleArrayInput.length; i++) {
 			if (i > 0)
 				stringNumVectorR = stringNumVectorR + ", " + doubleArrayInput[i];
 			else
 				stringNumVectorR = stringNumVectorR + doubleArrayInput[i];
 		}
-		
+
 		stringNumVectorR = stringNumVectorR + ")";
-		
+
 		return stringNumVectorR; 
 	}
-	
+
 	public String createRNumVector(String[] stringArrayInput) {
 		String stringNumVectorR = "c(";
-		
+
 		for (int i = 0; i < stringArrayInput.length; i++) {
 			if (i > 0)
 				stringNumVectorR = stringNumVectorR + ", " + stringArrayInput[i];
 			else
 				stringNumVectorR = stringNumVectorR + stringArrayInput[i];
 		}
-		
+
 		stringNumVectorR = stringNumVectorR + ")";
-		
+
 		return stringNumVectorR; 
 	}
-	
+
 	public String createRList(String[] stringArrayInput, Integer[] integerLevelInput) {
 		String tempList = "list(";
-		
+
 		for (int i = 0; i < stringArrayInput.length; i++) {
 			if (i > 0)
 				tempList = tempList + ", " + stringArrayInput[i] + " = " + integerLevelInput[i];
 			else
 				tempList = tempList + stringArrayInput[i] + " = " + integerLevelInput[i];
 		}
+
+		tempList = tempList + ")";
+
+		return tempList; 
+	}
+
+	public String createRList(String[] stringArrayInput, Integer[] startVal, Integer[] integerLevelInput) {
+		String tempList = "list(";
+		
+		for (int i = 0; i < stringArrayInput.length; i++) {
+			if (i > 0)
+				tempList = tempList + ", " + stringArrayInput[i] + " = c(" + startVal[i] + ":" + integerLevelInput[i] +")";
+			else
+				tempList = tempList + stringArrayInput[i] + " = c(" + startVal[i] + ":" + integerLevelInput[i] + ")";
+		}
 		
 		tempList = tempList + ")";
 		
-		return tempList; 
+		return tempList;
 	}
-	
+
 	public String createRList(String[] stringArrayInput, Integer[] integerLevelInput, String[] stringArrayIDInput) {
 		String tempList = "list(";
-		
+
 		for (int i = 0; i < stringArrayInput.length; i++) {
 			String stringVectorR = "c(";
 			for (int j = 1; j <= integerLevelInput[i]; j++) {
@@ -108,14 +139,14 @@ public class InputTransform {
 			else
 				tempList = tempList + stringArrayInput[i] + " = "+ stringVectorR;
 		}
-		
+
 		tempList = tempList + ")";
-		
+
 		return tempList; 
 	}
-	
+
 	public String createRVector(ArrayList<String[]> stringArrayListInput){
-		
+
 		boolean inputOne=false;
 		String toreturn="";
 		for(String[] s:stringArrayListInput){
@@ -129,10 +160,10 @@ public class InputTransform {
 		if(!inputOne){
 			toreturn=toreturn.substring(0, toreturn.length()-1);
 		}
-		
+
 		return toreturn;
 	}
-	
+
 	/**
 	 * creates an R vector containing R vectors of RBG values
 	 * 
@@ -141,19 +172,19 @@ public class InputTransform {
 	 */
 	public String createRColorRGBVector(String[] stringArrayInput) {
 		String stringVectorR = "c(";
-		
+
 		for (int i = 0; i < stringArrayInput.length; i++) {
 			if (i > 0)
 				stringVectorR = stringVectorR + "," + "" + stringArrayInput[i] + "";
 			else
 				stringVectorR = stringVectorR + "" + stringArrayInput[i] + "";
 		}
-		
+
 		stringVectorR = stringVectorR + ")";
-		
+
 		return stringVectorR; 
 	}
-	
+
 	public String subSetInputTransform(ArrayList<String> subsetConditions) {
 		String toreturn="c(";
 		if(subsetConditions.size() > 1) {
@@ -183,7 +214,7 @@ public class InputTransform {
 			}
 			toreturn=toreturn+"&(";
 		}
-		
+
 		if(subsetConditions.size() > 1) {
 			toreturn=toreturn.substring(0, toreturn.length()-2)+")";
 		}else{
@@ -191,5 +222,5 @@ public class InputTransform {
 		}
 		return toreturn; 
 	}
-	
+
 }

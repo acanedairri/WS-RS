@@ -102,6 +102,29 @@ public class SingleTrial  implements Runnable{
 	}
 
 	@GET
+	@Path("PRep/{name}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces("application/json")
+	public Response testGetSingleTrialPRep(@PathParam("name") String name) {
+		String toreturn = null;
+		try{
+			String realpath=ctx.getRealPath("/");
+			outputFolderPath=createOutputFolder(ctx,name);
+			dataFolderPath=realpath+separator+"temp"+separator;
+			RServeManager rserve= new RServeManager();
+			rserve.testSingleEnvironmentPRef(outputFolderPath,dataFolderPath);
+			SingleTrialFileResourceModel singleTrialFileResourceModel = fetchOutputFolderFileResources(name);
+			Gson gson = new Gson();
+			toreturn=gson.toJson(singleTrialFileResourceModel);
+
+		}catch(Exception e){
+
+		}
+		return Response.status(320).entity(toreturn).build();
+
+	}
+
+	@GET
 	@Path("outlier/{name}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces("application/json")
@@ -610,7 +633,11 @@ public class SingleTrial  implements Runnable{
 			long startTime=System.nanoTime();
 			RServeManager rserve= new RServeManager();
 			SingleTrialParametersModel param=assembleSingleTrialParameters(json);
-			rserve.doSingleEnvironmentAnalysis(param);
+			if(param.getDesign()==7){
+				rserve.doSingleEnvironmentAnalysisPRep(param);
+			}else{
+				rserve.doSingleEnvironmentAnalysis(param);
+			}
 			long elapsedTime = System.nanoTime() - startTime;
 			String elapsedTimeResult=((double) elapsedTime / 1000000000) + " sec";
 			System.out.println("#####" + ": Elapsed Time = " + elapsedTime + " ns = " + ((double) elapsedTime / 1000000000) + " sec");
@@ -650,7 +677,7 @@ public class SingleTrial  implements Runnable{
 			errorMsg.append("No Design Specified\n");
 		}else{
 
-			if(param.getDesign()==0 || param.getDesign()==1){
+			if(param.getDesign()==0 || param.getDesign()==1){   // RCB and Augmented RCB
 
 				if((param.getBlock().length()==0 || param.getBlock()==null || param.getBlock().toLowerCase().equals("null"))  ){
 					errorMsg.append("No Rep Variable Specified\n");
@@ -660,7 +687,7 @@ public class SingleTrial  implements Runnable{
 					errorMsg.append("Wrong Data Header defined for Block\n");
 				}*/
 
-			}else if(param.getDesign()==3){
+			}else if(param.getDesign()==3){  // Alpha-Lattice
 
 				if(param.getRep().length()==0 || param.getRep()==null || param.getRep().toLowerCase().equals("null")){
 					errorMsg.append("No Rep Variable Specified\n");
@@ -679,12 +706,12 @@ public class SingleTrial  implements Runnable{
 				}
 
 
-			}else if(param.getDesign()==4){
+			}else if(param.getDesign()==4){ //Row Column 
 				if(param.getRep().length()==0 || param.getRep()==null || param.getRep().toLowerCase().equals("null")){
 					errorMsg.append("No Rep Variable Specified\n");
 				}
 
-				if(!param.getDataHeader().toString().contains(param.getRep())){
+				if(!Arrays.toString(param.getDataHeader()).contains(param.getRep())){
 					errorMsg.append("Wrong Data Header defined for Rep\n");
 				}
 
@@ -692,6 +719,7 @@ public class SingleTrial  implements Runnable{
 				if(param.getRow().length()==0 || param.getRow()==null || param.getRow().toLowerCase().equals("null")){
 					errorMsg.append("No Row Block Variable Specified\n");
 				}
+
 				if(!Arrays.toString(param.getDataHeader()).contains(param.getRow())){
 					errorMsg.append("Wrong Data Header defined for Row\n");
 				}
@@ -704,6 +732,27 @@ public class SingleTrial  implements Runnable{
 				if(!Arrays.toString(param.getDataHeader()).contains(param.getColumn())){
 					errorMsg.append("Wrong Data Header defined for Column\n");
 				}
+
+			}
+
+			else if(param.getDesign()==7){ //Row Column 
+
+				if(param.getColumn().length()==0 || param.getColumn()==null || param.getColumn().toLowerCase().equals("null")){
+					errorMsg.append("No Column Variable Specified\n");
+				}
+
+				if(!Arrays.toString(param.getDataHeader()).contains(param.getColumn())){
+					errorMsg.append("Wrong Data Header defined for Column\n");
+				}
+
+				if(param.getRow().length()==0 || param.getRow()==null || param.getRow().toLowerCase().equals("null")){
+					errorMsg.append("No Row Variable Specified\n");
+				}
+
+				if(!Arrays.toString(param.getDataHeader()).contains(param.getRow())){
+					errorMsg.append("Wrong Data Header defined for Row\n");
+				}
+
 
 			}
 		}
@@ -944,7 +993,7 @@ public class SingleTrial  implements Runnable{
 
 		paramsSingleTrial.setAnalysisResultFolder(jsonField.getAnalysisResultFolder());
 		paramsSingleTrial.setDesign(jsonField.getDesign());
-		paramsSingleTrial.setEnvironment("NULL");
+		paramsSingleTrial.setEnvironment(null);
 		paramsSingleTrial.setEnvironmentLevels(null);
 		paramsSingleTrial.setRespvars(jsonField.getRespvars());
 		paramsSingleTrial.setGenotype(jsonField.getGenotype());
@@ -972,7 +1021,11 @@ public class SingleTrial  implements Runnable{
 		paramsSingleTrial.setControlLevels(jsonField.getControlLevels());
 		paramsSingleTrial.setGenotypeLevels(jsonField.getGenotypeLevels());
 
-		//		System.out.println("Model: " +ssaModel.toString());
+		String[] spatialStruc = {"none", "CompSymm", "Gaus", "Exp", "Spher"};
+		paramsSingleTrial.setControlLevels(null);
+		paramsSingleTrial.setMoransTest(false);
+		paramsSingleTrial.setSpatialStruc(spatialStruc);
+
 
 		System.out.println("Data Header :" +Arrays.toString(jsonField.getDataHeader()));
 		System.out.println("Data ");

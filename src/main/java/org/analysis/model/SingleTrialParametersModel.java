@@ -8,6 +8,7 @@ import java.util.List;
 public class SingleTrialParametersModel {
 	
 	
+	private String path;
 	private String resultFolderName;
 	private String outFileName;
 	private String dataFileName;
@@ -46,6 +47,73 @@ public class SingleTrialParametersModel {
 	private boolean excludeControls;
 	private boolean genoPhenoCorrelation;
 	
+	private boolean specifiedContrast;
+	private String contrastFileName;
+	private boolean moransTest; // for BIMS always false
+	private String[] spatialStruc;
+	
+	
+	
+
+	public String getPath() {
+		return path;
+	}
+
+
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+
+
+	public boolean isSpecifiedContrast() {
+		return specifiedContrast;
+	}
+
+
+
+	public void setSpecifiedContrast(boolean specifiedContrast) {
+		this.specifiedContrast = specifiedContrast;
+	}
+
+
+
+	public String getContrastFileName() {
+		return contrastFileName;
+	}
+
+
+
+	public void setContrastFileName(String contrastFileName) {
+		this.contrastFileName = contrastFileName;
+	}
+
+
+
+	public boolean isMoransTest() {
+		return moransTest;
+	}
+
+
+
+	public void setMoransTest(boolean moransTest) {
+		this.moransTest = moransTest;
+	}
+
+
+
+	public String[] getSpatialStruc() {
+		return spatialStruc;
+	}
+
+
+
+	public void setSpatialStruc(String[] spatialStruc) {
+		this.spatialStruc = spatialStruc;
+	}
+
+
 
 	public SingleTrialParametersModel() {
 		

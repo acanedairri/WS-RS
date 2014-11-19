@@ -209,7 +209,7 @@ public class TestWS {
 
 			Gson gson = new Gson();
 			String json = gson.toJson(params);
-		
+			
 			System.out.println(json);
 
 			Client c = ClientBuilder.newClient();
