@@ -2058,7 +2058,826 @@ public class RServeManager {
 		//return msg;
 	}
 	
-	public void testDesignAlpha(String outPutFolder, String dataFolderPath) {
+	public void doDesignAugmentedAlpha(String path, String fieldBookName, Integer numCheck, Integer numNew, 
+			String trmtName, Integer blkSize, Integer rep, Integer trial, Integer rowPerBlk, Integer rowPerRep, 
+			Integer numFieldRow, String fieldOrder, String trmtLabel, String checkTrmt, String newTrmt){
+		try{
+			//defining the R statements for randomization for Alpha Lattice
+			rscriptCommand = new StringBuilder();
+			String CSVOutput = path + fieldBookName + ".csv";
+			String TxtOuptut = path + fieldBookName + ".txt";
+
+			String sinkIn = "sink(\"" + TxtOuptut + "\")";
+			String pkgIntro = "cat(\"Result of Randomization\\n\",date(),\"\\n\\n\\n\", sep = \"\")";
+			String funcRandomize = "result <- try(";
+			String command = "designAugmentedAlpha(numCheck = "+ numCheck + ", numNew = "+ numNew;
+			if (trmtName == null) {
+				command = command + ", trmtName = NULL";
+			} else {
+				command = command + ", trmtName = \""+ trmtName +"\"";
+			}
+			command = command + ", blksize = "+ blkSize +", r = "+ rep +", trial = "+ trial;
+			command = command + ", rowPerBlk = " + rowPerBlk +", rowPerRep = "+ rowPerRep +", numFieldRow = "+ numFieldRow;
+			if (fieldOrder == "Plot Order") {
+				command = command + ", serpentine = FALSE";
+			} else {
+				command = command + ", serpentine = TRUE";
+			}
+			if (trmtLabel == null) {
+				command = command + ", trmtLabel = NULL";
+			} else {
+				command = command + ", trmtLabel = \""+ trmtLabel +"\"";
+			}
+			if (checkTrmt == null) {
+				command = command + ", checkTrmt = NULL";
+			} else {
+				command = command + ", checkTrmt = \""+ checkTrmt +"\"";
+			}
+			if (newTrmt == null) {
+				command = command + ", newTrmt = NULL";
+			} else {
+				command = command + ", newtrmt = \""+ newTrmt +"\"";
+			}
+			command = command + ", file = \""+ CSVOutput +"\")";
+			funcRandomize = funcRandomize + command + ", silent = TRUE)";
+
+			System.out.println(sinkIn);
+			System.out.println(pkgIntro);
+			System.out.println(funcRandomize);
+
+
+			//R statements passed on to the R engine
+			rConnection.eval(sinkIn);
+			rConnection.eval(pkgIntro);
+			rConnection.eval(funcRandomize);
+
+			//save sorted to csv file
+			//String sortFile = "write.csv(result$fieldbook, file = \""+ CSVOutput +"\", row.names = FALSE)";
+			//System.out.println(sortFile);
+			//rEngine.eval(sortFile);
+
+			String runSuccessCommand = rConnection.eval("class(result)").asString();
+			if (runSuccessCommand.equals("try-error")) {
+				String errorMsg1 = "msg <- trimStrings(strsplit(result, \":\")[[1]])";
+				String errorMsg2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+				String errorMsg3 = "msg <- gsub(\"\\\"\", \"\", msg)";
+				String errorMsg4 = "cat(\"Error in designAlphaLattice:\\n\",msg, sep = \"\")";
+
+				System.out.println(errorMsg1);
+				System.out.println(errorMsg2);
+				System.out.println(errorMsg3);
+				System.out.println(errorMsg4);
+
+				rConnection.eval(errorMsg1);
+				rConnection.eval(errorMsg2);
+				rConnection.eval(errorMsg3);
+				rConnection.eval(errorMsg4);
+			} 
+			//		else {
+			//			String checkOutput = "if (nrow(result$fieldbook) != 0) {\n";
+			//			checkOutput = checkOutput + "    cat(\"\\nLayout for Alpha Lattice Design:\",\"\\n\\n\")\n";
+			//			checkOutput = checkOutput + "    for (i in (1:length(result$layout))) { \n";
+			//			checkOutput = checkOutput + "          printLayout(result$layout[[i]], result$plotNum, RowLabel = rownames(result$layout[[i]]), ColLabel = colnames(result$layout[[i]]), title = paste(\"Trial = \", i, sep = \"\"))\n";
+			//			checkOutput = checkOutput + "          cat(\"\\n\")\n";
+			//			checkOutput = checkOutput + "    }\n";
+			//			checkOutput = checkOutput + "    cat(\"\\n\",\"**Note: Cells contain plot numbers on top, treatments/entries below\")\n";
+			//			checkOutput = checkOutput + "}";
+			//	
+			//			System.out.println(checkOutput);
+			//			rEngine.eval(checkOutput);
+			//		}
+
+			String sinkOut = "sink()";
+			System.out.println(sinkOut);
+			rConnection.eval(sinkOut);
+
+			rscriptCommand.append(command+"\n");
+
+			System.out.println("reached end.");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			rConnection.close();
+		}
+		//return msg;
+	}
+
+
+	public void doDesignAugmentedRowColumn(String path, String fieldBookName, Integer numCheck, Integer numNew,
+			String trmtName, Integer rep, Integer trial, Integer rowblkPerRep, Integer rowPerRowblk, 
+			Integer numFieldRow, String fieldOrder, String trmtLabel, String checkTrmt, String newTrmt){
+
+		try{
+			//defining the R statements for randomization for Alpha Lattice
+			rscriptCommand = new StringBuilder();
+			String CSVOutput = path + fieldBookName + ".csv";
+			String TxtOuptut = path + fieldBookName + ".txt";
+
+			String sinkIn = "sink(\"" + TxtOuptut + "\")";
+			String pkgIntro = "cat(\"Result of Randomization\\n\",date(),\"\\n\\n\\n\", sep = \"\")";
+			String funcRandomize = "result <- try(";
+			String command = "designAugmentedRowColumn(numCheck = "+ numCheck +", numNew = "+ numNew;
+			command = command + ", trmtName = \""+ trmtName +"\", r = "+ rep +", trial = "+ trial;
+			command = command + ", rowblkPerRep = "+ rowblkPerRep +", rowPerRowblk = "+ rowPerRowblk +", numFieldRow = "+ numFieldRow;
+			if (fieldOrder == "Plot Order") {
+				command = command + ", serpentine = FALSE";
+			} else {
+				command = command + ", serpentine = TRUE";
+			}
+			if (trmtLabel == null) {
+				command = command + ", trmtLabel = NULL";
+			} else {
+				command = command + ", trmtLabel = \""+ trmtLabel +"\"";
+			}
+			if (checkTrmt == null) {
+				command = command + ", checkTrmt = NULL";
+			} else {
+				command = command + ", checkTrmt = \""+ checkTrmt +"\"";
+			}
+			if (newTrmt == null) {
+				command = command + ", newTrmt = NULL";
+			} else {
+				command = command + ", newTrmt = \""+ newTrmt +"\"";
+			}
+			command = command + ", file = \""+ CSVOutput +"\")";
+			funcRandomize = funcRandomize + command + ", silent = TRUE)";
+
+			System.out.println(sinkIn);
+			System.out.println(pkgIntro);
+			System.out.println(funcRandomize);
+
+
+			//R statements passed on to the R engine
+			rConnection.eval(sinkIn);
+			rConnection.eval(pkgIntro);
+			rConnection.eval(funcRandomize);
+
+			String runSuccessCommand = rConnection.eval("class(result)").asString();
+			if (runSuccessCommand.equals("try-error")) {
+				String errorMsg1 = "msg <- trimStrings(strsplit(result, \":\")[[1]])";
+				String errorMsg2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+				String errorMsg3 = "msg <- gsub(\"\\\"\", \"\", msg)";
+				String errorMsg4 = "cat(\"Error in designRowColumn:\\n\",msg, sep = \"\")";
+
+				System.out.println(errorMsg1);
+				System.out.println(errorMsg2);
+				System.out.println(errorMsg3);
+				System.out.println(errorMsg4);
+
+				rConnection.eval(errorMsg1);
+				rConnection.eval(errorMsg2);
+				rConnection.eval(errorMsg3);
+				rConnection.eval(errorMsg4);
+			} 
+			//		else {
+			//			String checkOutput = "if (nrow(result$fieldbook) != 0) {\n";
+			//			checkOutput = checkOutput + "    cat(\"\\nLayout for Row-Column Design:\",\"\\n\\n\")\n";
+			//			checkOutput = checkOutput + "    for (i in (1:length(result$layout))) { \n";
+			//			checkOutput = checkOutput + "          printLayout(result$layout[[i]], result$plotNum, RowLabel = rownames(result$layout[[i]]), ColLabel = colnames(result$layout[[i]]), title = paste(\"Trial = \", i, sep = \"\"))\n";
+			//			checkOutput = checkOutput + "          cat(\"\\n\")\n";
+			//			checkOutput = checkOutput + "    }\n";
+			//			checkOutput = checkOutput + "    cat(\"\\n\",\"**Note: Cells contain plot numbers on top, treatments/entries below\")\n";
+			//			checkOutput = checkOutput + "}";
+			//	
+			//			System.out.println(checkOutput);
+			//			rEngine.eval(checkOutput);
+			//		}
+
+			String sinkOut = "sink()";
+			System.out.println(sinkOut);
+			rConnection.eval(sinkOut);
+
+			rscriptCommand.append(command+"\n");
+
+			System.out.println("reached end.");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			rConnection.close();
+		}
+		//return msg;
+	}
+
+	public void doDesignLatinizedAlpha(String path, String fieldBookName, Integer numTrmt, Integer blkSize, 
+			Integer rep, Integer trial, Integer numFieldRow, String fieldOrder){
+
+		try{
+			//defining the R statements for randomization for Alpha Lattice
+			rscriptCommand = new StringBuilder();
+			String CSVOutput = path + fieldBookName + ".csv";
+			String TxtOutput = path + fieldBookName + ".txt";
+			String LayoutOutput = path + fieldBookName;
+
+			String sinkIn = "sink(\"" + TxtOutput + "\")";
+			String pkgIntro = "cat(\"Result of Randomization\\n\",date(),\"\\n\\n\\n\", sep = \"\")";
+			String funcRandomize = "result <- try(";
+			String command = "designLatinizedAlpha(generate = list(EntryNo = c(1:"+ numTrmt +"))";
+			command = command + ", blksize = "+ blkSize +", r = "+ rep +", trial = "+ trial +", numFieldRow = "+ numFieldRow;
+			if (fieldOrder == "Plot Order") {
+				command = command + ", serpentine = FALSE, file = \""+ CSVOutput +"\")";
+			} else {
+				command = command + ", serpentine = TRUE, file = \""+ CSVOutput +"\")";
+			}
+			funcRandomize = funcRandomize + command + ", silent = TRUE)";
+
+			System.out.println(sinkIn);
+			System.out.println(pkgIntro);
+			System.out.println(funcRandomize);
+
+
+			//R statements passed on to the R engine
+			rConnection.eval(sinkIn);
+			rConnection.eval(pkgIntro);
+			rConnection.eval(funcRandomize);
+
+
+			String runSuccessCommand = rConnection.eval("class(result)").asString();
+			if (runSuccessCommand.equals("try-error")) {
+				String errorMsg1 = "msg <- trimStrings(strsplit(result, \":\")[[1]])";
+				String errorMsg2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+				String errorMsg3 = "msg <- gsub(\"\\\"\", \"\", msg)";
+				String errorMsg4 = "cat(\"Error in designAlphaLattice:\\n\",msg, sep = \"\")";
+
+				System.out.println(errorMsg1);
+				System.out.println(errorMsg2);
+				System.out.println(errorMsg3);
+				System.out.println(errorMsg4);
+
+				rConnection.eval(errorMsg1);
+				rConnection.eval(errorMsg2);
+				rConnection.eval(errorMsg3);
+				rConnection.eval(errorMsg4);
+			} 
+			else {
+				//			String checkOutput = "if (nrow(result$fieldbook) != 0) {\n";
+				//			checkOutput = checkOutput + "    cat(\"\\nLayout for Latinized Alpha Lattice Design:\",\"\\n\\n\")\n";
+				//			checkOutput = checkOutput + "    for (i in (1:length(result$layout))) { \n";
+				//			checkOutput = checkOutput + "          printLayout(result$layout[[i]], result$plotNum, RowLabel = rownames(result$layout[[i]]), ColLabel = colnames(result$layout[[i]]), title = paste(\"Trial = \", i, sep = \"\"))\n";
+				//			checkOutput = checkOutput + "          cat(\"\\n\")\n";
+				//			checkOutput = checkOutput + "    }\n";
+				//			checkOutput = checkOutput + "    cat(\"\\n\",\"**Note: Cells contain plot numbers on top, treatments/entries below\")\n";
+				//			checkOutput = checkOutput + "}";
+
+				Integer numBlk = numTrmt/blkSize;
+				Integer rowPerBlk;
+				Integer colPerBlk;
+				Integer rowPerRep;
+				Integer colPerRep;
+				if (numFieldRow == numBlk) {
+					rowPerBlk = 1;
+					colPerBlk = blkSize;
+					rowPerRep = numBlk;
+					colPerRep = blkSize;
+				} else {
+					rowPerBlk = blkSize;
+					colPerBlk = 1;
+					rowPerRep = blkSize;
+					colPerRep = numBlk;
+				}
+
+				String checkOutput = "for (i in (1:length(result$layout))) {\n";
+				checkOutput = checkOutput + "     png(filename = paste(\"" + LayoutOutput + "_Trial\",i,\".png\", sep = \"\")) \n";
+				checkOutput = checkOutput + "     des.plot(result$layout[[i]], col = 8, new = TRUE, label = TRUE, ";
+				checkOutput = checkOutput + "     chtdiv = 3, bdef = cbind("+ rowPerBlk+", "+ colPerBlk +"), bwd = 4, bcol = 4, ";
+				checkOutput = checkOutput + "     cstr = paste(\"Layout for Trial \",i,\": \\n\\nFieldCol\", sep = \"\"), rstr = \"FieldRow\")\n";
+				checkOutput = checkOutput + "     des.plot(result$layout[[i]], col = 7, new = FALSE, label = TRUE, ";
+				checkOutput = checkOutput + "     chtdiv = 3, bdef = cbind("+ rowPerRep+", "+ colPerRep +"), bwd = 4)\n";
+				checkOutput = checkOutput + "     dev.off() \n";
+				checkOutput = checkOutput + "}";
+
+				System.out.println(checkOutput);
+				rConnection.eval(checkOutput);
+			}
+
+			String sinkOut = "sink()";
+			System.out.println(sinkOut);
+			rConnection.eval(sinkOut);
+
+			rscriptCommand.append(command+"\n");
+			System.out.println("reached end.");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			rConnection.close();
+		}
+		//return msg;
+	}
+
+	public void doDesignLatinizedRowColumn(String path, String fieldBookName, Integer numTrmt, Integer rep, Integer trial, 
+			Integer rowPerRep, Integer numFieldRow, String fieldOrder){
+
+		try{
+			//defining the R statements for randomization for Alpha Lattice
+			rscriptCommand = new StringBuilder();
+			String CSVOutput = path + fieldBookName + ".csv";
+			String TxtOutput = path + fieldBookName + ".txt";
+			String LayoutOutput = path + fieldBookName;
+
+			String sinkIn = "sink(\"" + TxtOutput + "\")";
+			String pkgIntro = "cat(\"Result of Randomization\\n\",date(),\"\\n\\n\\n\", sep = \"\")";
+			String funcRandomize = "result <- try(";
+			String command = "designLatinizedRowCol(list(EntryNo = c(1:"+ numTrmt +"))";
+			command = command + ", r = "+ rep +", trial = "+ trial;
+			command = command + ", rowPerRep = "+ rowPerRep +", numFieldRow = "+ numFieldRow;
+			if (fieldOrder == "Plot Order") {
+				command = command + ", serpentine = FALSE, file = \""+ CSVOutput +"\")";
+			} else {
+				command = command + ", serpentine = TRUE, file = \""+ CSVOutput +"\")";
+			}
+			funcRandomize = funcRandomize + command + ", silent = TRUE)";
+
+			System.out.println(sinkIn);
+			System.out.println(pkgIntro);
+			System.out.println(funcRandomize);
+
+
+			//R statements passed on to the R engine
+			rConnection.eval(sinkIn);
+			rConnection.eval(pkgIntro);
+			rConnection.eval(funcRandomize);
+
+			String runSuccessCommand = rConnection.eval("class(result)").asString();
+			if (runSuccessCommand.equals("try-error")) {
+				String errorMsg1 = "msg <- trimStrings(strsplit(result, \":\")[[1]])";
+				String errorMsg2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+				String errorMsg3 = "msg <- gsub(\"\\\"\", \"\", msg)";
+				String errorMsg4 = "cat(\"Error in designLatinizedRowCol:\\n\",msg, sep = \"\")";
+
+				System.out.println(errorMsg1);
+				System.out.println(errorMsg2);
+				System.out.println(errorMsg3);
+				System.out.println(errorMsg4);
+
+				rConnection.eval(errorMsg1);
+				rConnection.eval(errorMsg2);
+				rConnection.eval(errorMsg3);
+				rConnection.eval(errorMsg4);
+			} 
+			else {
+				//			String checkOutput = "if (nrow(result$fieldbook) != 0) {\n";
+				//			checkOutput = checkOutput + "    cat(\"\\nLayout for Latinized Row-Column Design:\",\"\\n\\n\")\n";
+				//			checkOutput = checkOutput + "    for (i in (1:length(result$layout))) { \n";
+				//			checkOutput = checkOutput + "          printLayout(result$layout[[i]], result$plotNum, RowLabel = rownames(result$layout[[i]]), ColLabel = colnames(result$layout[[i]]), title = paste(\"Trial = \", i, sep = \"\"))\n";
+				//			checkOutput = checkOutput + "          cat(\"\\n\")\n";
+				//			checkOutput = checkOutput + "    }\n";
+				//			checkOutput = checkOutput + "    cat(\"\\n\",\"**Note: Cells contain plot numbers on top, treatments/entries below\")\n";
+				//			checkOutput = checkOutput + "}";
+
+				Integer colPerRep = numTrmt/rowPerRep;
+
+				String checkOutput = "for (i in (1:length(result$layout))) {\n";
+				checkOutput = checkOutput + "     png(filename = paste(\"" + LayoutOutput + "_Trial\",i,\".png\", sep = \"\")) \n";
+				checkOutput = checkOutput + "     des.plot(result$layout[[i]], col = 8, new = TRUE, label = TRUE, ";
+				checkOutput = checkOutput + "     chtdiv = 3, bdef = cbind("+ rowPerRep+", "+ colPerRep +"), bwd = 4, bcol = 4, ";
+				checkOutput = checkOutput + "     cstr = paste(\"Layout for Trial \",i,\": \\n\\nFieldCol\", sep = \"\"), rstr = \"FieldRow\")\n";
+				checkOutput = checkOutput + "     dev.off() \n";
+				checkOutput = checkOutput + "}";
+
+				System.out.println(checkOutput);
+				rConnection.eval(checkOutput);
+			}
+
+			String sinkOut = "sink()";
+			System.out.println(sinkOut);
+			rConnection.eval(sinkOut);
+
+			rscriptCommand.append(command+"\n");
+
+			System.out.println("reached end.");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			rConnection.close();
+		}
+		//return msg;
+	}
+
+
+	public void doDesignPRep(String path, String fieldBookName, String[] trmtGrpName, Integer[] numTrmtPerGrp, 
+			Integer[] trmtRepPerGrp, String trmtName, Integer blk, Integer trial, Integer rowPerBlk, Integer numFieldRow, 
+			String fieldOrder, String trmtLabel, String trmtListPerGrp){
+
+		try{
+			//defining the R statements for randomization for Alpha Lattice
+			rscriptCommand = new StringBuilder();
+			String CSVOutput = path + fieldBookName + ".csv";
+			String TxtOuptut = path + fieldBookName + ".txt";
+
+			String sinkIn = "sink(\"" + TxtOuptut + "\")";
+			String pkgIntro = "cat(\"Result of Randomization\\n\",date(),\"\\n\\n\\n\", sep = \"\")";
+			String funcRandomize = "result <- try(";
+			String command = "designPRep(trmtPerGrp = "+ inputTransform.createRList(trmtGrpName, numTrmtPerGrp);
+			command = command + ", trmtRepPerGrp = "+ inputTransform.createRNumVector(trmtRepPerGrp);
+			command = command + ", trmtName = \""+ trmtName  +"\", blk = "+ blk +", trial = "+ trial;
+			command = command + ", rowPerBlk = "+ rowPerBlk +", numFieldRow = "+ numFieldRow;
+			if (fieldOrder == "Plot Order") {
+				command = command + ", serpentine = FALSE";
+			} else {
+				command = command + ", serpentine = TRUE";
+			}
+			if (trmtLabel == null) {
+				command = command + ", trmtLabel = NULL";
+			} else {
+				command = command + ", trmtLabel = \""+ trmtLabel + "\"";
+			}
+			if (trmtListPerGrp == null) {
+				command = command + ", trmtListPerGrp = NULL";
+			} else {
+				command = command + ", trmtListPerGrp = \""+ trmtListPerGrp + "\"";
+			}
+
+			command = command + ", file = \""+ CSVOutput +"\")";
+			funcRandomize = funcRandomize + command + ", silent = TRUE)";
+
+			System.out.println(sinkIn);
+			System.out.println(pkgIntro);
+			System.out.println(funcRandomize);
+
+
+			//R statements passed on to the R engine
+			rConnection.eval(sinkIn);
+			rConnection.eval(pkgIntro);
+			rConnection.eval(funcRandomize);
+
+			String runSuccessCommand = rConnection.eval("class(result)").asString();
+			if (runSuccessCommand.equals("try-error")) {
+				String errorMsg1 = "msg <- trimStrings(strsplit(result, \":\")[[1]])";
+				String errorMsg2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+				String errorMsg3 = "msg <- gsub(\"\\\"\", \"\", msg)";
+				String errorMsg4 = "cat(\"Error in designAlphaLattice:\\n\",msg, sep = \"\")";
+
+				System.out.println(errorMsg1);
+				System.out.println(errorMsg2);
+				System.out.println(errorMsg3);
+				System.out.println(errorMsg4);
+
+				rConnection.eval(errorMsg1);
+				rConnection.eval(errorMsg2);
+				rConnection.eval(errorMsg3);
+				rConnection.eval(errorMsg4);
+			} 
+			//		else {
+			//			String checkOutput = "if (nrow(result$fieldbook) != 0) {\n";
+			//			checkOutput = checkOutput + "    cat(\"\\nLayout for Alpha Lattice Design:\",\"\\n\\n\")\n";
+			//			checkOutput = checkOutput + "    for (i in (1:length(result$layout))) { \n";
+			//			checkOutput = checkOutput + "          printLayout(result$layout[[i]], result$plotNum, RowLabel = rownames(result$layout[[i]]), ColLabel = colnames(result$layout[[i]]), title = paste(\"Trial = \", i, sep = \"\"))\n";
+			//			checkOutput = checkOutput + "          cat(\"\\n\")\n";
+			//			checkOutput = checkOutput + "    }\n";
+			//			checkOutput = checkOutput + "    cat(\"\\n\",\"**Note: Cells contain plot numbers on top, treatments/entries below\")\n";
+			//			checkOutput = checkOutput + "}";
+			//	
+			//			System.out.println(checkOutput);
+			//			rEngine.eval(checkOutput);
+			//		}
+
+			String sinkOut = "sink()";
+			System.out.println(sinkOut);
+			rConnection.eval(sinkOut);
+
+			rscriptCommand.append(command+"\n");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			rConnection.close();
+		}
+		//return msg;
+	}
+
+	public void doDesignRCBD(String path, String fieldBookName, String[] factorName, String[] factorID, Integer[] factorLevel,
+			Integer blk, Integer trial, Integer numFieldRow, Integer rowPerBlk, String fieldOrder){
+		try{
+			Integer[] startVal = {1};
+			String inputList = inputTransform.createRList(factorName, startVal, factorLevel);
+
+			// defining the R statements for randomization of randomized complete block design
+			// input specification for PBTools only
+			rscriptCommand = new StringBuilder();
+			String CSVOutput = path + fieldBookName + ".csv";
+			String TxtOutput = path + fieldBookName + ".txt";
+			String LayoutOutput = path + fieldBookName;
+
+			String sinkIn = "sink(\"" + TxtOutput + "\")";
+			String pkgIntro = "cat(\"Result of Randomization\\n\",date(),\"\\n\\n\\n\", sep = \"\")";
+			String funcRandomize = "result <- try(";
+			String command = "designRCBD(generate = "+ inputList +", r = "+ blk +", trial = "+ trial +", numFieldRow = "+ numFieldRow + ", rowPerBlk = "+ rowPerBlk;
+			if (fieldOrder == "Plot Order") {
+				command = command + ", serpentine = FALSE";
+			} else {
+				command = command + ", serpentine = TRUE";
+			}
+			command = command + ", display = TRUE, file = \""+ CSVOutput +"\")";
+			funcRandomize = funcRandomize + command + ", silent = TRUE)";
+
+			System.out.println(sinkIn);
+			System.out.println(pkgIntro);
+			System.out.println(funcRandomize);
+
+			rConnection.eval(sinkIn);
+			rConnection.eval(pkgIntro);
+			rConnection.eval(funcRandomize);
+
+			String runSuccessCommand = rConnection.eval("class(result)").asString();
+			if (runSuccessCommand.equals("try-error")) {
+				String errorMsg1 = "msg <- trimStrings(strsplit(result, \":\")[[1]])";
+				String errorMsg2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+				String errorMsg3 = "msg <- gsub(\"\\\"\", \"\", msg)";
+				String errorMsg4 = "cat(\"Error in designRCBD:\\n\",msg, sep = \"\")";
+
+				System.out.println(errorMsg1);
+				System.out.println(errorMsg2);
+				System.out.println(errorMsg3);
+				System.out.println(errorMsg4);
+
+				rConnection.eval(errorMsg1);
+				rConnection.eval(errorMsg2);
+				rConnection.eval(errorMsg3);
+				rConnection.eval(errorMsg4);
+			} 
+			else {
+				//			String checkOutput = "if (nrow(result$fieldbook) != 0) {\n";
+				//			checkOutput = checkOutput + "    cat(\"\\nLayout for Randomized Complete Block Design:\",\"\\n\\n\")\n";
+				//			checkOutput = checkOutput + "    for (i in (1:length(result$layout))) { \n";
+				//			checkOutput = checkOutput + "          printLayout(result$layout[[i]], result$plotNum, RowLabel = rownames(result$layout[[i]]), ColLabel = colnames(result$layout[[i]]), title = paste(\"Trial = \", i, sep = \"\"))\n";
+				//			checkOutput = checkOutput + "          cat(\"\\n\")\n";
+				//			checkOutput = checkOutput + "    }\n";
+				//			checkOutput = checkOutput + "    cat(\"\\n\",\"**Note: Cells contain plot numbers on top, treatments/entries below\")\n";
+				//			checkOutput = checkOutput + "}";
+
+				Integer numTrmt = factorLevel[0];
+				Integer colPerBlk = numTrmt/rowPerBlk;
+
+				String checkOutput = "for (i in (1:length(result$layout))) {\n";
+				checkOutput = checkOutput + "     png(filename = paste(\"" + LayoutOutput + "_Trial\",i,\".png\", sep = \"\")) \n";
+				checkOutput = checkOutput + "     des.plot(result$layout[[i]], col = 8, new = TRUE, label = TRUE, ";
+				checkOutput = checkOutput + "     chtdiv = 3, bdef = cbind("+ rowPerBlk+", "+ colPerBlk +"), bwd = 4, bcol = 4, ";
+				checkOutput = checkOutput + "     cstr = paste(\"Layout for Trial \",i,\": \\n\\nFieldCol\", sep = \"\"), rstr = \"FieldRow\")\n";
+				checkOutput = checkOutput + "     dev.off() \n";
+				checkOutput = checkOutput + "}";
+
+				System.out.println(checkOutput);
+				rConnection.eval(checkOutput);
+			}
+
+			String sinkOut = "sink()";
+			System.out.println(sinkOut);
+			rConnection.eval(sinkOut);
+
+			rscriptCommand.append(command+"\n");
+			System.out.println("reached end.");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			rConnection.close();
+		}
+	}
+
+	public void doDesignRowColumn(String path, String fieldBookName, Integer numTrmt, Integer rep, Integer trial, 
+			Integer rowPerRep, Integer numFieldRow, String fieldOrder){
+
+		try{
+			//defining the R statements for randomization for Row-Column Design
+			rscriptCommand = new StringBuilder();
+			String CSVOutput = path + fieldBookName + ".csv";
+			String TxtOutput = path + fieldBookName + ".txt";
+			String LayoutOutput = path + fieldBookName;
+
+			String sinkIn = "sink(\"" + TxtOutput + "\")";
+			String pkgIntro = "cat(\"Result of Randomization\\n\",date(),\"\\n\\n\\n\", sep = \"\")";
+			String funcRandomize = "result <- try(";
+			String command = "designRowColumn(list(EntryNo = c(1: "+ numTrmt +"))";
+			command = command + ", r = "+ rep +", trial = "+ trial;
+			command = command + ", rowPerRep = "+ rowPerRep +", numFieldRow = "+ numFieldRow;
+			if (fieldOrder == "Plot Order") {
+				command = command + ", serpentine = FALSE, file = \""+ CSVOutput +"\")";
+			} else {
+				command = command + ", serpentine = TRUE, file = \""+ CSVOutput +"\")";
+			}
+			funcRandomize = funcRandomize + command + ", silent = TRUE)";
+
+			System.out.println(sinkIn);
+			System.out.println(pkgIntro);
+			System.out.println(funcRandomize);
+
+
+			//R statements passed on to the R engine
+			rConnection.eval(sinkIn);
+			rConnection.eval(pkgIntro);
+			rConnection.eval(funcRandomize);
+
+			String runSuccessCommand = rConnection.eval("class(result)").asString();
+			if (runSuccessCommand.equals("try-error")) {
+				String errorMsg1 = "msg <- trimStrings(strsplit(result, \":\")[[1]])";
+				String errorMsg2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+				String errorMsg3 = "msg <- gsub(\"\\\"\", \"\", msg)";
+				String errorMsg4 = "cat(\"Error in designRowColumn:\\n\",msg, sep = \"\")";
+
+				System.out.println(errorMsg1);
+				System.out.println(errorMsg2);
+				System.out.println(errorMsg3);
+				System.out.println(errorMsg4);
+
+				rConnection.eval(errorMsg1);
+				rConnection.eval(errorMsg2);
+				rConnection.eval(errorMsg3);
+				rConnection.eval(errorMsg4);
+			} 
+			else {
+				//			String checkOutput = "if (nrow(result$fieldbook) != 0) {\n";
+				//			checkOutput = checkOutput + "    cat(\"\\nLayout for Row-Column Design:\",\"\\n\\n\")\n";
+				//			checkOutput = checkOutput + "    for (i in (1:length(result$layout))) { \n";
+				//			checkOutput = checkOutput + "          printLayout(result$layout[[i]], result$plotNum, RowLabel = rownames(result$layout[[i]]), ColLabel = colnames(result$layout[[i]]), title = paste(\"Trial = \", i, sep = \"\"))\n";
+				//			checkOutput = checkOutput + "          cat(\"\\n\")\n";
+				//			checkOutput = checkOutput + "    }\n";
+				//			checkOutput = checkOutput + "    cat(\"\\n\",\"**Note: Cells contain plot numbers on top, treatments/entries below\")\n";
+				//			checkOutput = checkOutput + "}";
+
+				Integer colPerRep = numTrmt/rowPerRep;
+
+				String checkOutput = "for (i in (1:length(result$layout))) {\n";
+				checkOutput = checkOutput + "     png(filename = paste(\"" + LayoutOutput + "_Trial\",i,\".png\", sep = \"\")) \n";
+				checkOutput = checkOutput + "     des.plot(result$layout[[i]], col = 8, new = TRUE, label = TRUE, ";
+				checkOutput = checkOutput + "     chtdiv = 3, bdef = cbind("+ rowPerRep+", "+ colPerRep +"), bwd = 4, bcol = 4, ";
+				checkOutput = checkOutput + "     cstr = paste(\"Layout for Trial \",i,\": \\n\\nFieldCol\", sep = \"\"), rstr = \"FieldRow\")\n";
+				checkOutput = checkOutput + "     dev.off() \n";
+				checkOutput = checkOutput + "}";
+
+				System.out.println(checkOutput);
+				rConnection.eval(checkOutput);
+			}
+
+			String sinkOut = "sink()";
+			System.out.println(sinkOut);
+			rConnection.eval(sinkOut);
+
+			rscriptCommand.append(command+"\n");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			rConnection.close();
+		}
+		//return msg;
+	}
+	
+	public void doDesignAugmentedLSD(String path, String fieldBookName, Integer repTrmt, Integer unrepTrmt, Integer fieldRow, 
+			Integer trial, String fieldOrder){
+		try{
+			//defining the R statements for randomization for augmented design in Latin Square Design
+			rscriptCommand = new StringBuilder();
+			String CSVOutput = path + fieldBookName + ".csv";
+			String TxtOuptut = path + fieldBookName + ".txt";
+
+			String sinkIn = "sink(\"" + TxtOuptut + "\")";
+			String pkgIntro = "cat(\"Result of Randomization\\n\",date(),\"\\n\\n\\n\", sep = \"\")";
+			String funcRandomize = "result <- try(";
+			String command = "designAugmentedLSD(check = "+ repTrmt +", newTrmt = "+ unrepTrmt;
+			command = command + ", trial = "+ trial + ", numFieldRow = "+ fieldRow;
+			if (fieldOrder == "Plot Order") {
+				command = command + ", serpentine = FALSE, file = \""+ CSVOutput +"\")";
+			} else {
+				command = command + ", serpentine = TRUE, file = \""+ CSVOutput +"\")";
+			}
+			funcRandomize = funcRandomize + command + ", silent = TRUE)";
+
+			System.out.println(sinkIn);
+			System.out.println(pkgIntro);
+			System.out.println(funcRandomize);
+
+
+			rConnection.eval(sinkIn);
+			rConnection.eval(pkgIntro);
+			rConnection.eval(funcRandomize);
+
+			//save sorted to csv file
+			//		String sortFile = "write.csv(result$fieldbook[order(result$fieldbook$Trial, result$fieldbook$PlotNum),], file = \""+ CSVOutput +"\", row.names = FALSE)";
+			//		System.out.println(sortFile);
+			//		rEngine.eval(sortFile);
+
+
+			String runSuccessCommand = rConnection.eval("class(result)").asString();
+			if (runSuccessCommand.equals("try-error")) {
+				String errorMsg1 = "msg <- trimStrings(strsplit(result, \":\")[[1]])";
+				String errorMsg2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+				String errorMsg3 = "msg <- gsub(\"\\\"\", \"\", msg)";
+				String errorMsg4 = "cat(\"Error in designAugmentedLSD:\\n\",msg, sep = \"\")";
+
+				System.out.println(errorMsg1);
+				System.out.println(errorMsg2);
+				System.out.println(errorMsg3);
+				System.out.println(errorMsg4);
+
+				rConnection.eval(errorMsg1);
+				rConnection.eval(errorMsg2);
+				rConnection.eval(errorMsg3);
+				rConnection.eval(errorMsg4);
+			} 
+			else {
+				String checkOutput = "if (nrow(result$fieldbook) != 0) {\n";
+				checkOutput = checkOutput + "    cat(\"\\nLayout for Augmented Latin Square Design:\",\"\\n\\n\")\n";
+				checkOutput = checkOutput + "    for (i in (1:length(result$layout))) { \n";
+				checkOutput = checkOutput + "          printLayout(result$layout[[i]], result$plotNum[[i]], RowLabel = rownames(result$layout[[i]]), ColLabel = colnames(result$layout[[i]]), title = paste(\"Trial = \", i, sep = \"\"))\n";
+				checkOutput = checkOutput + "          cat(\"\\n\")\n";
+				checkOutput = checkOutput + "    }\n";
+				checkOutput = checkOutput + "    cat(\"\\n\",\"**Note: Cells contain plot numbers on top, treatments/entries below\")\n";
+				checkOutput = checkOutput + "}";
+
+				System.out.println(checkOutput);
+				rConnection.eval(checkOutput);
+			}
+
+			String sinkOut = "sink()";
+			System.out.println(sinkOut);
+			rConnection.eval(sinkOut);
+
+			rscriptCommand.append(command+"\n");
+
+			System.out.println("reached end.");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			rConnection.close();
+		}
+		//return msg;
+	}
+
+	public void doDesignAugmentedRCB(String path, String fieldBookName, Integer repTrmt, Integer unrepTrmt, Integer Blk, Integer fieldRow, 
+			Integer trial, String fieldOrder){
+		try{
+			//defining the R statements for randomization for augmented design in Latin Square Design
+			rscriptCommand = new StringBuilder();
+			String CSVOutput = path + fieldBookName + ".csv";
+			String TxtOuptut = path + fieldBookName + ".txt";
+
+			String sinkIn = "sink(\"" + TxtOuptut + "\")";
+			String pkgIntro = "cat(\"Result of Randomization\\n\",date(),\"\\n\\n\\n\", sep = \"\")";
+			String funcRandomize = "result <- try(";
+			String command = "designAugmentedRCB(checkTrmt = "+ repTrmt +", newTrmt = "+ unrepTrmt + ", r = "+ Blk;
+			command = command + ", trial = "+ trial + ", numFieldRow = "+ fieldRow;
+			if (fieldOrder == "Plot Order") {
+				command = command + ", serpentine = FALSE, file = \""+ CSVOutput +"\")";
+			} else {
+				command = command + ", serpentine = TRUE, file = \""+ CSVOutput +"\")";
+			}
+			funcRandomize = funcRandomize + command + ", silent = TRUE)";
+
+			System.out.println(sinkIn);
+			System.out.println(pkgIntro);
+			System.out.println(funcRandomize);
+
+
+			rConnection.eval(sinkIn);
+			rConnection.eval(pkgIntro);
+			rConnection.eval(funcRandomize);
+
+			//save sorted to csv file
+			//		String sortFile = "write.csv(result$fieldbook[order(result$fieldbook$Trial, result$fieldbook$PlotNum),], file = \""+ CSVOutput +"\", row.names = FALSE)";
+			//		System.out.println(sortFile);
+			//		rEngine.eval(sortFile);
+
+			String runSuccessCommand = rConnection.eval("class(result)").asString();
+			if (runSuccessCommand.equals("try-error")) {
+				String errorMsg1 = "msg <- trimStrings(strsplit(result, \":\")[[1]])";
+				String errorMsg2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+				String errorMsg3 = "msg <- gsub(\"\\\"\", \"\", msg)";
+				String errorMsg4 = "cat(\"Error in designAugmentedRCBD:\\n\",msg, sep = \"\")";
+
+				System.out.println(errorMsg1);
+				System.out.println(errorMsg3);
+				System.out.println(errorMsg4);
+
+				rConnection.eval(errorMsg1);
+				rConnection.eval(errorMsg2);
+				rConnection.eval(errorMsg3);
+				rConnection.eval(errorMsg4);
+			} 
+			else {
+				String checkOutput = "if (nrow(result$fieldbook) != 0) {\n";
+				checkOutput = checkOutput + "    cat(\"\\nLayout for Augmented Randomized Complete Block Design:\",\"\\n\\n\")\n";
+				checkOutput = checkOutput + "    for (i in (1:length(result$layout))) { \n";
+				checkOutput = checkOutput + "          printLayout(result$layout[[i]], result$plotNum[[i]], RowLabel = rownames(result$layout[[i]]), ColLabel = NULL, title = paste(\"Trial = \", i, sep = \"\"))\n";
+				checkOutput = checkOutput + "          cat(\"\\n\")\n";
+				checkOutput = checkOutput + "    }\n";
+				checkOutput = checkOutput + "    cat(\"\\n\",\"**Note: Cells contain plot numbers on top, treatments/entries below\")\n";
+				checkOutput = checkOutput + "}";
+
+				System.out.println(checkOutput);
+				rConnection.eval(checkOutput);
+			}
+
+			String sinkOut = "sink()";
+			System.out.println(sinkOut);
+			rConnection.eval(sinkOut);
+
+			rscriptCommand.append(command+"\n");
+
+			System.out.println("reached end.");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			rConnection.close();
+		}
+	}
+	
+	public void testDesignAlpha(String outPutFolder) {
 		RandomizationParamModel param= new RandomizationParamModel();
 
 		String resultFolder = outPutFolder.replace(BSLASH, FSLASH);

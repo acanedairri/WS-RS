@@ -12,11 +12,14 @@ public class RandomizationParamModel {
 	int rowPerBlk;
 	int rowPerRep;
 	int numFieldRow;
+	int fieldRow;
 	int numCheck;
 	int numNew;
 	int numTrmt;
 	int rowBlockPerRep;
 	int rowPerRowBlock;
+	int repTrmt;
+	int unrepTrmt;
 	String trmtName;
 	String trmtLabel;
 	String checktrmt;
@@ -27,12 +30,11 @@ public class RandomizationParamModel {
 	String[] trmtGrpName;
 	String[] factorName;
 	String[] factorID;
-	int[] factorLEvel;
-	int[] numTrmtPerGrp;
-	int[] trmtRepPerGrp;
+	Integer[] factorLevel;
+	Integer[]numTrmtPerGrp;
+	Integer[]trmtRepPerGrp;
 	
-	
-	
+
 	public String getResultFolder() {
 		return resultFolder;
 	}
@@ -183,24 +185,43 @@ public class RandomizationParamModel {
 	public void setFactorID(String[] factorID) {
 		this.factorID = factorID;
 	}
-	public int[] getFactorLEvel() {
-		return factorLEvel;
+	public Integer[] getFactorLevel() {
+		return factorLevel;
 	}
-	public void setFactorLEvel(int[] factorLEvel) {
-		this.factorLEvel = factorLEvel;
+	public void setFactorLevel(Integer[] factorLevel) {
+		this.factorLevel = factorLevel;
 	}
-	public int[] getNumTrmtPerGrp() {
+	public Integer[] getNumTrmtPerGrp() {
 		return numTrmtPerGrp;
 	}
-	public void setNumTrmtPerGrp(int[] numTrmtPerGrp) {
+	public void setNumTrmtPerGrp(Integer[] numTrmtPerGrp) {
 		this.numTrmtPerGrp = numTrmtPerGrp;
 	}
-	public int[] getTrmtRepPerGrp() {
+	public Integer[] getTrmtRepPerGrp() {
 		return trmtRepPerGrp;
 	}
-	public void setTrmtRepPerGrp(int[] trmtRepPerGrp) {
+	public void setTrmtRepPerGrp(Integer[] trmtRepPerGrp) {
 		this.trmtRepPerGrp = trmtRepPerGrp;
 	}
+	public int getRepTrmt() {
+		return repTrmt;
+	}
+	public void setRepTrmt(int repTrmt) {
+		this.repTrmt = repTrmt;
+	}
+	public int getUnrepTrmt() {
+		return unrepTrmt;
+	}
+	public void setUnrepTrmt(int unrepTrmt) {
+		this.unrepTrmt = unrepTrmt;
+	}
+	public int getFieldRow() {
+		return fieldRow;
+	}
+	public void setFieldRow(int fieldRow) {
+		this.fieldRow = fieldRow;
+	}
+	
 	
 	
 	
