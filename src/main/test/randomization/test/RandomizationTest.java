@@ -16,23 +16,27 @@ public class RandomizationTest{
 
 	public static void main(String[] args){
 		
-		
-//		testRowColumn4();
-//		testLatinizedAlphaLattice5();
-//		testLatinizedRowColumn6();
-//		testPRep7();
+		testRCBD0();
+		testAugmentedRCB1();
+		testAugmentedLatinSquare2();
+		testAlphaLattice3();
+		testRowColumn4();
+		testLatinizedAlphaLattice5();
+		testLatinizedRowColumn6();
+		testPRep7();
 		testAugmentedRowColumn8();
+		
 	}
 
 
-	private void testRCBD0(){
+	private static void testRCBD0(){
 
 		try {
 			RandomizationParamModel param= new RandomizationParamModel();
 
 
-			String resultFolder="DesignRCBD";
-			String fieldBookName = "fieldbookDesignRCBD"; 
+			String resultFolder="RCBD";
+			String fieldBookName = "fieldbookRCBD"; 
 			int design=0;
 
 			String[] factorName = {"EntryNo"}; // for PBTools Version 1.5 and up and BIMS, only one factor should be entered
@@ -84,7 +88,7 @@ public class RandomizationTest{
 	}
 	
 	
-	private void testAugmentedRCB1(){
+	private static void testAugmentedRCB1(){
 
 		try {
 			RandomizationParamModel param= new RandomizationParamModel();
@@ -194,14 +198,14 @@ public class RandomizationTest{
 
 
 	
-	private void testAlphaLattice3(){
+	private static void testAlphaLattice3(){
 
 		try {
 			RandomizationParamModel param= new RandomizationParamModel();
 
 
 			String fieldBookName = "fieldbookDesignAlphaLattice"; 		
-			String resultFolder="Alpha2";
+			String resultFolder="AlphaLattice";
 			//specify parameters
 			int design=3;
 
@@ -259,8 +263,8 @@ public class RandomizationTest{
 			RandomizationParamModel param= new RandomizationParamModel();
 
 
-			String fieldBookName = "fieldbookRowColumn4"; 		
-			String resultFolder="RowColumn4";
+			String fieldBookName = "fieldbookRowColumn"; 		
+			String resultFolder="RowColumn";
 			//specify parameters
 			int design=4;
 
@@ -315,8 +319,8 @@ public class RandomizationTest{
 			RandomizationParamModel param= new RandomizationParamModel();
 
 
-			String fieldBookName = "fieldbookLatinizedAlphaLattice5"; 		
-			String resultFolder="LatinizedAlphaLattice5";
+			String fieldBookName = "fieldbookLatinizedAlphaLattice"; 		
+			String resultFolder="LatinizedAlphaLattice";
 			//specify parameters
 			int design=5;
 
@@ -371,8 +375,8 @@ public class RandomizationTest{
 			RandomizationParamModel param= new RandomizationParamModel();
 
 
-			String fieldBookName = "fieldbookLatinizedRowColumn6"; 		
-			String resultFolder="LatinizedRowColumn6";
+			String fieldBookName = "fieldbookLatinizedRowColumn"; 		
+			String resultFolder="LatinizedRowColumn";
 			//specify parameters
 			int design=6;
 
@@ -427,8 +431,8 @@ public class RandomizationTest{
 			RandomizationParamModel param= new RandomizationParamModel();
 
 
-			String fieldBookName = "fieldbookPRep7"; 		
-			String resultFolder="PRep7";
+			String fieldBookName = "fieldbookPRep"; 		
+			String resultFolder="PRep";
 			//specify parameters
 			int design=7;
 
@@ -493,8 +497,8 @@ public class RandomizationTest{
 			RandomizationParamModel param= new RandomizationParamModel();
 
 
-			String fieldBookName = "fieldbookAugmentedRowColumn8"; 		
-			String resultFolder="AugmentedRowColumn8";
+			String fieldBookName = "fieldbookAugmentedRowColumn"; 		
+			String resultFolder="AugmentedRowColumn";
 			//specify parameters
 			int design=8;
 
@@ -556,14 +560,14 @@ public class RandomizationTest{
 	}
 
 	
-	private void testAugmentedAlphaLattice9(){
+	private static void testAugmentedAlphaLattice9(){
 
 		try {
 			RandomizationParamModel param= new RandomizationParamModel();
 
 
 			String resultFolder="AugmentedAlphaLattice";
-			String fieldBookName = "fieldbookDesignAugmentedAlphaLattice"; 
+			String fieldBookName = "fieldbookAugmentedAlphaLattice"; 
 			int design=9;
 
 			//specify parameters
