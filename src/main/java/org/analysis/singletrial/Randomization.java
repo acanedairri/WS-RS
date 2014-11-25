@@ -55,7 +55,7 @@ public class Randomization  implements Runnable {
 
 
 	@POST
-	@Path("/Run")
+	@Path("/run")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces("application/json")
 	public String postDesignAlphaLattice(String json){
@@ -66,7 +66,7 @@ public class Randomization  implements Runnable {
 			if(msg.length() > 0){
 				return msg;
 			}else{
-				msg="Data has been received and started randomized";
+				msg="Data has been received and started the randomization";
 				(new Thread(new Randomization(json,ctx))).start();
 				return msg;
 			}
@@ -156,16 +156,20 @@ public class Randomization  implements Runnable {
 		Gson jsonInput= new Gson();
 		RandomizationParamModel jsonField=jsonInput.fromJson(json, RandomizationParamModel.class);
 
+
 		String realpath=ctx.getRealPath("/");
 		String outputFolderPath=createOutputFolder(ctx,jsonField.getResultFolder()); //jsonField.getAnalysisResultFolder()
+		String resultFolder = outputFolderPath.replace(BSLASH, FSLASH);
 		String dataFolderPath=realpath+separator+"temp"+separator;
 
 		FileUtilities fileUtil = new FileUtilities();
 		String timestamp =  new  SimpleDateFormat("yyyyMMddhhmmss").format(new Date());
 
 		//default
-		param.setPath(outputFolderPath);
+		param.setResultFolder(jsonField.getResultFolder());
+		param.setPath(resultFolder);
 		param.setFieldBookName(jsonField.getFieldBookName());
+		param.setDesign(jsonField.getDesign());
 
 		if(jsonField.getDesign()==0){ // RCB
 
@@ -201,6 +205,7 @@ public class Randomization  implements Runnable {
 			param.setRep(jsonField.getRep());
 			param.setTrial(jsonField.getTrial());
 			param.setRowPerBlk(jsonField.getRowPerBlk());
+			param.setRowPerRep(jsonField.getRowPerRep());
 			param.setNumFieldRow(jsonField.getNumFieldRow());
 			param.setFieldOrder(jsonField.getFieldOrder());
 
@@ -265,10 +270,12 @@ public class Randomization  implements Runnable {
 			param.setNumCheck(jsonField.getNumCheck());
 			param.setNumNew(jsonField.getNumNew()); 
 			param.setTrmtName(jsonField.getTrmtName());
+			param.setBlkSize(jsonField.getBlkSize());
 			param.setRep(jsonField.getRep());
 			param.setTrial(jsonField.getTrial());
 			param.setRowPerBlk(jsonField.getRowPerBlk());
 			param.setRowPerRep(jsonField.getRowPerRep());
+			param.setNumFieldRow(jsonField.getNumFieldRow());
 			param.setFieldOrder(jsonField.getFieldOrder());
 			param.setTrmtLabel(jsonField.getTrmtLabel());
 			param.setChecktrmt(jsonField.getChecktrmt());
