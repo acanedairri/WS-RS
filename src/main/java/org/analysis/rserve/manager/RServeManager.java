@@ -89,16 +89,16 @@ public class RServeManager {
 
 		String resultFolderName = outPutFolder.replace(BSLASH, FSLASH);
 		String outFileName = outPutFolder.replace(BSLASH, FSLASH) + "SEA_output.txt";
-		String dataFileName = dataInputFolder.replace(BSLASH, FSLASH) + "AugmentedRCBD.csv";
-		String env="NULL";
-		String respvars[] = {"YLD1"};
+		String dataFileName = dataInputFolder.replace(BSLASH, FSLASH) + "SingleSite.csv";
+		String env="Site";
+		String respvars[] = {"HT_CONT"};
 		String[] environmentLevels={};
-		int design = 1;
-		String genotype = "Gen";
-		String block = "Blk";
-		String rep = "NULL";
-		String row = "NULL";
-		String column = "NULL";
+		int design = 4;
+		String genotype = "Designation";
+		String block = "NULL";
+		String rep = "Rep";
+		String row = "Row";
+		String column = "Col";
 		boolean descriptiveStat = true; 
 		boolean varianceComponents = true;
 		boolean boxplotRawData = true;
@@ -260,6 +260,7 @@ public class RServeManager {
 		boolean genoPhenoCorrelation = ssaModel.isGenoPhenoCorrelation();
 
 		System.out.println(ssaModel.toString());
+		
 
 		String respvarVector= inputTransform.createRVector(respvars);
 		//		String genotypeLevelsVector= inputTransform.createRVector(genotypeLevels);

@@ -993,8 +993,8 @@ public class SingleTrial  implements Runnable{
 
 		paramsSingleTrial.setAnalysisResultFolder(jsonField.getAnalysisResultFolder());
 		paramsSingleTrial.setDesign(jsonField.getDesign());
-		paramsSingleTrial.setEnvironment(null);
-		paramsSingleTrial.setEnvironmentLevels(null);
+		paramsSingleTrial.setEnvironment(jsonField.getEnvironment());
+		paramsSingleTrial.setEnvironmentLevels(jsonField.getEnvironmentLevels());
 		paramsSingleTrial.setRespvars(jsonField.getRespvars());
 		paramsSingleTrial.setGenotype(jsonField.getGenotype());
 		paramsSingleTrial.setBlock(jsonField.getBlock());
@@ -1022,7 +1022,10 @@ public class SingleTrial  implements Runnable{
 		paramsSingleTrial.setGenotypeLevels(jsonField.getGenotypeLevels());
 
 		String[] spatialStruc = {"none", "CompSymm", "Gaus", "Exp", "Spher"};
-		paramsSingleTrial.setControlLevels(null);
+		if(jsonField.getDesign()==7){
+			paramsSingleTrial.setControlLevels(null);
+		}
+		
 		paramsSingleTrial.setMoransTest(false);
 		paramsSingleTrial.setSpatialStruc(spatialStruc);
 
