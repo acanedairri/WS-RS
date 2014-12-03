@@ -16,18 +16,21 @@ public class RandomizationTest{
 
 	public static void main(String[] args){
 		
-		testRCBD0();
-		testAugmentedRCB1();
-		testAugmentedLatinSquare2();
-		testAlphaLattice3();
+testRCBD0();
+//		testAugmentedRCB1();
+//		testAugmentedLatinSquare2();
+//		testAlphaLattice3();
 		testRowColumn4();
-		testLatinizedAlphaLattice5();
+//		testLatinizedAlphaLattice5();
 		testLatinizedRowColumn6();
-		testPRep7();
-		testAugmentedRowColumn8();
+//		testPRep7();
+//		testAugmentedRowColumn8();
+//		testAugmentedAlpha9();
 		
 	}
 
+
+	
 
 	private static void testRCBD0(){
 
@@ -98,9 +101,9 @@ public class RandomizationTest{
 			String fieldBookName = "fieldbookAugmentedRCB"; 
 			int design=1;
 
-			Integer repTrmt = 5;
-			Integer unrepTrmt = 702;
-			Integer Blk = 6;
+			Integer numCheck = 5;
+			Integer numNew = 702;
+			Integer blk = 6;
 			Integer fieldRow = 122;
 			Integer trial = 1;
 			String fieldOrder = "Serpentine";
@@ -110,9 +113,9 @@ public class RandomizationTest{
 			param.setDesign(design);
 			param.setResultFolder(resultFolder);
 
-			param.setRepTrmt(repTrmt);
-			param.setUnrepTrmt(unrepTrmt);
-			param.setBlk(Blk); 
+			param.setNumCheck(numCheck);
+			param.setNumNew(numNew);
+			param.setBlk(blk); 
 			param.setFieldRow(fieldRow);
 			param.setTrial(trial);
 			param.setFieldOrder(fieldOrder);
@@ -153,8 +156,8 @@ public class RandomizationTest{
 			String fieldBookName = "fieldbookAugmentedLatinSquare"; 
 			int design=2;
 
-			Integer repTrmt = 5;
-			Integer unrepTrmt = 230;
+			Integer numCheck = 5;
+			Integer numNew = 230;
 			Integer fieldRow = 17;
 			Integer trial = 2;
 			String fieldOrder = "Serpentine";
@@ -164,8 +167,8 @@ public class RandomizationTest{
 			param.setDesign(design);
 			param.setResultFolder(resultFolder);
 
-			param.setRepTrmt(repTrmt);
-			param.setUnrepTrmt(unrepTrmt);
+			param.setNumCheck(numCheck);
+			param.setNumNew(numNew);
 			param.setFieldRow(fieldRow);
 			param.setTrial(trial);
 			param.setFieldOrder(fieldOrder);
@@ -445,8 +448,8 @@ public class RandomizationTest{
 			Integer rowPerBlk = 6;
 			Integer numFieldRow = 18; 
 			String fieldOrder = "Serpentine";
-			String trmtLabel = null;
-			String trmtListPerGrp = null;
+			String trmtLabel = "NULL";
+			String trmtListPerGrp = "NULL";
 			
 			param.setFieldBookName(fieldBookName);
 			param.setDesign(design);
@@ -512,9 +515,9 @@ public class RandomizationTest{
 			Integer rowPerRowblk = 3; 
 			Integer numFieldRow = 18;
 			String fieldOrder = "Serpentine";
-			String trmtLabel = null;
-			String checkTrmt = null;
-			String newTrmt = null;
+			String trmtLabel = "NULL";
+			String checkTrmt =  "NULL";
+			String newTrmt = "NULL";
 			
 			param.setFieldBookName(fieldBookName);
 			param.setDesign(design);
@@ -525,8 +528,8 @@ public class RandomizationTest{
 			param.setTrmtName(trmtName);
 			param.setRep(rep);
 			param.setTrial(trial);
-			param.setRowBlockPerRep(rowblkPerRep); 
-			param.setRowPerRowBlock(rowPerRowblk);
+			param.setRowBlkPerRep(rowblkPerRep); 
+			param.setRowPerRowBlk(rowPerRowblk);
 			param.setNumFieldRow(numFieldRow);
 			param.setFieldOrder(fieldOrder);
 			param.setTrmtLabel(trmtLabel);
@@ -582,8 +585,8 @@ public class RandomizationTest{
 			Integer numFieldRow = 15;
 			String fieldOrder = "Serpentine";
 			String trmtLabel = "Designation";
-			String checkTrmt = null;
-			String newTrmt = null;
+			String checkTrmt = "NULL";
+			String newTrmt = "NULL";
 
 			param.setFieldBookName(fieldBookName);
 			param.setDesign(design);
@@ -600,8 +603,8 @@ public class RandomizationTest{
 			param.setNumFieldRow(numFieldRow);
 			param.setFieldOrder(fieldOrder);
 			param.setTrmtLabel(trmtLabel);
-			param.setChecktrmt(null);
-			param.setNewTrmt(null);
+			param.setChecktrmt(checkTrmt);
+			param.setNewTrmt(newTrmt);
 			
 			Gson gson = new Gson();
 			String json = gson.toJson(param);
@@ -628,4 +631,74 @@ public class RandomizationTest{
 			e.printStackTrace();
 		}
 	}
+	
+	
+	private static void testAugmentedAlpha9() {
+		try {
+			RandomizationParamModel param= new RandomizationParamModel();
+
+
+			String resultFolder="AugmentedAlpha";
+			String fieldBookName = "fieldbookAugmentedAlpha"; 
+			int design=9;
+
+			Integer numCheck = 9;
+			Integer numNew = 63;
+			String trmtName = "EntryNum";
+			Integer blkSize = 10;
+			Integer rep = 3;
+			Integer trial = 2;
+			Integer rowPerBlk = 5;
+			Integer rowPerRep = 15;
+			Integer numFieldRow = 15;
+			String fieldOrder = "Serpentine";
+			String trmtLabel = "Designation";
+			String checkTrmt = "NULL";
+			String newTrmt = "NULL";
+
+
+			param.setFieldBookName(fieldBookName);
+			param.setDesign(design);
+			param.setResultFolder(resultFolder);
+			param.setNumCheck(numCheck);
+			param.setNumNew(numNew);
+			param.setTrmtName(trmtName);
+			param.setBlkSize(blkSize);
+			param.setRep(rep);
+			param.setTrial(trial);
+			param.setRowPerBlk(rowPerBlk);
+			param.setRowPerRep(rowPerRep);
+			param.setNumFieldRow(numFieldRow);
+			param.setFieldOrder(fieldOrder);
+			param.setTrmtLabel(trmtLabel);
+			param.setChecktrmt(checkTrmt);
+			param.setNewTrmt(newTrmt);
+			
+			Gson gson = new Gson();
+			String json = gson.toJson(param);
+
+			System.out.println(json);
+
+			Client c = ClientBuilder.newClient();
+			//		WebTarget target= c.target("http://172.29.4.166:8080/WS-RS/rest/SingleTrial/run");
+			//		WebTarget target= c.target("http://localhost:8080/WS-RS/rest/SingleTrial/run");
+			WebTarget target= c.target("http://localhost:8080/WS-RS/rest/Randomization/run");
+			Response response = target.request().post(Entity.json(json));
+
+			if (response.getStatus() != 200) {
+				throw new RuntimeException("Failed : HTTP error code : "
+						+ response.getStatus());
+			}
+
+
+			String output = response.getEntity().toString();
+			System.out.println("Server response .... \n");
+			System.out.println(response.readEntity(String.class));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+
 }

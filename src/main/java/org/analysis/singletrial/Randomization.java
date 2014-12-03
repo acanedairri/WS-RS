@@ -1,9 +1,14 @@
 package org.analysis.singletrial;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Scanner;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
@@ -17,7 +22,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.analysis.model.CsvToJsonModel;
 import org.analysis.model.RandomizationParamModel;
+import org.analysis.model.FileResourceModel;
 import org.analysis.rserve.manager.RServeManager;
 import org.analysis.util.FileUtilities;
 
@@ -95,9 +102,9 @@ public class Randomization  implements Runnable {
 				rserve.doDesignRCBD(param.getPath(),param.getFieldBookName(), param.getFactorName(),param.getFactorID(), param.getFactorLevel()
 						,param.getBlk(), param.getTrial(),param.getNumFieldRow(), param.getRowPerBlk(),param.getFieldOrder());
 			}else if(param.getDesign()==1){ // Augmented RCB
-				rserve.doDesignAugmentedRCB(param.getPath(),param.getFieldBookName(), param.getRepTrmt(),param.getUnrepTrmt(),param.getBlk(), param.getFieldRow(), param.getTrial(),param.getFieldOrder());
+				rserve.doDesignAugmentedRCB(param.getPath(),param.getFieldBookName(), param.getNumCheck(),param.getNumNew(),param.getBlk(), param.getFieldRow(), param.getTrial(),param.getFieldOrder());
 			}else if(param.getDesign()==2){ // Augmented Latin Square
-				rserve.doDesignAugmentedLSD(param.getPath(),param.getFieldBookName(), param.getRepTrmt(),param.getUnrepTrmt(), param.getFieldRow(), param.getTrial(),param.getFieldOrder());
+				rserve.doDesignAugmentedLSD(param.getPath(),param.getFieldBookName(),param.getNumCheck(),param.getNumNew(), param.getFieldRow(), param.getTrial(),param.getFieldOrder());
 			}else if(param.getDesign()==3){ // Alpha Lattice
 				rserve.doDesignAlpha(param.getPath(),param.getFieldBookName(), param.getNumTrmt(), param.getBlkSize(),param.getRep(),param.getTrial(),
 						param.getRowPerBlk(), param.getRowPerRep(),param.getNumFieldRow(),param.getFieldOrder());
@@ -114,7 +121,7 @@ public class Randomization  implements Runnable {
 				rserve.doDesignPRep(param.getPath(),  param.getFieldBookName(),param.getTrmtGrpName(), param.getNumTrmtPerGrp(),param.getTrmtRepPerGrp(),param.getTrmtName(),param.getBlk(),param.getTrial(), param.getRowPerBlk()
 						, param.getNumFieldRow(),param.getFieldOrder(), param.getTrmtLabel(),param.getTrmtListPerGrp());
 			}else if(param.getDesign()==8){ // Augmented Row Column
-				rserve.doDesignAugmentedRowColumn(param.getPath(),  param.getFieldBookName(), param.getNumCheck(),param.getNumNew(), param.getTrmtName(),param.getRep(),param.getTrial(),param.getRowBlockPerRep(), param.getRowPerRowBlock()
+				rserve.doDesignAugmentedRowColumn(param.getPath(),  param.getFieldBookName(), param.getNumCheck(),param.getNumNew(), param.getTrmtName(),param.getRep(),param.getTrial(),param.getRowBlkPerRep(), param.getRowPerRowBlk()
 						, param.getNumFieldRow(),param.getFieldOrder(),param.getTrmtLabel(),param.getChecktrmt(),param.getNewTrmt());
 			}else if(param.getDesign()==9){ // Augmentead Alpha Lattice
 				rserve.doDesignAugmentedAlpha(param.getPath(),  param.getFieldBookName(), param.getNumCheck(),param.getNumNew(), param.getTrmtName(),param.getBlkSize(),param.getRep(),param.getTrial(),param.getRowPerBlk(), param.getRowPerRep()
@@ -183,17 +190,17 @@ public class Randomization  implements Runnable {
 			param.setFieldOrder(jsonField.getFieldOrder());
 
 		}else if(jsonField.getDesign()==1){ // Augmented RCB
-			param.setRepTrmt(jsonField.getRepTrmt());
-			param.setUnrepTrmt(jsonField.getUnrepTrmt());
+			param.setNumCheck(jsonField.getNumCheck());
+			param.setNumNew(jsonField.getNumNew());
 			param.setBlk(jsonField.getBlk()); 
 			param.setFieldRow(jsonField.getFieldRow());
 			param.setTrial(jsonField.getTrial());
 			param.setFieldOrder(jsonField.getFieldOrder());
 
 		}else if(jsonField.getDesign()==2){ // Augmented Latin Square
-			
-			param.setRepTrmt(jsonField.getRepTrmt());
-			param.setUnrepTrmt(jsonField.getUnrepTrmt());
+
+			param.setNumCheck(jsonField.getNumCheck());
+			param.setNumNew(jsonField.getNumNew());
 			param.setFieldRow(jsonField.getFieldRow());
 			param.setTrial(jsonField.getTrial());
 			param.setFieldOrder(jsonField.getFieldOrder());
@@ -246,8 +253,18 @@ public class Randomization  implements Runnable {
 			param.setRowPerBlk(jsonField.getRowPerBlk());
 			param.setNumFieldRow(jsonField.getNumFieldRow());
 			param.setFieldOrder(jsonField.getFieldOrder());
-			param.setTrmtLabel(jsonField.getTrmtLabel());
-			param.setTrmtListPerGrp(jsonField.getTrmtListPerGrp());
+
+			if(jsonField.getTrmtLabel().equals("NULL")){
+				param.setTrmtLabel(null);
+			}else{
+				param.setTrmtLabel(jsonField.getTrmtLabel());
+			}
+
+			if(jsonField.getTrmtListPerGrp().equals("NULL")){
+				param.setTrmtListPerGrp(null);
+			}else{
+				param.setTrmtListPerGrp(jsonField.getTrmtListPerGrp());
+			}
 
 
 		}else if(jsonField.getDesign()==8){ // Augmented Row Column
@@ -257,16 +274,31 @@ public class Randomization  implements Runnable {
 			param.setTrmtName(jsonField.getTrmtName());
 			param.setRep(jsonField.getRep());
 			param.setTrial(jsonField.getTrial());
-			param.setRowBlockPerRep(jsonField.getRowBlockPerRep()); 
-			param.setRowPerRowBlock(jsonField.getRowPerRowBlock());
+			param.setRowBlkPerRep(jsonField.getRowBlkPerRep()); 
+			param.setRowPerRowBlk(jsonField.getRowPerRowBlk());
 			param.setNumFieldRow(jsonField.getNumFieldRow());
 			param.setFieldOrder(jsonField.getFieldOrder());
-			param.setTrmtLabel(jsonField.getTrmtLabel());
-			param.setChecktrmt(jsonField.getChecktrmt());
-			param.setNewTrmt(jsonField.getNewTrmt());
+
+			if(jsonField.getTrmtLabel().equals("NULL")){
+				param.setTrmtLabel(null);
+			}else{
+				param.setTrmtLabel(jsonField.getTrmtLabel());
+			}
+
+			if(jsonField.getChecktrmt().equals("NULL")){
+				param.setChecktrmt(null);
+			}else{
+				param.setChecktrmt(jsonField.getChecktrmt());
+			}
+
+			if(jsonField.getNewTrmt().equals("NULL")){
+				param.setNewTrmt(null);
+			}else{
+				param.setNewTrmt(jsonField.getNewTrmt());
+			}
 
 		}else if(jsonField.getDesign()==9){ // Augmented Alpha{
-					
+
 			param.setNumCheck(jsonField.getNumCheck());
 			param.setNumNew(jsonField.getNumNew()); 
 			param.setTrmtName(jsonField.getTrmtName());
@@ -278,8 +310,18 @@ public class Randomization  implements Runnable {
 			param.setNumFieldRow(jsonField.getNumFieldRow());
 			param.setFieldOrder(jsonField.getFieldOrder());
 			param.setTrmtLabel(jsonField.getTrmtLabel());
-			param.setChecktrmt(jsonField.getChecktrmt());
-			param.setNewTrmt(jsonField.getNewTrmt());
+
+			if(jsonField.getChecktrmt().equals("NULL")){
+				param.setChecktrmt(null);
+			}else{
+				param.setChecktrmt(jsonField.getChecktrmt());
+			}
+
+			if(jsonField.getNewTrmt().equals("NULL")){
+				param.setNewTrmt(null);
+			}else{
+				param.setNewTrmt(jsonField.getNewTrmt());
+			}
 
 		}
 
@@ -305,21 +347,100 @@ public class Randomization  implements Runnable {
 	}
 
 
+	
 	@GET
-	@Path("alpha/{name}")
+	@Path("getResultFiles/{foldername}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces("application/json")
-	public Response testDesignAlpha(@PathParam("name") String name) {
+	public Response getResultFiles(@PathParam("foldername") String name) {
 		String toreturn = null;
 		try{
+			
+			FileUtilities fUtil= new FileUtilities();
+			FileResourceModel fileList = fUtil.fetchOutputFolderFileResources(ctx,name);
+			Gson gson = new Gson();
+			boolean finished=false;
+
+			for(String f:fileList.getFileListResource()){
+				if(f.contains("elapsed")){
+					finished=true;
+				}
+			}
+
+			if(fileList.getFileListResource().size() > 0 && finished){
+				toreturn=gson.toJson(fileList);
+			}else{
+				toreturn="Analysis is not yet done";
+			}
+		}catch(Exception e){
+		}
+		return Response.status(320).entity(toreturn).build();
+
+	}
+	
+	
+	@GET
+	@Path("getResultCsvToJson/{folder}/{filename}")
+	@Consumes("text/plain")
+	@Produces("text/plain")
+	public Response getResultCsvToJson(@PathParam("folder") String folder,@PathParam("filename") String filename) {
+		String toreturn = null;
+		String dataFileName = null;
+		String path=null;
+		try{
 			String realpath=ctx.getRealPath("/");
-			outputFolderPath=createOutputFolder(ctx,name);
-			/*dataFolderPath=realpath+separator+"temp"+separator;*/
-			RServeManager rserve= new RServeManager();
-			rserve.testDesignAlpha(outputFolderPath);
-			/*	SingleTrialFileResourceModel singleTrialFileResourceModel = fetchOutputFolderFileResources(name);*/
-			/*			Gson gson = new Gson();
-			toreturn=gson.toJson(singleTrialFileResourceModel);*/
+
+			path= realpath+separator+"output"+separator+folder+separator;
+
+			dataFolderPath=path+separator;
+			dataFileName = dataFolderPath.replace(BSLASH, FSLASH) + filename;
+
+
+			BufferedReader reader = new BufferedReader(new FileReader(dataFileName));
+			String line = null;
+			Scanner scanner = null;
+			int index = 0;
+			CsvToJsonModel csvModel=new CsvToJsonModel();
+			int hindex=0;
+
+			ArrayList<String> headerArray = new ArrayList<String>();
+			List<String[]> dataRow=new ArrayList<String[]>();
+
+			while ((line = reader.readLine()) != null) {
+
+				scanner = new Scanner(line);
+				scanner.useDelimiter(",");
+				ArrayList<String> rowDataArray = new ArrayList<String>();
+
+
+				List<String> s= new ArrayList<String>(); 
+				while (scanner.hasNext()) {
+					String data = scanner.next();
+					if(hindex==0){
+						headerArray.add(data.replace("\"", ""));
+						System.out.println(data.replace("\"", ""));
+					}else{
+						rowDataArray.add(data.replace("\"", ""));
+					}
+
+					index++;
+				}
+				if(hindex==0){
+					String[] header= new String[headerArray.size()];
+					header=headerArray.toArray(header);
+					csvModel.setDataHeader(header);
+				}else{
+					String[] rowData= new String[rowDataArray.size()];
+					rowData=rowDataArray.toArray(rowData);
+					dataRow.add(rowData);
+				}
+				hindex=1;
+				index = 0;
+			}
+			csvModel.setData(dataRow);
+			Gson gson = new Gson();
+			toreturn=gson.toJson(csvModel);
+
 
 		}catch(Exception e){
 
@@ -327,4 +448,5 @@ public class Randomization  implements Runnable {
 		return Response.status(320).entity(toreturn).build();
 
 	}
+
 }

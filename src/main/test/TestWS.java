@@ -110,7 +110,7 @@ public class TestWS {
 			String column = "NULL";*/
 			
 			
-			String env="NULL";
+			String env="Site";
 			String respvars[] = {"Y1"};
 //			String respvars[] = {""};
 			String[] environmentLevels={};

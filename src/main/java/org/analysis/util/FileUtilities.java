@@ -6,12 +6,21 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.servlet.ServletContext;
+
+import org.analysis.model.FileResourceModel;
+
 
 public class FileUtilities {
+	
+	private static String BSLASH = "\\";
+	private static String FSLASH = "/";
+	static String separator=java.nio.file.FileSystems.getDefault().getSeparator();
 
 	public static void uploadFile(String filepath, InputStream file) {
 		try {
@@ -119,5 +128,30 @@ public class FileUtilities {
 		return new File(filePath);
 	}
 
+	
+	public FileResourceModel fetchOutputFolderFileResources(ServletContext ctx, String name){
+		String path = null;
+		FileResourceModel fileResourceModel= new FileResourceModel();
+		try{
+
+			String realpath=ctx.getRealPath("/");
+			path= realpath+separator+"output"+separator+name+separator;
+			File f = new File (path);
+			File directory = new File(path);
+			File[] fList = directory.listFiles();
+			String url=ctx.getContextPath()+"/output"+separator+name+separator;
+			fileResourceModel.setFolderResource(url.replace(BSLASH, FSLASH));
+			List<String> fileList= new ArrayList<String>();
+			for (File file : fList){
+				fileList.add(file.getName());
+				System.out.println();
+			}
+			fileResourceModel.setFileListResource(fileList);
+			return fileResourceModel;
+		}catch(Exception e){
+
+		}
+		return fileResourceModel;
+	}
 	
 }

@@ -2,7 +2,7 @@ package org.analysis.model;
 
 import java.util.List;
 
-public class SingleTrialFileResourceModel {
+public class FileResourceModel {
 	
 	String folderResource;
 	List<String> fileListResource;

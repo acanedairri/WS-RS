@@ -34,7 +34,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.analysis.model.CsvToJsonModel;
-import org.analysis.model.SingleTrialFileResourceModel;
+import org.analysis.model.FileResourceModel;
 import org.analysis.model.OutlierFileResourceModel;
 import org.analysis.model.OutlierParametersModel;
 import org.analysis.model.SingleTrialResultModel;
@@ -90,7 +90,7 @@ public class SingleTrial  implements Runnable{
 			dataFolderPath=realpath+separator+"temp"+separator;
 			RServeManager rserve= new RServeManager();
 			rserve.testSingleEnvironment(outputFolderPath,dataFolderPath);
-			SingleTrialFileResourceModel singleTrialFileResourceModel = fetchOutputFolderFileResources(name);
+			FileResourceModel singleTrialFileResourceModel = fetchOutputFolderFileResources(name);
 			Gson gson = new Gson();
 			toreturn=gson.toJson(singleTrialFileResourceModel);
 
@@ -113,7 +113,7 @@ public class SingleTrial  implements Runnable{
 			dataFolderPath=realpath+separator+"temp"+separator;
 			RServeManager rserve= new RServeManager();
 			rserve.testSingleEnvironmentPRef(outputFolderPath,dataFolderPath);
-			SingleTrialFileResourceModel singleTrialFileResourceModel = fetchOutputFolderFileResources(name);
+			FileResourceModel singleTrialFileResourceModel = fetchOutputFolderFileResources(name);
 			Gson gson = new Gson();
 			toreturn=gson.toJson(singleTrialFileResourceModel);
 
@@ -556,7 +556,7 @@ public class SingleTrial  implements Runnable{
 			SingleTrialParametersModel paramsSingleTrial= assembleSingleTrialParameters(json);
 			RServeManager rserve= new RServeManager();
 			rserve.doSingleEnvironmentAnalysis(paramsSingleTrial);
-			SingleTrialFileResourceModel fileList = fetchOutputFolderFileResources(paramsSingleTrial.getAnalysisResultFolder());
+			FileResourceModel fileList = fetchOutputFolderFileResources(paramsSingleTrial.getAnalysisResultFolder());
 			//			removeDataFile();
 			Gson gson = new Gson();
 			toreturn=gson.toJson(fileList);
@@ -580,7 +580,8 @@ public class SingleTrial  implements Runnable{
 	public Response getResultFiles(@PathParam("name") String name) {
 		String toreturn = null;
 		try{
-			SingleTrialFileResourceModel fileList = fetchOutputFolderFileResources(name);
+			FileUtilities fUtil= new FileUtilities();
+			FileResourceModel fileList = fUtil.fetchOutputFolderFileResources(ctx,name);
 			Gson gson = new Gson();
 			boolean finished=false;
 
@@ -892,9 +893,9 @@ public class SingleTrial  implements Runnable{
 	}
 
 
-	public SingleTrialFileResourceModel fetchOutputFolderFileResources(String name){
+	public FileResourceModel fetchOutputFolderFileResources(String name){
 		String path = null;
-		SingleTrialFileResourceModel fileResourceModel= new SingleTrialFileResourceModel();
+		FileResourceModel fileResourceModel= new FileResourceModel();
 		try{
 
 			String realpath=ctx.getRealPath("/");
@@ -993,7 +994,7 @@ public class SingleTrial  implements Runnable{
 
 		paramsSingleTrial.setAnalysisResultFolder(jsonField.getAnalysisResultFolder());
 		paramsSingleTrial.setDesign(jsonField.getDesign());
-		paramsSingleTrial.setEnvironment(jsonField.getEnvironment());
+		paramsSingleTrial.setEnvironment("NULL");
 		paramsSingleTrial.setEnvironmentLevels(jsonField.getEnvironmentLevels());
 		paramsSingleTrial.setRespvars(jsonField.getRespvars());
 		paramsSingleTrial.setGenotype(jsonField.getGenotype());
@@ -1024,6 +1025,7 @@ public class SingleTrial  implements Runnable{
 		String[] spatialStruc = {"none", "CompSymm", "Gaus", "Exp", "Spher"};
 		if(jsonField.getDesign()==7){
 			paramsSingleTrial.setControlLevels(null);
+			paramsSingleTrial.setEnvironment(null);
 		}
 		
 		paramsSingleTrial.setMoransTest(false);

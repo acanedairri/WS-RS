@@ -16,8 +16,8 @@ public class RandomizationParamModel {
 	int numCheck;
 	int numNew;
 	int numTrmt;
-	int rowBlockPerRep;
-	int rowPerRowBlock;
+	int rowBlkPerRep;
+	int rowPerRowBlk;
 	int repTrmt;
 	int unrepTrmt;
 	String trmtName;
@@ -113,17 +113,19 @@ public class RandomizationParamModel {
 	public void setNumTrmt(int numTrmt) {
 		this.numTrmt = numTrmt;
 	}
-	public int getRowBlockPerRep() {
-		return rowBlockPerRep;
+
+	
+	public int getRowBlkPerRep() {
+		return rowBlkPerRep;
 	}
-	public void setRowBlockPerRep(int rowBlockPerRep) {
-		this.rowBlockPerRep = rowBlockPerRep;
+	public void setRowBlkPerRep(int rowBlkPerRep) {
+		this.rowBlkPerRep = rowBlkPerRep;
 	}
-	public int getRowPerRowBlock() {
-		return rowPerRowBlock;
+	public int getRowPerRowBlk() {
+		return rowPerRowBlk;
 	}
-	public void setRowPerRowBlock(int rowPerRowBlock) {
-		this.rowPerRowBlock = rowPerRowBlock;
+	public void setRowPerRowBlk(int rowPerRowBlk) {
+		this.rowPerRowBlk = rowPerRowBlk;
 	}
 	public String getTrmtName() {
 		return trmtName;
