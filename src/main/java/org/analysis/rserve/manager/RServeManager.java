@@ -3,6 +3,7 @@ package org.analysis.rserve.manager;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.analysis.model.MultiTrialParametersModel;
 import org.analysis.model.OutlierParametersModel;
 import org.analysis.model.RandomizationParamModel;
 import org.analysis.model.SingleTrialParametersModel;
@@ -150,8 +151,79 @@ public class RServeManager {
 
 		doSingleEnvironmentAnalysis(ssaModel);
 	}
-	
-	
+
+
+	public void  testMultiEnvironment(String outPutFolder, String dataInputFolder) {
+
+		MultiTrialParametersModel msaModel = new MultiTrialParametersModel();
+
+		String resultFolderName = outPutFolder.replace(BSLASH, FSLASH);
+		String outFileName = outPutFolder.replace(BSLASH, FSLASH) + "MEA_output.txt";
+		String dataFileName = dataInputFolder.replace(BSLASH, FSLASH) + "SingleSite.csv";
+		String env="Site";
+		String respvars[] = {"HT_CONT"};
+		String[] environmentLevels={};
+		int design = 4;
+		String genotype = "Designation";
+		String block = "NULL";
+		String rep = "Rep";
+		String row = "Row";
+		String column = "Col";
+		boolean descriptiveStat = true; 
+		boolean varianceComponents = true;
+		boolean boxplotRawData = true;
+		boolean histogramRawData = true;
+		boolean heatmapResiduals = false;
+		String heatmapRow = "NULL";
+		String heatmapColumn = "NULL";
+		boolean diagnosticPlot = false;
+		boolean genotypeFixed = true;
+		boolean performPairwise = false;
+		String pairwiseAlpha = "0.05";
+		boolean compareControl = false;
+		boolean performAllPairwise = false;
+		boolean genotypeRandom = true;
+		boolean excludeControls = false;
+		boolean genoPhenoCorrelation = false;
+		boolean ammi= false;
+		boolean gge= false;
+		boolean stabilityFinlay= false;
+		boolean stabilityShukla= false;
+
+		msaModel.setRespvars(respvars);
+		msaModel.setResultFolderPath(resultFolderName);
+		msaModel.setOutFileName(outFileName);
+		msaModel.setDataFileName(dataFileName);
+		msaModel.setEnvironment(env);
+		msaModel.setEnvironmentLevels(environmentLevels);
+		msaModel.setDesign(design);
+		msaModel.setGenotype(genotype);
+		msaModel.setBlock(block);
+		msaModel.setRep(rep);
+		msaModel.setRow(row);
+		msaModel.setColumn(column);
+		msaModel.setDescriptiveStat(descriptiveStat);
+		msaModel.setVarianceComponents(varianceComponents);
+		msaModel.setBoxplotRawData(boxplotRawData);
+		msaModel.setHistogramRawData(histogramRawData);
+		msaModel.setDiagnosticPlot(diagnosticPlot);
+		msaModel.setGenotypeFixed(genotypeFixed);
+		msaModel.setPerformPairwise(performPairwise);
+		msaModel.setPairwiseAlpha(pairwiseAlpha);
+		msaModel.setCompareControl(compareControl);
+		msaModel.setPerformAllPairwise(performAllPairwise);
+		msaModel.setGenotypeRandom(genotypeRandom);
+		msaModel.setAmmi(ammi);
+		msaModel.setGge(gge);
+		msaModel.setStabilityFinlay(stabilityFinlay); 
+		msaModel.setStabilityShukla(stabilityShukla);
+
+
+		//System.out.println(OUTPUTFOLDER_PATH);
+
+		doMultiEnvironmentAnalysis(msaModel);
+	}
+
 	public void  testSingleEnvironmentPRef(String outPutFolder, String dataInputFolder) {
 
 		SingleTrialParametersModel ssaModel = new SingleTrialParametersModel();
@@ -169,8 +241,8 @@ public class RServeManager {
 		boolean compareControl = false;
 		boolean performAllPairwise = false;
 		boolean genoPhenoCorrelation = false;
-		
-		
+
+
 		String[] respvars = {"Plotyield.Adj"}; 
 		String genotype = "ENTRY";
 		String row = "ROW";
@@ -215,7 +287,7 @@ public class RServeManager {
 		ssaModel.setGenotypeRandom(genotypeRandom);
 		ssaModel.setExcludeControls(excludeControls);
 		ssaModel.setGenoPhenoCorrelation(genoPhenoCorrelation);
-		
+
 		ssaModel.setSpatialStruc(spatialStruc);
 		ssaModel.setControlLevels(controlLevels);
 		ssaModel.setMoransTest(moransTest);
@@ -260,7 +332,7 @@ public class RServeManager {
 		boolean genoPhenoCorrelation = ssaModel.isGenoPhenoCorrelation();
 
 		System.out.println(ssaModel.toString());
-		
+
 
 		String respvarVector= inputTransform.createRVector(respvars);
 		//		String genotypeLevelsVector= inputTransform.createRVector(genotypeLevels);
@@ -1665,7 +1737,7 @@ public class RServeManager {
 		}
 	}
 
-	
+
 	public void doSingleEnvironmentAnalysisPRep(SingleTrialParametersModel ssaModel){
 		String resultFolderPath = ssaModel.getResultFolderName().replace(BSLASH, FSLASH);
 		String outFileName = ssaModel.getOutFileName().replace(BSLASH, FSLASH);
@@ -1689,169 +1761,169 @@ public class RServeManager {
 		boolean diagnosticPlot = ssaModel.isDiagnosticPlot();
 
 		try{
-		//Single-Site Analysis for p-rep design
-		String readData = "dataRead <- read.csv(\"" + dataFileName + "\", header = TRUE, na.strings = c(\"NA\",\".\", \"\", \" \"), blank.lines.skip=TRUE, sep = \",\")";
-		String sinkIn = "sink(\"" + resultFolderPath + "SEA_output.txt\")";
-		String usedData = "cat(\"\\nDATA FILE: " + dataFileName + "\\n\")";
-		String analysisDone = "cat(\"\\nSINGLE-ENVIRONMENT ANALYSIS\\n\")";
-		String usedDesign = "cat(\"\\nDESIGN: p-rep Design\\n\\n\")";
+			//Single-Site Analysis for p-rep design
+			String readData = "dataRead <- read.csv(\"" + dataFileName + "\", header = TRUE, na.strings = c(\"NA\",\".\", \"\", \" \"), blank.lines.skip=TRUE, sep = \",\")";
+			String sinkIn = "sink(\"" + resultFolderPath + "SEA_output.txt\")";
+			String usedData = "cat(\"\\nDATA FILE: " + dataFileName + "\\n\")";
+			String analysisDone = "cat(\"\\nSINGLE-ENVIRONMENT ANALYSIS\\n\")";
+			String usedDesign = "cat(\"\\nDESIGN: p-rep Design\\n\\n\")";
 
-		String command1 = "ssaTestPrep(data = dataRead, respvar = "+ inputTransform.createRVector(respvar) + ", geno = \""+ genotype + "\"";
-		command1 = command1 + ", row = \"" + row + "\", column = \"" + column + "\"";
-		if (environment != null) {
-			command1 = command1 + ", env = \"" + environment +"\"";
-		} else { 
-			command1 = command1 + ", env = " + String.valueOf(environment).toUpperCase();
-		}
-
-		String command2;
-		if (controlLevel != null) {
-			command2 = ", checkList = " + inputTransform.createRVector(controlLevel);	
-		} else { 
-			command2 = ", checkList = " + String.valueOf(controlLevel).toUpperCase();
-		}
-		command2 = command2 + ", moransTest = " + String.valueOf(moransTest).toUpperCase();
-		command2 = command2 + ", spatialStruc = "+ inputTransform.createRVector(spatialStruc);
-		command2 = command2 + ", descriptive = "+ String.valueOf(descriptiveStat).toUpperCase();
-		command2 = command2 + ", varCorr = "+ String.valueOf(varianceComponents).toUpperCase();
-		command2 = command2 + ", heatmap = "+ String.valueOf(heatmapResiduals).toUpperCase();
-		command2 = command2 + ", diagplot = "+ String.valueOf(diagnosticPlot).toUpperCase();
-		command2 = command2 + ", histogram = "+ String.valueOf(histogramRawData).toUpperCase();
-		command2 = command2 + ", boxplot = "+ String.valueOf(boxplotRawData).toUpperCase();
-		command2 = command2 + ", outputPath = \"" + resultFolderPath + "\")";
-
-		String funcSSAPRepFixed = "resultFixed <- try(" + command1 ;
-		if (genotypeFixed) {
-			funcSSAPRepFixed = funcSSAPRepFixed + ", is.random = FALSE";
-			funcSSAPRepFixed = funcSSAPRepFixed + command2 + ", silent = TRUE)";
-		}
-
-		String funcSSAPRepRandom = "resultRandom <- try(" + command1;
-		if (genotypeRandom) {
-			funcSSAPRepRandom = funcSSAPRepRandom + ", is.random = " + String.valueOf(genotypeRandom).toUpperCase();
-			funcSSAPRepRandom = funcSSAPRepRandom + ", excludeCheck = " + String.valueOf(excludeControls).toUpperCase();
-			funcSSAPRepRandom = funcSSAPRepRandom + command2 + ", silent = TRUE)";
-		} 
-
-		System.out.println(readData);
-		System.out.println(sinkIn);
-		System.out.println(usedData);
-		System.out.println(analysisDone);
-		System.out.println(usedDesign);
-
-		rConnection.eval(readData);
-		rConnection.eval(sinkIn);
-		rConnection.eval(usedData);
-		rConnection.eval(analysisDone);
-		rConnection.eval(usedDesign);
-
-		if (genotypeFixed) {
-			System.out.println(funcSSAPRepFixed);
-			rConnection.eval(funcSSAPRepFixed);
-
-			String runSuccessCommand = rConnection.eval("class(resultFixed)").asString();
-			if (runSuccessCommand.equals("try-error")) {
-				String errorMsg1 = "msg <- trimStrings(strsplit(resultFixed, \":\")[[1]])";
-				String errorMsg2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
-				String errorMsg3 = "msg <- gsub(\"\\\"\", \"\", msg)";
-				String errorMsg4 = "cat(\"Error in SSATestPrep:\\n\",msg, sep = \"\")";
-
-				System.out.println(errorMsg1);
-				System.out.println(errorMsg2);
-				System.out.println(errorMsg3);
-				System.out.println(errorMsg4);
-
-				rConnection.eval(errorMsg1);
-				rConnection.eval(errorMsg2);
-				rConnection.eval(errorMsg3);
-				rConnection.eval(errorMsg4);
-			} 
-			else{
-				String funcResidFixed = "residFixed <- ssaTestPrepResid(resultFixed)";
-				String funcResidFixedWrite = "if (nrow(residFixed) > 0) { \n";
-				funcResidFixedWrite = funcResidFixedWrite + "  write.csv(residFixed, file = \"" + resultFolderPath + "residuals_fixed.csv\", row.names = FALSE) \n";
-				funcResidFixedWrite = funcResidFixedWrite + "} \n";
-
-				String funcSummaryFixed = "summaryFixed <- ssaTestPrepSummary(resultFixed)";
-				String funcSummaryFixedWrite = "if (nrow(summaryFixed) > 0) { \n";
-				funcSummaryFixedWrite = funcSummaryFixedWrite + "  write.csv(summaryFixed, file = \"" + resultFolderPath + "summaryStats.csv\", row.names = FALSE) \n";
-				funcSummaryFixedWrite = funcSummaryFixedWrite + "} \n";
-
-				System.out.println(funcResidFixed);
-				rConnection.eval(funcResidFixed);
-
-				System.out.println(funcResidFixedWrite);
-				rConnection.eval(funcResidFixedWrite);
-
-				System.out.println(funcSummaryFixed);
-				rConnection.eval(funcSummaryFixed);
-
-				System.out.println(funcSummaryFixedWrite);
-				rConnection.eval(funcSummaryFixedWrite);
+			String command1 = "ssaTestPrep(data = dataRead, respvar = "+ inputTransform.createRVector(respvar) + ", geno = \""+ genotype + "\"";
+			command1 = command1 + ", row = \"" + row + "\", column = \"" + column + "\"";
+			if (environment != null) {
+				command1 = command1 + ", env = \"" + environment +"\"";
+			} else { 
+				command1 = command1 + ", env = " + String.valueOf(environment).toUpperCase();
 			}
-		}
 
-		if (genotypeRandom) {
-			System.out.println(funcSSAPRepRandom);
-			rConnection.eval(funcSSAPRepRandom);
-
-			String runSuccessCommand = rConnection.eval("class(resultFixed)").asString();
-			if (runSuccessCommand.equals("try-error")) {
-				String errorMsg1 = "msg <- trimStrings(strsplit(resultFixed, \":\")[[1]])";
-				String errorMsg2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
-				String errorMsg3 = "msg <- gsub(\"\\\"\", \"\", msg)";
-				String errorMsg4 = "cat(\"Error in SSATestPrep:\\n\",msg, sep = \"\")";
-
-				System.out.println(errorMsg1);
-				System.out.println(errorMsg2);
-				System.out.println(errorMsg3);
-				System.out.println(errorMsg4);
-
-				rConnection.eval(errorMsg1);
-				rConnection.eval(errorMsg2);
-				rConnection.eval(errorMsg3);
-				rConnection.eval(errorMsg4);
-			} 
-			else{
-				String funcResidRandom = "residRandom <- ssaTestPrepResid(resultRandom)";
-				String funcResidRandomWrite = "if (nrow(residRandom) > 0) { \n";
-				funcResidRandomWrite = funcResidRandomWrite + "  write.csv(residRandom, file = \"" + resultFolderPath + "residuals_random.csv\", row.names = FALSE) \n";
-				funcResidRandomWrite = funcResidRandomWrite + "} \n";
-
-				String funcSummaryRandom = "summaryRandom <- ssaTestPrepSummary(resultRandom)";
-				String funcSummaryRandomWrite = "if (nrow(summaryRandom) > 0) { \n";
-				funcSummaryRandomWrite = funcSummaryRandomWrite + "  write.csv(summaryRandom, file = \"" + resultFolderPath + "predictedMeans.csv\", row.names = FALSE) \n";
-				funcSummaryRandomWrite = funcSummaryRandomWrite + "} \n";
-
-				System.out.println(funcResidRandom);
-				rConnection.eval(funcResidRandom);
-
-				System.out.println(funcResidRandomWrite);
-				rConnection.eval(funcResidRandomWrite);
-
-				System.out.println(funcSummaryRandom);
-				rConnection.eval(funcSummaryRandom);
-
-				System.out.println(funcSummaryRandomWrite);
-				rConnection.eval(funcSummaryRandomWrite);
+			String command2;
+			if (controlLevel != null) {
+				command2 = ", checkList = " + inputTransform.createRVector(controlLevel);	
+			} else { 
+				command2 = ", checkList = " + String.valueOf(controlLevel).toUpperCase();
 			}
+			command2 = command2 + ", moransTest = " + String.valueOf(moransTest).toUpperCase();
+			command2 = command2 + ", spatialStruc = "+ inputTransform.createRVector(spatialStruc);
+			command2 = command2 + ", descriptive = "+ String.valueOf(descriptiveStat).toUpperCase();
+			command2 = command2 + ", varCorr = "+ String.valueOf(varianceComponents).toUpperCase();
+			command2 = command2 + ", heatmap = "+ String.valueOf(heatmapResiduals).toUpperCase();
+			command2 = command2 + ", diagplot = "+ String.valueOf(diagnosticPlot).toUpperCase();
+			command2 = command2 + ", histogram = "+ String.valueOf(histogramRawData).toUpperCase();
+			command2 = command2 + ", boxplot = "+ String.valueOf(boxplotRawData).toUpperCase();
+			command2 = command2 + ", outputPath = \"" + resultFolderPath + "\")";
+
+			String funcSSAPRepFixed = "resultFixed <- try(" + command1 ;
+			if (genotypeFixed) {
+				funcSSAPRepFixed = funcSSAPRepFixed + ", is.random = FALSE";
+				funcSSAPRepFixed = funcSSAPRepFixed + command2 + ", silent = TRUE)";
+			}
+
+			String funcSSAPRepRandom = "resultRandom <- try(" + command1;
+			if (genotypeRandom) {
+				funcSSAPRepRandom = funcSSAPRepRandom + ", is.random = " + String.valueOf(genotypeRandom).toUpperCase();
+				funcSSAPRepRandom = funcSSAPRepRandom + ", excludeCheck = " + String.valueOf(excludeControls).toUpperCase();
+				funcSSAPRepRandom = funcSSAPRepRandom + command2 + ", silent = TRUE)";
+			} 
+
+			System.out.println(readData);
+			System.out.println(sinkIn);
+			System.out.println(usedData);
+			System.out.println(analysisDone);
+			System.out.println(usedDesign);
+
+			rConnection.eval(readData);
+			rConnection.eval(sinkIn);
+			rConnection.eval(usedData);
+			rConnection.eval(analysisDone);
+			rConnection.eval(usedDesign);
+
+			if (genotypeFixed) {
+				System.out.println(funcSSAPRepFixed);
+				rConnection.eval(funcSSAPRepFixed);
+
+				String runSuccessCommand = rConnection.eval("class(resultFixed)").asString();
+				if (runSuccessCommand.equals("try-error")) {
+					String errorMsg1 = "msg <- trimStrings(strsplit(resultFixed, \":\")[[1]])";
+					String errorMsg2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+					String errorMsg3 = "msg <- gsub(\"\\\"\", \"\", msg)";
+					String errorMsg4 = "cat(\"Error in SSATestPrep:\\n\",msg, sep = \"\")";
+
+					System.out.println(errorMsg1);
+					System.out.println(errorMsg2);
+					System.out.println(errorMsg3);
+					System.out.println(errorMsg4);
+
+					rConnection.eval(errorMsg1);
+					rConnection.eval(errorMsg2);
+					rConnection.eval(errorMsg3);
+					rConnection.eval(errorMsg4);
+				} 
+				else{
+					String funcResidFixed = "residFixed <- ssaTestPrepResid(resultFixed)";
+					String funcResidFixedWrite = "if (nrow(residFixed) > 0) { \n";
+					funcResidFixedWrite = funcResidFixedWrite + "  write.csv(residFixed, file = \"" + resultFolderPath + "residuals_fixed.csv\", row.names = FALSE) \n";
+					funcResidFixedWrite = funcResidFixedWrite + "} \n";
+
+					String funcSummaryFixed = "summaryFixed <- ssaTestPrepSummary(resultFixed)";
+					String funcSummaryFixedWrite = "if (nrow(summaryFixed) > 0) { \n";
+					funcSummaryFixedWrite = funcSummaryFixedWrite + "  write.csv(summaryFixed, file = \"" + resultFolderPath + "summaryStats.csv\", row.names = FALSE) \n";
+					funcSummaryFixedWrite = funcSummaryFixedWrite + "} \n";
+
+					System.out.println(funcResidFixed);
+					rConnection.eval(funcResidFixed);
+
+					System.out.println(funcResidFixedWrite);
+					rConnection.eval(funcResidFixedWrite);
+
+					System.out.println(funcSummaryFixed);
+					rConnection.eval(funcSummaryFixed);
+
+					System.out.println(funcSummaryFixedWrite);
+					rConnection.eval(funcSummaryFixedWrite);
+				}
+			}
+
+			if (genotypeRandom) {
+				System.out.println(funcSSAPRepRandom);
+				rConnection.eval(funcSSAPRepRandom);
+
+				String runSuccessCommand = rConnection.eval("class(resultFixed)").asString();
+				if (runSuccessCommand.equals("try-error")) {
+					String errorMsg1 = "msg <- trimStrings(strsplit(resultFixed, \":\")[[1]])";
+					String errorMsg2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+					String errorMsg3 = "msg <- gsub(\"\\\"\", \"\", msg)";
+					String errorMsg4 = "cat(\"Error in SSATestPrep:\\n\",msg, sep = \"\")";
+
+					System.out.println(errorMsg1);
+					System.out.println(errorMsg2);
+					System.out.println(errorMsg3);
+					System.out.println(errorMsg4);
+
+					rConnection.eval(errorMsg1);
+					rConnection.eval(errorMsg2);
+					rConnection.eval(errorMsg3);
+					rConnection.eval(errorMsg4);
+				} 
+				else{
+					String funcResidRandom = "residRandom <- ssaTestPrepResid(resultRandom)";
+					String funcResidRandomWrite = "if (nrow(residRandom) > 0) { \n";
+					funcResidRandomWrite = funcResidRandomWrite + "  write.csv(residRandom, file = \"" + resultFolderPath + "residuals_random.csv\", row.names = FALSE) \n";
+					funcResidRandomWrite = funcResidRandomWrite + "} \n";
+
+					String funcSummaryRandom = "summaryRandom <- ssaTestPrepSummary(resultRandom)";
+					String funcSummaryRandomWrite = "if (nrow(summaryRandom) > 0) { \n";
+					funcSummaryRandomWrite = funcSummaryRandomWrite + "  write.csv(summaryRandom, file = \"" + resultFolderPath + "predictedMeans.csv\", row.names = FALSE) \n";
+					funcSummaryRandomWrite = funcSummaryRandomWrite + "} \n";
+
+					System.out.println(funcResidRandom);
+					rConnection.eval(funcResidRandom);
+
+					System.out.println(funcResidRandomWrite);
+					rConnection.eval(funcResidRandomWrite);
+
+					System.out.println(funcSummaryRandom);
+					rConnection.eval(funcSummaryRandom);
+
+					System.out.println(funcSummaryRandomWrite);
+					rConnection.eval(funcSummaryRandomWrite);
+				}
+			}
+
+			String sinkOut = "sink()";
+			System.out.println(sinkOut);
+			rConnection.eval(sinkOut);			
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			rConnection.close();
 		}
-
-		String sinkOut = "sink()";
-		System.out.println(sinkOut);
-		rConnection.eval(sinkOut);			
-
-
-	} catch (Exception e) {
-		e.printStackTrace();
-	} finally{
-		rConnection.close();
 	}
-}
-	
-	
-	
-	
+
+
+
+
 	public void test() {
 		// TODO Auto-generated method stub
 		try {
@@ -1866,6 +1938,1386 @@ public class RServeManager {
 			e.printStackTrace();
 		}
 	}
+
+
+	private String getDisplayName(String dataFileName) {
+		// TODO Auto-generated method stub
+		String[] newFile = dataFileName.split(FSLASH);
+		String displayName=newFile[newFile.length-2] + FSLASH + newFile[newFile.length-1];
+		System.out.println(displayName);
+		return displayName ;
+	}
+
+	public void doMultiEnvironmentAnalysis(MultiTrialParametersModel msa) {
+		// This function is for DMAS with contrast analysis, ammi ang gge analysis
+
+		System.out.println(msa.toString());
+		String dataFileName =msa.getDataFileName().replace(BSLASH, FSLASH);
+		String outFileName = msa.getOutFileName().replace(BSLASH, FSLASH);
+		String resultFolderPath = msa.getResultFolderPath().replace(BSLASH, FSLASH);
+		int designIndex = msa.getDesign();
+		String[] respvar = msa.getRespvars();
+		String environment = msa.getEnvironment();
+		String[] environmentLevels = msa.getEnvironmentLevels();
+		String genotype= msa.getGenotype();
+		String block = msa.getBlock();
+		String rep = msa.getRep();
+		String row = msa.getRow();
+		String column = msa.getColumn();
+		boolean descriptiveStat = msa.isDescriptiveStat();
+		boolean varianceComponents = msa.isVarianceComponents();
+		boolean boxplotRawData = msa.isBoxplotRawData();
+		boolean histogramRawData = msa.isHistogramRawData();
+		boolean diagnosticPlot = msa.isDiagnosticPlot();
+		boolean genotypeFixed = msa.isGenotypeFixed();
+		boolean performPairwise = msa.isPerformPairwise();
+		String pairwiseAlpha = msa.getPairwiseAlpha();
+		String[] genotypeLevels = msa.getGenotypeLevels();
+		String[] controlLevels = msa.getControlLevels();
+		boolean compareControl = msa.isCompareControl();
+		boolean performAllPairwise = msa.isPerformAllPairwise();
+		boolean genotypeRandom  = msa.isGenotypeRandom();
+		boolean stabilityFinlay = msa.isStabilityFinlay();
+		boolean stabilityShukla= msa.isStabilityShukla();
+		boolean specifiedContrastGeno = false;
+		String contrastGenoFilename = msa.getContrastGenoFilename();
+		boolean specifiedContrastEnv = msa.isSpecifiedContrastEnv();
+		String contrastEnvFilename = msa.getContrastEnvFilename();
+		boolean ammi = msa.isAmmi();
+		boolean gge = msa.isGge();
+
+		String respvarVector= inputTransform.createRVector(respvar);
+		String controlLevelsVector= inputTransform.createRVector(controlLevels);
+		boolean runningFixedSuccess =true;
+		boolean runningRandomSuccess =true;
+		boolean printAllOutputFixed = true;
+		boolean printAllOutputRandom = true;
+		try {
+			String designUsed = new String();
+			String design = new String();
+			switch (designIndex) {
+			case 0: {
+				designUsed = "Randomized Complete Block (RCB)"; 
+				design = "RCB"; 
+				break;
+			}
+			case 1: {
+				designUsed = "Augmented RCB"; 
+				design = "AugRCB";
+				break;
+			}
+			case 2: {
+				designUsed = "Augmented Latin Square"; 
+				design = "AugLS";
+				break;
+			}
+			case 3: {
+				designUsed = "Alpha-Lattice"; 
+				design = "Alpha";
+				break;
+			}
+			case 4: {
+				designUsed = "Row-Column"; 
+				design = "RowCol";
+				break;
+			}
+			case 5: {
+				designUsed = "Latinized Alpha-Lattice"; 
+				design = "LatinAlpha";
+				break;
+			}
+			case 6: {
+				designUsed = "Latinized Row-Column"; 
+				design = "LatinRowCol";
+				break;
+			}
+			default: {
+				designUsed = "Randomized Complete Block (RCB)"; 
+				design = "RCB";
+				break;
+			}
+			}
+
+			String readData = "dataMeaOneStage <- read.csv(\"" + dataFileName + "\", header = TRUE, na.strings = c(\"NA\",\".\",\" \",\"\"), blank.lines.skip=TRUE, sep = \",\")";
+			System.out.println(readData);
+			rConnection.eval(readData);
+			String runSuccessData = rConnection.eval("dataMeaOneStage").toString();
+
+			if (runSuccessData != null && runSuccessData.equals("notRun")) {	
+				System.out.println("error");
+				rConnection.eval("capture.output(cat(\"\n***Error reading data.***\n\"),file=\"" + outFileName + "\",append = FALSE)"); //append to output file?
+			}
+			else {
+				String setWd = "setwd(\"" + resultFolderPath + "\")";
+				System.out.println(setWd);
+				rConnection.eval(setWd);
+			}
+
+			String dataFileNameDisplay = getDisplayName(dataFileName);
+			String usedData = "capture.output(cat(\"\nDATA FILE: " + dataFileNameDisplay + "\n\",file=\"" + outFileName + "\"))";
+			String outFile = "capture.output(cat(\"\nMULTI-ENVIRONMENT ANALYSIS (ONE-STAGE)\n\"),file=\"" + outFileName + "\",append = TRUE)";
+			String usedDesign = "capture.output(cat(\"\nDESIGN: " + designUsed + "\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+			String sep = "capture.output(cat(\"------------------------------\n\"),file=\"" + outFileName + "\",append = TRUE)";
+			String sep2 = "capture.output(cat(\"==============================\n\"),file=\"" + outFileName + "\",append = TRUE)";
+			String outSpace = "capture.output(cat(\"\n\"),file=\"" + outFileName + "\",append = TRUE)";
+
+			rConnection.eval(usedData);
+			rConnection.eval(outFile);
+			rConnection.eval(usedDesign);
+
+
+			// OUTPUT
+			// Genotype Fixed
+			if (genotypeFixed) {
+				String funcMeaOneStageFixed = null;
+				String groupVars = null;
+				if (design == "RCB" || design == "AugRCB") {
+					funcMeaOneStageFixed = "meaOne1 <- try(GEOneStage.test(\"" + design + "\",dataMeaOneStage,"+ respvarVector + ",\"" + genotype + "\",\"" + block+ "\",column = NULL, rep = NULL,\"" + environment + "\", is.genoRandom = FALSE), silent=TRUE)";
+					groupVars = "c(\"" + environment + "\", \"" + genotype + "\", \"" + block + "\")";
+				} else if (design == "AugLS") {
+					funcMeaOneStageFixed = "meaOne1 <- try(GEOneStage.test(\"" + design + "\",dataMeaOneStage,"+ respvarVector + ",\"" + genotype + "\", row = \"" + row + "\", column = \"" + column + "\", rep = NULL,\"" + environment + "\", is.genoRandom = FALSE), silent=TRUE)";
+					groupVars = "c(\"" + environment + "\", \"" + genotype + "\", \"" + row + "\", \"" + column +"\")";
+				} else if (design == "Alpha" || design == "LatinAlpha") {
+					funcMeaOneStageFixed = "meaOne1 <- try(GEOneStage.test(\"" + design + "\",dataMeaOneStage,"+ respvarVector + ",\"" + genotype + "\",\"" + block+ "\",column = NULL,\"" + rep + "\",\"" + environment+ "\", is.genoRandom = FALSE), silent=TRUE)";
+					groupVars = "c(\"" + environment + "\", \"" + genotype + "\", \"" + block + "\", \"" + rep + "\")";
+				} else if (design == "RowCol" || design == "LatinRowCol") {
+					funcMeaOneStageFixed = "meaOne1 <- try(GEOneStage.test(\"" + design + "\",dataMeaOneStage,"+ respvarVector + ",\"" + genotype + "\",\"" + row + "\",\"" + column + "\",\"" + rep + "\",\""+ environment + "\", is.genoRandom = FALSE), silent=TRUE)";
+					groupVars = "c(\"" + environment + "\", \"" + genotype + "\", \"" + rep + "\", \"" + row + "\", \"" + column + "\")";
+				}	
+
+				String fixedHead = "capture.output(cat(\"GENOTYPE AS: Fixed\n\"),file=\""+ outFileName + "\",append = TRUE)";
+				rConnection.eval(funcMeaOneStageFixed);
+				rConnection.eval(sep2);
+				rConnection.eval(fixedHead);
+				rConnection.eval(sep2);
+				rConnection.eval(outSpace);
+
+				System.out.println(funcMeaOneStageFixed);
+				String runSuccess = rConnection.eval("class(meaOne1)").asString();
+				if (runSuccess != null && runSuccess.equals("try-error")) {	
+					System.out.println("GEOneStage.test: error");
+					String checkError = "msg <- trimStrings(strsplit(meaOne1, \":\")[[1]])";
+					String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+					String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+					String checkError4 = "capture.output(cat(\"*** \nERROR in GEOneStage.test function:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+					rConnection.eval(checkError);
+					rConnection.eval(checkError2);
+					rConnection.eval(checkError3);
+					rConnection.eval(checkError4);
+
+					runningFixedSuccess =false;
+
+				} else {
+
+					for (int k = 0; k < respvar.length; k++) {
+						printAllOutputFixed=true;
+						int i = k + 1; // 1-relative index;
+						String respVarHead = "capture.output(cat(\"RESPONSE VARIABLE: " + respvar[k] + "\n\"),file=\"" + outFileName + "\",append = TRUE)";
+						rConnection.eval(sep);
+						rConnection.eval(respVarHead);
+						rConnection.eval(sep);
+
+						//check if the data has too many missing observations
+						double responseRate = rConnection.eval("meaOne1$output[[" + i + "]]$responseRate").asDouble(); //error double part
+						if (responseRate < 0.80) {
+							String allNAWarning = rConnection.eval("meaOne1$output[[" + i + "]]$manyNAWarning").asString();
+							String printError1 = "capture.output(cat(\"***\\n\"), file=\"" + outFileName + "\",append = TRUE)";
+							String printError2 = "capture.output(cat(\"ERROR:\\n\"), file=\"" + outFileName + "\",append = TRUE)";
+							String printError3 = "capture.output(cat(\"" + allNAWarning + "\\n\"), file=\"" + outFileName + "\",append = TRUE)";
+
+							rConnection.eval(outSpace);
+							rConnection.eval(printError1);
+							rConnection.eval(printError2);
+							rConnection.eval(printError3);
+							rConnection.eval(printError1);
+							rConnection.eval(outSpace);
+							rConnection.eval(outSpace);
+							printAllOutputFixed=false;
+						}
+
+						if (printAllOutputFixed) {
+							// default output: Trial Summary
+							String funcTrialSum = "funcTrialSum <- try(class.information(" + groupVars + ",meaOne1$output[[" + i + "]]$data), silent=TRUE)";
+							String trialSumHead = "capture.output(cat(\"\nDATA SUMMARY:\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String trialObsRead = "capture.output(cat(\"Number of observations read: \", meaOne1$output[["	+ i	+ "]]$obsread[[1]],\"\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String trialObsUsed = "capture.output(cat(\"Number of observations used: \", meaOne1$output[["	+ i	+ "]]$obsused[[1]],\"\n\n\"),file=\""	+ outFileName + "\",append = TRUE)";
+							String trialSum = "capture.output(funcTrialSum,file=\"" + outFileName + "\",append = TRUE)";
+
+							rConnection.eval(funcTrialSum);
+
+							String runSuccessTS = rConnection.eval("class(funcTrialSum)").asString();
+							if (runSuccessTS != null && runSuccessTS.equals("try-error")) {	
+								System.out.println("class info: error");
+								String checkError = "msg <- trimStrings(strsplit(funcTrialSum, \":\")[[1]])";
+								String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+								String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+								String checkError4 = "capture.output(cat(\"*** \nERROR in class.information function:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+								rConnection.eval(checkError);
+								rConnection.eval(checkError2);
+								rConnection.eval(checkError3);
+								rConnection.eval(checkError4);
+							}
+
+							else {
+								rConnection.eval(trialSumHead);
+								rConnection.eval(trialObsRead);
+								rConnection.eval(trialObsUsed);
+								rConnection.eval(trialSum);
+								rConnection.eval(outSpace);
+							}
+
+							//optional output: descriptive statistics
+							String funcDesc = "outDesc <- try(DescriptiveStatistics(dataMeaOneStage, \"" + respvar[k] + "\", grp = NULL), silent=TRUE)";
+							rConnection.eval(funcDesc);
+
+							if (descriptiveStat) {
+								String outDescStat = "capture.output(cat(\"\nDESCRIPTIVE STATISTICS:\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+								String outDescStat2 = "capture.output(outDesc,file=\"" + outFileName + "\",append = TRUE)"; 
+
+								String runSuccessDescStat = rConnection.eval("class(outDesc)").asString();	
+								if (runSuccessDescStat != null && runSuccessDescStat.equals("try-error")) {	
+									System.out.println("desc stat: error");
+									String checkError = "msg <- trimStrings(strsplit(outDesc, \":\")[[1]])";
+									String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+									String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+									String checkError4 = "capture.output(cat(\"*** \nERROR in DescriptiveStatistics function:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+									rConnection.eval(checkError);
+									rConnection.eval(checkError2);
+									rConnection.eval(checkError3);
+									rConnection.eval(checkError4);
+								} 
+
+								else {
+									rConnection.eval(outDescStat);
+									rConnection.eval(outDescStat2);
+									rConnection.eval(outSpace);
+								}
+							}
+
+							//optional output: Variance Components
+							if (varianceComponents) {
+								String outVarComp = "capture.output(cat(\"\nVARIANCE COMPONENTS TABLE:\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+								String outVarComp2 = "capture.output(meaOne1$output[[" + i + "]]$varcomp.table,file=\"" + outFileName + "\",append = TRUE)";
+
+								rConnection.eval(outVarComp);
+								rConnection.eval(outVarComp2);
+								rConnection.eval(outSpace);
+							}
+
+							//default output: Test Genotypic Effect
+							//							String outAnovaTable1 = "capture.output(meaOne1$output[[" + i + "]]$testsig.Geno,file=\"" + outFileName + "\",append = TRUE)";
+							String outAnovaTable1 = "capture.output(cat(\"\nTESTING FOR THE SIGNIFICANCE OF GENOTYPIC EFFECT:\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outAnovaTable2 = "library(lmerTest)";
+							String outAnovaTable3 = "model1b <- lmer(formula(meaOne1$output[[" + i + "]]$formula1), data = meaOne1$output[[" + i + "]]$data, REML = T)";
+							String outAnovaTable4 = "a.table <- anova(model1b)";
+							String outAnovaTable5 = "pvalue <- formatC(as.numeric(format(a.table[1,6], scientific=FALSE)), format=\"f\")";
+							String outAnovaTable6 = "a.table<-cbind(round(a.table[,1:5], digits=4),pvalue)";
+							String outAnovaTable7 = "colnames(a.table)<-c(\"Df\", \"Sum Sq\", \"Mean Sq\", \"F value\", \"Denom\", \"Pr(>F)\")";
+							String outAnovaTable8 = "capture.output(cat(\"Analysis of Variance Table with Satterthwaite Denominator Df\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outAnovaTable9 = "capture.output(a.table,file=\"" + outFileName + "\",append = TRUE)";
+							String outAnovaTable10 = "detach(\"package:lmerTest\")";
+
+							//							rConnection.eval(outspace);
+							rConnection.eval(outAnovaTable1);
+							rConnection.eval(outAnovaTable2);
+							rConnection.eval(outAnovaTable3);
+							rConnection.eval(outAnovaTable4);
+							rConnection.eval(outAnovaTable5);
+							rConnection.eval(outAnovaTable6);
+							rConnection.eval(outAnovaTable7);
+							//							rConnection.eval(outSpace);
+							rConnection.eval(outAnovaTable8);
+							rConnection.eval(outAnovaTable9);
+							rConnection.eval(outSpace);
+							rConnection.eval(outAnovaTable10);
+
+							//default output: Test Environment Effect
+							String outTestEnv1 = "capture.output(cat(\"\nTESTING FOR THE SIGNIFICANCE OF ENVIRONMENT EFFECT USING -2 LOGLIKELIHOOD RATIO TEST:\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outTestEnv2 = "capture.output(cat(\"\nFormula for Model1: \", meaOne1$output[[" + i + "]]$formula1,\"\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outTestEnv3 = "capture.output(cat(\"Formula for Model2: \", meaOne1$output[[" + i + "]]$formula3,\"\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outTestEnv4 = "capture.output(meaOne1$output[[" + i + "]]$testsig.Env,file=\"" + outFileName + "\",append = TRUE)";
+							rConnection.eval(outTestEnv1);
+							rConnection.eval(outTestEnv2);
+							rConnection.eval(outTestEnv3);
+							rConnection.eval(outTestEnv4);
+							rConnection.eval(outSpace);
+
+							//default output: Test GXE Effect
+							String outTestGenoEnv1 = "capture.output(cat(\"\nTESTING FOR THE SIGNIFICANCE OF GENOTYPE X ENVIRONMENT EFFECT USING -2 LOGLIKELIHOOD RATIO TEST:\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outTestGenoEnv2 = "capture.output(cat(\"\nFormula for Model1: \", meaOne1$output[[" + i + "]]$formula1,\"\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outTestGenoEnv3 = "capture.output(cat(\"Formula for Model2: \", meaOne1$output[[" + i + "]]$formula4,\"\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outTestGenoEnv4 = "capture.output(meaOne1$output[[" + i + "]]$testsig.GenoEnv,file=\"" + outFileName + "\",append = TRUE)";
+							rConnection.eval(outTestGenoEnv1);
+							rConnection.eval(outTestGenoEnv2);
+							rConnection.eval(outTestGenoEnv3);
+							rConnection.eval(outTestGenoEnv4);
+							rConnection.eval(outSpace);
+
+							//default output: Genotype x Environment Means
+							String outGenoEnv = "capture.output(cat(\"\nGENOTYPE X ENVIRONMENT MEANS:\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outGenoEnv2 = "capture.output(meaOne1$output[[" + i + "]]$wide.GenoEnv,file=\"" + outFileName + "\",append = TRUE)";
+							rConnection.eval(outGenoEnv);
+							rConnection.eval(outGenoEnv2);
+							rConnection.eval(outSpace);
+
+							//default output: Genotype Means
+							String outDescStat = "capture.output(cat(\"\nGENOTYPE LSMEANS AND STANDARD ERRORS:\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outDescStat2 = "capture.output(meaOne1$output[[" + i + "]]$means.Geno,file=\"" + outFileName + "\",append = TRUE)";
+							rConnection.eval(outDescStat);
+							rConnection.eval(outDescStat2);
+							rConnection.eval(outSpace);
+
+							//default output: statistics on SED
+							String outSedStat1 = "capture.output(cat(\"\nSTANDARD ERROR OF THE DIFFERENCE (SED):\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outSedStat2 = "capture.output(meaOne1$output[[" + i + "]]$sedTable,file=\"" + outFileName + "\",append = TRUE)";
+							rConnection.eval(outSedStat1);
+							rConnection.eval(outSedStat2);
+							rConnection.eval(outSpace);
+
+							//optional output: PerformPairwise
+							if (performPairwise) {
+								double pairwiseSig = Double.valueOf(pairwiseAlpha);
+
+								//								rConnection.rniAssign("trmt.levels",	rConnection.rniPutStringArray(genotypeLevels),	0); // a string array from OptionsPage
+								if (compareControl) {
+									//									rConnection.rniAssign("controlLevels",rConnection.rniPutStringArray(controlLevels),0); // a string array from OptionsPage
+
+									String funcPwC = "pwControl <- try(ssa.pairwise(meaOne1$output[[" + i + "]]$model, type = \"Dunnett\", alpha = "	+ pairwiseSig + ", control.level = " + controlLevelsVector + "), silent=TRUE)";
+									String outCompareControl = "capture.output(cat(\"\nSIGNIFICANT PAIRWISE COMPARISONS (IF ANY): \nCompared with control(s)\n\n\"),file=\"" + outFileName	+ "\",append = TRUE)";
+									String outCompareControl2 = "capture.output(pwControl$result,file=\""	+ outFileName	+ "\",append = TRUE)";
+									System.out.println(funcPwC);
+									rConnection.eval(funcPwC);
+									rConnection.eval(outCompareControl);
+
+									String runSuccessPwC = rConnection.eval("class(pwControl)").asString();	
+									if (runSuccessPwC != null && runSuccessPwC.equals("try-error")) {	
+										System.out.println("compare with control: error");
+										String checkError = "msg <- trimStrings(strsplit(pwControl, \":\")[[1]])";
+										String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+										String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+										String checkError4 = "capture.output(cat(\"*** \nERROR in ssa.pairwise function:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+										rConnection.eval(checkError);
+										rConnection.eval(checkError2);
+										rConnection.eval(checkError3);
+										rConnection.eval(checkError4);
+										rConnection.eval(outSpace);
+										rConnection.eval(outSpace);
+									}
+									else {
+										rConnection.eval(outCompareControl2);
+
+										// display warning generated by checkTest in ssa.pairwise
+										String warningControlTest = rConnection.eval("pwControl$controlTestWarning").asString();
+
+										if (!warningControlTest.equals("NONE")) {
+											String warningCheckTest2 = "capture.output(cat(\"----- \nNOTE:\\n\"), file=\"" + outFileName + "\",append = TRUE)";
+											String warningCheckTest3 = "capture.output(cat(\"" + warningControlTest + "\\n\"), file=\"" + outFileName + "\",append = TRUE)";
+
+											rConnection.eval(warningCheckTest2);
+											rConnection.eval(warningCheckTest3);
+										}
+										rConnection.eval(outSpace);
+										rConnection.eval(outSpace);
+										System.out.println("pairwise control test:" + warningControlTest);
+
+									}
+								} else if (performAllPairwise) {
+									String outPerformAllPairwise = "capture.output(cat(\"\nSIGNIFICANT PAIRWISE COMPARISONS (IF ANY): \n\n\"),file=\""	+ outFileName	+ "\",append = TRUE)";
+									rConnection.eval(outPerformAllPairwise);
+									if (genotypeLevels.length > 0	& genotypeLevels.length < 16) {
+										String funcPwAll = "pwAll <- try(ssa.pairwise(meaOne1$output[[" + i + "]]$model, type = \"Tukey\", alpha = "+ pairwiseSig + ", control.level = NULL), silent=TRUE)";
+										String outPerformAllPairwise2n = "capture.output(pwAll$result,file=\"" + outFileName + "\",append = TRUE)";
+										rConnection.eval(funcPwAll);
+
+										String runSuccessPwAll = rConnection.eval("class(pwAll)").asString();
+										if (runSuccessPwAll != null && runSuccessPwAll.equals("try-error")) {	
+											System.out.println("all pairwise: error");
+											String checkError = "msg <- trimStrings(strsplit(pwAll, \":\")[[1]])";
+											String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+											String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+											String checkError4 = "capture.output(cat(\"*** \nERROR in ssa.pairwise function:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+											rConnection.eval(checkError);
+											rConnection.eval(checkError2);
+											rConnection.eval(checkError3);
+											rConnection.eval(checkError4);
+										}
+										else {
+											rConnection.eval(outPerformAllPairwise2n);
+											rConnection.eval(outSpace);
+											rConnection.eval(outSpace);
+										}	
+									} else {
+										String nLevelsLarge = "capture.output(cat(\"***\nExceeded maximum number of genotypes that can be compared. \n***\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+										rConnection.eval(nLevelsLarge);
+									}
+								}
+							}
+
+							// contrast analysis
+
+							if (specifiedContrastGeno) {
+								double pairwiseSig = Double.valueOf(pairwiseAlpha);
+								String readContrastData = "contrastGenoData <- read.csv(\"" + contrastGenoFilename + "\", header = TRUE, na.strings = c(\"NA\",\".\",\" \",\"\"), blank.lines.skip=TRUE, sep = \",\")";
+								System.out.println(readContrastData);
+								rConnection.eval(readContrastData);
+								String runSuccessContrastData = rConnection.eval("contrastGenoData").asString();
+
+								if (runSuccessContrastData != null && runSuccessContrastData.equals("notRun")) {	
+									System.out.println("error");
+									rConnection.eval("capture.output(cat(\"\n***Error reading contrast data.***\n\"),file=\"" + outFileName + "\",append = FALSE)"); 
+								} else {
+									String userContrast = "userContrast <- try(contrastAnalysis(model = meaOne1$output[["+ i +"]]$model, contrastOpt = \"user\", contrast = contrastGenoData, alpha = "+ pairwiseSig +"), silent = TRUE)";
+									System.out.println(userContrast);
+									rConnection.eval(userContrast);
+
+									String runSuccessUserCtrl = rConnection.eval("class(userContrast)").asString();
+									if (runSuccessUserCtrl != null && runSuccessUserCtrl.equals("try-error")) {
+										System.out.println("compare with control: error");
+										String checkUError = "msg <- trimStrings(strsplit(userContrast, \":\")[[1]])";
+										String checkUError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+										String checkUError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+										String checkUError4 = "capture.output(cat(\"*** \nERROR in contrastAnalysis function:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+										rConnection.eval(checkUError);
+										rConnection.eval(checkUError2);
+										rConnection.eval(checkUError3);
+										rConnection.eval(checkUError4);
+
+									} else {
+										String outCompareControl = "if (nrow(userContrast) != 0) {\n";
+										outCompareControl = outCompareControl + "     capture.output(cat(\"\nSIGNIFICANT LINEAR CONTRAST FOR GENOTYPIC EFFECT AT ALPHA = "+ pairwiseSig+":\n\n\"),file=\"" + outFileName	+ "\",append = TRUE)\n";
+										outCompareControl = outCompareControl + "     capture.output(userContrast,file=\"" + outFileName	+ "\",append = TRUE)\n";
+										outCompareControl = outCompareControl + "     capture.output(cat(\"\n\n\"),file=\"" + outFileName	+ "\",append = TRUE)\n";
+										outCompareControl = outCompareControl + "} else {";
+										outCompareControl = outCompareControl + "     capture.output(cat(\"\n NO SIGNIFICANT LINEAR CONTRAST FOR GENOTYPIC EFFECT AT ALPHA = "+ pairwiseSig+":\n\n\"),file=\"" + outFileName	+ "\",append = TRUE)\n";
+										outCompareControl = outCompareControl + "     capture.output(cat(\"\n\n\"),file=\"" + outFileName	+ "\",append = TRUE)\n";
+										outCompareControl = outCompareControl + "}";
+										//										System.out.println(outCompareControl);
+										rConnection.eval(outCompareControl);	
+									}
+								} // end stmt if-else (runSuccessContrastData != null && runSuccessContrastData.equals("notRun")) 
+
+							} // end stmt if (specifiedContrastGeno)
+
+
+							// the following command cannot be performed since Env is classified as random factor
+							//							if (specifiedContrastEnv) {
+							//								double pairwiseSig = Double.valueOf(pairwiseAlpha);
+							//								String readContrastData = "contrastEnvData <- read.csv(\"" + contrastEnvFilename + "\", header = TRUE, na.strings = c(\"NA\",\".\",\" \",\"\"), blank.lines.skip=TRUE, sep = \",\")";
+							//								System.out.println(readContrastData);
+							//								rConnection.eval(readContrastData);
+							//								String runSuccessContrastData = rConnection.eval("contrastEnvData").toString();
+							//								
+							//								if (runSuccessContrastData != null && runSuccessContrastData.equals("notRun")) {	
+							//									System.out.println("error");
+							//									rConnection.eval("capture.output(cat(\"\n***Error reading contrast data.***\n\"),file=\"" + outFileName + "\",append = FALSE)"); 
+							//								} else {
+							//									String userContrast = "userContrast <- try(contrastAnalysis(model = meaOne1$output[["+ i +"]]$model, contrastOpt = \"user\", contrast = contrastEnvData, alpha = "+ pairwiseSig +"), silent = TRUE)";
+							//									System.out.println(userContrast);
+							//									rConnection.eval(userContrast);
+							//									
+							//									String runSuccessUserCtrl = rConnection.eval("class(userContrast)").toString();
+							//									if (runSuccessUserCtrl != null && runSuccessUserCtrl.equals("try-error")) {
+							//										System.out.println("compare with control: error");
+							//										String checkUError = "msg <- trimStrings(strsplit(userContrast, \":\")[[1]])";
+							//										String checkUError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+							//										String checkUError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+							//										String checkUError4 = "capture.output(cat(\"*** \nERROR in contrastAnalysis function:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+							//										rConnection.eval(checkUError);
+							//										rConnection.eval(checkUError2);
+							//										rConnection.eval(checkUError3);
+							//										rConnection.eval(checkUError4);
+							//										
+							//									} else {
+							//										String outCompareControl = "if (nrow(userContrast) != 0) {\n";
+							//										outCompareControl = outCompareControl + "     capture.output(cat(\"\nSIGNIFICANT LINEAR CONTRAST FOR ENVIRONMENT EFFECT AT ALPHA = "+ pairwiseSig+":\n\n\"),file=\"" + outFileName	+ "\",append = TRUE)\n";
+							//										outCompareControl = outCompareControl + "     capture.output(userContrast,file=\"" + outFileName	+ "\",append = TRUE)\n";
+							//										outCompareControl = outCompareControl + "     capture.output(cat(\"\n\n\"),file=\"" + outFileName	+ "\",append = TRUE)\n";
+							//										outCompareControl = outCompareControl + "} else {";
+							//										outCompareControl = outCompareControl + "     capture.output(cat(\"\n NO SIGNIFICANT LINEAR CONTRAST FOR ENVIRONMENT EFFECT AT ALPHA = "+ pairwiseSig+":\n\n\"),file=\"" + outFileName	+ "\",append = TRUE)\n";
+							//										outCompareControl = outCompareControl + "     capture.output(cat(\"\n\n\"),file=\"" + outFileName	+ "\",append = TRUE)\n";
+							//										outCompareControl = outCompareControl + "}";
+							//										System.out.println(outCompareControl);
+							//										rConnection.eval(outCompareControl);	
+							//									}	
+							//									
+							//								} // end stmt if-else (runSuccessContrastData != null && runSuccessContrastData.equals("notRun")) 
+							//								
+							//							} // end stmt if (specifiedContrastEnv)
+
+							String genoEnvMeans = "genoEnvMeans <- meaOne1$output[[" + i + "]]$means.GenoEnvCode";
+							rConnection.eval(genoEnvMeans);
+							System.out.println(genoEnvMeans);
+
+							// stability analysis start at next line							
+							String ybarName = respvar[k] + "_means";
+
+							//optional output if selected and if the number of environment levels is at least 5: Stability Analysis using Regression
+							if (stabilityFinlay) {
+								if (environmentLevels.length > 4) {
+									String funcStability1 = "funcStability1 <- try(stability.analysis(genoEnvMeans, \"" + ybarName + "\", \"" + genotype + "\", \"" + environment + "\", method = \"regression\"), silent=TRUE)";
+									String outTestStability1 = "capture.output(cat(\"\nSTABILITY ANALYSIS USING FINLAY-WILKINSON MODEL:\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+									String outTestStability1b = "capture.output(funcStability1[[1]][[1]]$stability,file=\"" + outFileName + "\",append = TRUE)";
+
+									rConnection.eval(funcStability1);
+									rConnection.eval(outTestStability1);
+									System.out.println(funcStability1);
+
+									String runSuccessStab = rConnection.eval("class(funcStability1)").asString();
+									if (runSuccessStab != null && runSuccessStab.equals("try-error")) {	
+										System.out.println("stability reg: error");
+										String checkError = "msg <- trimStrings(strsplit(funcStability1, \":\")[[1]])";
+										String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+										String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+										String checkError4 = "capture.output(cat(\"*** \nERROR in stability.analysis function:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+										rConnection.eval(checkError);
+										rConnection.eval(checkError2);
+										rConnection.eval(checkError3);
+										rConnection.eval(checkError4);
+									}
+									else {
+										rConnection.eval(outTestStability1b);
+										rConnection.eval(outSpace);
+									}
+								} else {
+									String outRemark = "capture.output(cat(\"\nSTABILITY ANALYSIS USING FINLAY-WILKINSON MODEL:\n\"),file=\"" + outFileName + "\",append = TRUE)";
+									String outRemark2 = "capture.output(cat(\"***This is not done. The environment factor should have at least five levels.***\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+
+									rConnection.eval(outRemark);
+									rConnection.eval(outRemark2);
+								}
+							}
+
+							//optional output if selected and if the number of environment levels is at least 5: Stability Analysis using Shukla
+							if (stabilityShukla) {
+								if (environmentLevels.length > 4) {
+									String funcStability2 = "funcStability2 <- try(stability.analysis(genoEnvMeans, \"" + ybarName + "\", \"" + genotype + "\", \"" + environment + "\", method = \"shukla\"), silent=TRUE)";
+									String outTestStability2 = "capture.output(cat(\"\nSTABILITY ANALYSIS USING SHUKLA'S MODEL:\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+									String outTestStability2b = "capture.output(funcStability2[[1]][[1]]$stability,file=\"" + outFileName + "\",append = TRUE)";
+
+									System.out.println(funcStability2);
+									rConnection.eval(funcStability2);
+									rConnection.eval(outTestStability2);
+
+									String runSuccessStab = rConnection.eval("class(funcStability2)").asString();
+									if (runSuccessStab != null && runSuccessStab.equals("try-error")) {	
+										System.out.println("stability shukla: error");
+										String checkError = "msg <- trimStrings(strsplit(funcStability2, \":\")[[1]])";
+										String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+										String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+										String checkError4 = "capture.output(cat(\"*** \nERROR in stability.analysis function:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+										rConnection.eval(checkError);
+										rConnection.eval(checkError2);
+										rConnection.eval(checkError3);
+										rConnection.eval(checkError4);
+									}
+									else {
+										rConnection.eval(outTestStability2b);
+										rConnection.eval(outSpace);
+									}
+								} else {
+									String outRemark = "capture.output(cat(\"\nSTABILITY ANALYSIS USING SHUKLA'S MODEL:\n\"),file=\"" + outFileName + "\",append = TRUE)";
+									String outRemark2 = "capture.output(cat(\"***This is not done. The environment factor should have at least five levels.***\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+
+									rConnection.eval(outRemark);
+									rConnection.eval(outRemark2);
+								}
+							}
+							// end stability												
+							//optional output if selected and if the number of environment levels is at least 3: AMMI analysis
+							if (ammi) {
+								if (environmentLevels.length > 2) {
+									//String ammiOut = "ammiOut <- try(ammi.analysis(genoEnvMeans[,match(\""+ environment +"\", names(genoEnvMeans))], genoEnvMeans[,match(\"" + genotype + "\", names(genoEnvMeans))], meaOne1$output[[" + i + "]]$harmonicMean, genoEnvMeans[,match(\"" + ybarName + "\", names(genoEnvMeans))], meaOne1$output[[" + i + "]]$MSE, number = FALSE, graph = \"biplot\", yVar = \"" + ybarName +"\"), silent=TRUE)";
+									//String ammiOut = "ammiOut <- try(ammi.analysis(genoEnvMeans[,match(\"CodedEnv\", names(genoEnvMeans))], genoEnvMeans[,match(\"CodedGeno\", names(genoEnvMeans))], meaOne1$output[[" + i + "]]$harmonicMean, genoEnvMeans[,match(\"" + ybarName + "\", names(genoEnvMeans))], meaOne1$output[[" + i + "]]$MSE, number = FALSE, graph = \"biplot\", yVar = \"" + ybarName +"\"), silent=TRUE)";
+									// next line was revised for R Version 3.0.2
+									String setWd="setwd(\"" + resultFolderPath + "\")";
+									String ammiOut = "ammiOut <- try(ammi.analysis(ENV = genoEnvMeans[,match(\"CodedEnv\", names(genoEnvMeans))], GEN = genoEnvMeans[,match(\"CodedGeno\", names(genoEnvMeans))], meaOne1$output[[" + i + "]]$harmonicMean, genoEnvMeans[,match(\"" + ybarName + "\", names(genoEnvMeans))], meaOne1$output[[" + i + "]]$MSE, number = FALSE, biplotPC12 = TRUE, biplotPC13 = TRUE, biplotPC23 = TRUE, ammi1 = TRUE, adaptMap = TRUE, yVar = \"" + ybarName +"\"), silent=TRUE)";
+									String outAmmi1 = "capture.output(cat(\"\nAMMI ANALYSIS:\n\"),file=\"" + outFileName + "\",append = TRUE)";
+									String outAmmi2 = "capture.output(cat(\"Percentage of Total Variation Accounted for by the Principal Components: \n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+									rConnection.eval(setWd);
+									rConnection.eval(ammiOut);
+									rConnection.eval(outAmmi1);
+									System.out.println(setWd);
+									System.out.println(ammiOut);
+
+									String runSuccessAmmi = rConnection.eval("class(ammiOut)").asString();
+									if (runSuccessAmmi != null && runSuccessAmmi.equals("try-error")) {	
+										System.out.println("ammi: error");
+										String checkError = "msg <- trimStrings(strsplit(ammiOut, \":\")[[1]])";
+										String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+										String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+										String checkError4 = "capture.output(cat(\"*** \nERROR in ammi.analysis function:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+										rConnection.eval(checkError);
+										rConnection.eval(checkError2);
+										rConnection.eval(checkError3);
+										rConnection.eval(checkError4);
+									} else {
+
+										String outAmmi3 = "capture.output(ammiOut$analysis,file=\"" + outFileName + "\",append = TRUE)";
+										rConnection.eval(outAmmi2);
+										rConnection.eval(outAmmi3);
+										rConnection.eval(outSpace);
+									}
+								} else {
+									String outRemark = "capture.output(cat(\"\nAMMI ANALYSIS:\n\"),file=\"" + outFileName + "\",append = TRUE)";
+									String outRemark2 = "capture.output(cat(\"***This is not done. The environment factor should have at least three levels.***\n\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+
+									rConnection.eval(outRemark);
+									rConnection.eval(outRemark2);
+								}
+							}
+
+							//optional output if selected and if the number of environment levels is at least 3: GGE analysis
+							if (gge) {
+								if (environmentLevels.length > 2) {
+									//f=0.5
+									//String ggeOut = "ggeOut <- try(gge.analysis(genoEnvMeans[,match(\"CodedEnv\", names(genoEnvMeans))], genoEnvMeans[,match(\"CodedGeno\", names(genoEnvMeans))], meaOne1$output[[" + i + "]]$harmonicMean, genoEnvMeans[,match(\"" + ybarName + "\", names(genoEnvMeans))], meaOne1$output[[" + i + "]]$MSE, number = FALSE, graph = \"biplot\", yVar = \"" + ybarName +"\", f=0.5), silent=TRUE)"; 
+									// the next line for R version 3.0.2
+									String setWd="setwd(\"" + resultFolderPath + "\")";
+									String ggeOut = "ggeOut <- try(gge.analysis(genoEnvMeans[,match(\"CodedEnv\", names(genoEnvMeans))], genoEnvMeans[,match(\"CodedGeno\", names(genoEnvMeans))], meaOne1$output[[" + i + "]]$harmonicMean, genoEnvMeans[,match(\"" + ybarName + "\", names(genoEnvMeans))], meaOne1$output[[" + i + "]]$MSE, number = FALSE, yVar = \"" + ybarName +"\", f=0.5, graphSym = TRUE, graphEnv = TRUE, graphGeno = TRUE), silent=TRUE)"; 
+									String outAmmi1 = "capture.output(cat(\"\nGGE ANALYSIS:\n\"),file=\"" + outFileName + "\",append = TRUE)";
+									String outAmmi2 = "capture.output(cat(\"Percentage of Total Variation Accounted for by the Principal Components: \n\n\"),file=\"" + outFileName + "\",append = TRUE)";;
+									rConnection.eval(setWd);
+									rConnection.eval(ggeOut);
+									rConnection.eval(outAmmi1);
+									System.out.println(setWd);
+									System.out.println(ggeOut);
+
+									String runSuccessAmmi = rConnection.eval("class(ggeOut)").asString();
+									if (runSuccessAmmi != null && runSuccessAmmi.equals("try-error")) {	
+										System.out.println("gge1: error");
+										String checkError = "msg <- trimStrings(strsplit(ggeOut, \":\")[[1]])";
+										String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+										String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+										String checkError4 = "capture.output(cat(\"*** \nERROR in gge.analysis function (f=0.5):\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+										rConnection.eval(checkError);
+										rConnection.eval(checkError2);
+										rConnection.eval(checkError3);
+										rConnection.eval(checkError4);
+									} else {
+
+										String outAmmi3 = "capture.output(ggeOut$analysis,file=\"" + outFileName + "\",append = TRUE)";
+										rConnection.eval(outAmmi2);
+										rConnection.eval(outAmmi3);
+										rConnection.eval(outSpace);
+									}
+
+									//f=0
+									//									String ggeOut2 = "ggeOut2 <- try(gge.analysis(genoEnvMeans[,match(\"CodedEnv\", names(genoEnvMeans))], genoEnvMeans[,match(\"CodedGeno\", names(genoEnvMeans))], meaOne1$output[[" + i + "]]$harmonicMean, genoEnvMeans[,match(\"" + ybarName + "\", names(genoEnvMeans))], meaOne1$output[[" + i + "]]$MSE, number = FALSE, graph = \"biplot\", yVar = \"" + ybarName +"\", f=0), silent=TRUE)"; 
+									//									rConnection.eval(ggeOut2);
+									//									System.out.println(ggeOut2);
+									//									
+									//									String runSuccessAmmi2 = rConnection.eval("class(ggeOut2)").toString();
+									//									if (runSuccessAmmi2 != null && runSuccessAmmi2.equals("try-error")) {	
+									//										System.out.println("gge2: error");
+									//										String checkError = "msg <- trimStrings(strsplit(ggeOut2, \":\")[[1]])";
+									//										String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+									//										String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+									//										String checkError4 = "capture.output(cat(\"*** \nERROR in gge.analysis function (f=0):\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+									//										rConnection.eval(checkError);
+									//										rConnection.eval(checkError2);
+									//										rConnection.eval(checkError3);
+									//										rConnection.eval(checkError4);
+									//									} 
+
+									//f=1
+									//									String ggeOut3 = "ggeOut3 <- try(gge.analysis(genoEnvMeans[,match(\"CodedEnv\", names(genoEnvMeans))], genoEnvMeans[,match(\"CodedGeno\", names(genoEnvMeans))], meaOne1$output[[" + i + "]]$harmonicMean, genoEnvMeans[,match(\"" + ybarName + "\", names(genoEnvMeans))], meaOne1$output[[" + i + "]]$MSE, number = FALSE, graph = \"biplot\", yVar = \"" + ybarName +"\", f=1), silent=TRUE)"; 
+									//									rConnection.eval(ggeOut3);
+									//									System.out.println(ggeOut3);
+									//									
+									//									String runSuccessAmmi3 = rConnection.eval("class(ggeOut3)").toString();
+									//									if (runSuccessAmmi3 != null && runSuccessAmmi3.equals("try-error")) {	
+									//										System.out.println("gge2: error");
+									//										String checkError = "msg <- trimStrings(strsplit(ggeOut2, \":\")[[1]])";
+									//										String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+									//										String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+									//										String checkError4 = "capture.output(cat(\"*** \nERROR in gge.analysis function (f=1):\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+									//										rConnection.eval(checkError);
+									//										rConnection.eval(checkError2);
+									//										rConnection.eval(checkError3);
+									//										rConnection.eval(checkError4);
+									//									}
+								} else {
+									String outRemark = "capture.output(cat(\"\nGGE ANALYSIS:\n\"),file=\"" + outFileName + "\",append = TRUE)";
+									String outRemark2 = "capture.output(cat(\"***This is not done. The environment factor should have at least three levels.***\n\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+
+									rConnection.eval(outRemark);
+									rConnection.eval(outRemark2);
+								}
+							}
+
+
+							//							//if levels of Geno and Env are recoded, display new code for genotype and environment levels
+							//							String recodedLevels = rConnection.eval("meaOne1$output[[" + i + "]]$recodedLevels").asBool().toString();
+							//							
+							//							System.out.println("recodedLevels: " + recodedLevels);
+							//							
+							//							if (recodedLevels.equals("TRUE")) {
+							//								String outLegends = "capture.output(cat(\"\nCODES USED IN GRAPHS:\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							//								String outLegends2 = "capture.output(meaOne1$output[[" + i + "]]$newCodingGeno,file=\"" + outFileName + "\",append = TRUE)";
+							//								String outLegends3 = "capture.output(meaOne1$output[[" + i + "]]$newCodingEnv,file=\"" + outFileName + "\",append = TRUE)";
+							//								rConnection.eval(outLegends);
+							//								rConnection.eval(outLegends2);
+							//								rConnection.eval(outSpace);
+							//								rConnection.eval(outLegends3);
+							//								rConnection.eval(outSpace);
+							//								rConnection.eval(outSpace);
+							//							} else {
+							//								rConnection.eval(outSpace);
+							//							}
+							//							
+							//							//create response plots
+							//							String responsePlot1 = "dataCoded <- meaOne1$output[[" + i + "]]$data";
+							//							String responsePlot2 = "nlevelsEnv <- meaOne1$output[[" + i + "]]$nlevelsEnv";
+							//							String responsePlot3 = "nlevelsGeno <- meaOne1$output[[" + i + "]]$nlevelsGeno";
+							//							String responsePlot4 = "resPlot1 <- try(GraphLine(data=dataCoded, outputPath=\"" + resultFolderPath + "\", yVars =c(\"" + respvar[k] + "\"), xVar =c(\"CodedGeno\"), lineVars =c(\"CodedEnv\"), mTitle =\"Response Plot of " + respvar[k] + "\", yAxisLab =c(\"" + respvar[k] + "\"), xAxisLab =\"" + genotype + "\", yMinValue = c(NA), yMaxValue = c(NA), axisLabelStyle = 2, byVar = NULL, plotCol = c(1:nlevelsEnv), showLineLabels =TRUE, showLeg = FALSE, boxed = TRUE, linePtTypes=rep(\"b\", nlevelsEnv), lineTypes=rep(1, nlevelsEnv), lineWidths=rep(1, nlevelsEnv), pointChars=rep(\" \", nlevelsEnv), pointCharSizes=rep(1, nlevelsEnv), multGraphs =FALSE), silent = TRUE)";
+							//							String responsePlot5 = "resPlot2 <- try(GraphLine(data=dataCoded, outputPath=\"" + resultFolderPath + "\", yVars =c(\"" + respvar[k] + "\"), xVar =c(\"CodedEnv\"), lineVars =c(\"CodedGeno\"), mTitle =\"Response Plot of " + respvar[k] + "\", yAxisLab =c(\"" + respvar[k] + "\"), xAxisLab =\"" + environment + "\", yMinValue = c(NA), yMaxValue = c(NA), axisLabelStyle = 2, byVar = NULL, plotCol = c(1:nlevelsGeno), showLineLabels =TRUE, showLeg = FALSE, boxed = TRUE, linePtTypes=rep(\"b\", nlevelsGeno), lineTypes=rep(1, nlevelsGeno), lineWidths=rep(1, nlevelsGeno), pointChars=rep(\" \", nlevelsGeno), pointCharSizes=rep(1, nlevelsGeno), multGraphs =FALSE), silent = TRUE)";
+							//							
+							//							System.out.println(responsePlot1);
+							//							System.out.println(responsePlot2);
+							//							System.out.println(responsePlot3);
+							//							System.out.println(responsePlot4);
+							//							System.out.println(responsePlot5);
+							//							
+							//							rConnection.eval(responsePlot1);
+							//							rConnection.eval(responsePlot2);
+							//							rConnection.eval(responsePlot3);
+							//							rConnection.eval(responsePlot4);
+							//							rConnection.eval(responsePlot5);
+							//							
+							//							String runSuccessPlot1 = rConnection.eval("class(resPlot1)").toString();
+							//							if (runSuccessPlot1 != null && runSuccessPlot1.equals("try-error")) {	
+							//								System.out.println("response plot geno: error");
+							//								String checkError = "msg <- trimStrings(strsplit(resPlot1, \":\")[[1]])";
+							//								String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+							//								String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+							//								String checkError4 = "capture.output(cat(\"*** \nERROR in GraphLine function (geno):\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+							//								rConnection.eval(checkError);
+							//								rConnection.eval(checkError2);
+							//								rConnection.eval(checkError3);
+							//								rConnection.eval(checkError4);
+							//							}
+							//							
+							//							String runSuccessPlot2 = rConnection.eval("class(resPlot2)").toString();
+							//							if (runSuccessPlot2 != null && runSuccessPlot2.equals("try-error")) {	
+							//								System.out.println("response plot env: error");
+							//								String checkError = "msg <- trimStrings(strsplit(resPlot2, \":\")[[1]])";
+							//								String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+							//								String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+							//								String checkError4 = "capture.output(cat(\"*** \nERROR in GraphLine function (env):\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+							//								rConnection.eval(checkError);
+							//								rConnection.eval(checkError2);
+							//								rConnection.eval(checkError3);
+							//								rConnection.eval(checkError4);
+							//							}
+							// end							
+							rConnection.eval(outSpace);	
+						}
+					} //end of for loop respvars
+
+					//default output: save Genotype x Environment Means to a csv file
+					String checkGenoEnvMean = rConnection.eval("meaOne1$meansGenoEnvWarning").asString();
+					System.out.println("checkGenoEnvMean: " + checkGenoEnvMean);
+
+					if (checkGenoEnvMean.equals("empty")) {
+						System.out.println("Saving geno x env means not done.");
+					} else {
+						String funcSaveGEMeansCsv = "saveGEMeans <- try(write.table(meaOne1$means.GenoEnv.all,file =\"" + resultFolderPath + "GenoEnvMeans_fixed.csv\",sep=\",\",row.names=FALSE), silent=TRUE)";
+						System.out.println(funcSaveGEMeansCsv);
+						rConnection.eval(funcSaveGEMeansCsv);
+
+						String runSuccessSaveGEMeans = rConnection.eval("class(saveGEMeans)").asString();
+						if (runSuccessSaveGEMeans != null && runSuccessSaveGEMeans.equals("try-error")) {	
+							System.out.println("save GxE means: error");
+							String checkError = "msg <- trimStrings(strsplit(saveGEMeans, \":\")[[1]])";
+							String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+							String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+							String checkError4 = "capture.output(cat(\"*** \nERROR in saving genotype x environment means to a file:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+							rConnection.eval(checkError);
+							rConnection.eval(checkError2);
+							rConnection.eval(checkError3);
+							rConnection.eval(checkError4);
+						}
+
+					}
+
+					//default output: save Genotype Means to a csv file
+					String checkGenoMean = rConnection.eval("meaOne1$meansGenoWarning").asString();
+					System.out.println("checkGenoMean: " + checkGenoMean);
+
+					if (checkGenoMean.equals("empty")) {
+						System.out.println("Saving geno means not done.");
+					} else {
+						String funcSaveGMeansCsv = "saveGMeans <- try(write.table(meaOne1$means.Geno.all,file =\"" + resultFolderPath + "GenoMeans_fixed.csv\",sep=\",\",row.names=FALSE), silent=TRUE)";
+						System.out.println(funcSaveGMeansCsv);
+						rConnection.eval(funcSaveGMeansCsv);
+
+						String runSuccessSaveGMeans = rConnection.eval("class(saveGMeans)").asString();
+						if (runSuccessSaveGMeans != null && runSuccessSaveGMeans.equals("try-error")) {	
+							System.out.println("save G means: error");
+							String checkError = "msg <- trimStrings(strsplit(saveGMeans, \":\")[[1]])";
+							String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+							String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+							String checkError4 = "capture.output(cat(\"*** \nERROR in saving genotype means to a file:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+							rConnection.eval(checkError);
+							rConnection.eval(checkError2);
+							rConnection.eval(checkError3);
+							rConnection.eval(checkError4);
+						}
+					}
+
+					//optional output: diagnostic plots for genotype fixed
+					if (diagnosticPlot) {
+						String diagPlotsMea1SFunc = "diagPlotsMea1S <- try(graph.mea1s.diagplots(dataMeaOneStage, " + respvarVector + ", is.random = FALSE, meaOne1), silent=TRUE)";
+						System.out.println(diagPlotsMea1SFunc);
+						rConnection.eval(diagPlotsMea1SFunc);
+
+						String runSuccessDiag = rConnection.eval("class(diagPlotsMea1S)").asString();
+						if (runSuccessDiag != null && runSuccessDiag.equals("try-error")) {	
+							System.out.println("diagnostic plot: error");
+							String checkError = "msg <- trimStrings(strsplit(diagPlotsMea1S, \":\")[[1]])";
+							String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+							String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+							String checkError4 = "capture.output(cat(\"*** \nERROR in creating diagnostic plot (fixed genotype):\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+							rConnection.eval(checkError);
+							rConnection.eval(checkError2);
+							rConnection.eval(checkError3);
+							rConnection.eval(checkError4);
+						}
+					}
+				} //end of else for if runSuccess
+			} //end of Fixed
+
+			// Genotype Random
+			if (genotypeRandom) {
+				String funcMeaOneStageRandom = null;
+				String groupVars = null;
+				if (design == "RCB" || design == "AugRCB") {
+					funcMeaOneStageRandom = "meaOne2 <- try(GEOneStage.test(\"" + design + "\",dataMeaOneStage,"+ respvarVector + ",\"" + genotype + "\",\"" + block+ "\",column = NULL, rep = NULL,\"" + environment+ "\", is.genoRandom = TRUE), silent=TRUE)";
+					groupVars = "c(\"" + environment + "\", \"" + genotype + "\", \"" + block + "\")";
+				} else if (design == "AugLS") {
+					funcMeaOneStageRandom = "meaOne2 <- try(GEOneStage.test(\"" + design + "\",dataMeaOneStage,"+ respvarVector + ",\"" + genotype + "\", row = \"" + row + "\", column = \"" + column + "\", rep = NULL,\"" + environment + "\", is.genoRandom = TRUE), silent=TRUE)";
+					groupVars = "c(\"" + environment + "\", \"" + genotype + "\", \"" + row + "\", \"" + column +"\")";
+				} else if (design == "Alpha" || design == "LatinAlpha") {
+					funcMeaOneStageRandom = "meaOne2 <- try(GEOneStage.test(\"" + design + "\",dataMeaOneStage,"+ respvarVector + ",\"" + genotype + "\",\"" + block+ "\",column = NULL,\"" + rep + "\",\"" + environment+ "\", is.genoRandom = TRUE), silent=TRUE)";
+					groupVars = "c(\"" + environment + "\", \"" + genotype + "\", \"" + block + "\", \"" + rep + "\")";
+				} else if (design == "RowCol" || design == "LatinRowCol") {
+					funcMeaOneStageRandom = "meaOne2 <- try(GEOneStage.test(\"" + design + "\",dataMeaOneStage,"+ respvarVector + ",\"" + genotype + "\",\"" + row+ "\",\"" + column + "\",\"" + rep + "\",\""+ environment + "\", is.genoRandom = TRUE), silent=TRUE)";
+					groupVars = "c(\"" + environment + "\", \"" + genotype + "\", \"" + rep + "\", \"" + row + "\", \"" + column + "\")";
+				}
+
+				String randomHead = "capture.output(cat(\"GENOTYPE AS: Random\n\"),file=\"" + outFileName + "\",append = TRUE)";
+				rConnection.eval(funcMeaOneStageRandom);
+				rConnection.eval(sep2);
+				rConnection.eval(randomHead);
+				rConnection.eval(sep2);
+				rConnection.eval(outSpace);
+
+				System.out.println(funcMeaOneStageRandom);
+				String runSuccess2 = rConnection.eval("class(meaOne2)").asString();
+				if (runSuccess2 != null && runSuccess2.equals("try-error")) {	
+					System.out.println("GEOneStage.test: error");
+					String checkError = "msg <- trimStrings(strsplit(meaOne2, \":\")[[1]])";
+					String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+					String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+					String checkError4 = "capture.output(cat(\"*** \nERROR in GEOneStage.test function:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+					rConnection.eval(checkError);
+					rConnection.eval(checkError2);
+					rConnection.eval(checkError3);
+					rConnection.eval(checkError4);
+
+					runningRandomSuccess=false;
+				}
+				else {
+
+					for (int k = 0; k < respvar.length; k++) {
+						printAllOutputRandom=true;
+						int i = k + 1; // 1-relative index;
+						String respVarHead = "capture.output(cat(\"RESPONSE VARIABLE: " + respvar[k] + "\n\"),file=\"" + outFileName + "\",append = TRUE)";
+						rConnection.eval(sep);
+						rConnection.eval(respVarHead);
+						rConnection.eval(sep);
+
+						double responseRate = rConnection.eval("meaOne2$output[[" + i + "]]$responseRate").asDouble();
+						if (responseRate < 0.80) {
+							String allNAWarning = rConnection.eval("meaOne2$output[[" + i + "]]$manyNAWarning").asString();
+							String printError1 = "capture.output(cat(\"***\\n\"), file=\"" + outFileName + "\",append = TRUE)";
+							String printError2 = "capture.output(cat(\"ERROR:\\n\"), file=\"" + outFileName + "\",append = TRUE)";
+							String printError3 = "capture.output(cat(\"" + allNAWarning + "\\n\"), file=\"" + outFileName + "\",append = TRUE)";
+
+							rConnection.eval(outSpace);
+							rConnection.eval(printError1);
+							rConnection.eval(printError2);
+							rConnection.eval(printError3);
+							rConnection.eval(printError1);
+							rConnection.eval(outSpace);
+							rConnection.eval(outSpace);
+							printAllOutputRandom=false;
+						}
+
+						if (printAllOutputRandom) {
+							//default output: Trial Summary
+							String funcTrialSum = "funcTrialSum <- try(class.information(" + groupVars + ",meaOne2$output[[" + i + "]]$data), silent=TRUE)";
+							String trialSumHead = "capture.output(cat(\"\nDATA SUMMARY:\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String trialObsRead = "capture.output(cat(\"Number of observations read: \", meaOne2$output[["	+ i	+ "]]$obsread[[1]],\"\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String trialObsUsed = "capture.output(cat(\"Number of observations used: \", meaOne2$output[["	+ i	+ "]]$obsused[[1]],\"\n\n\"),file=\""	+ outFileName + "\",append = TRUE)";
+							String trialSum = "capture.output(funcTrialSum,file=\"" + outFileName + "\",append = TRUE)";
+
+							rConnection.eval(funcTrialSum);
+
+							String runSuccessTS = rConnection.eval("class(funcTrialSum)").asString();
+							if (runSuccessTS != null && runSuccessTS.equals("try-error")) {	
+								System.out.println("class info: error");
+								String checkError = "msg <- trimStrings(strsplit(funcTrialSum, \":\")[[1]])";
+								String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+								String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+								String checkError4 = "capture.output(cat(\"*** \nERROR in class.information function:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+								rConnection.eval(checkError);
+								rConnection.eval(checkError2);
+								rConnection.eval(checkError3);
+								rConnection.eval(checkError4);
+							}
+
+							else {
+								rConnection.eval(trialSumHead);
+								rConnection.eval(trialObsRead);
+								rConnection.eval(trialObsUsed);
+								rConnection.eval(trialSum);
+								rConnection.eval(outSpace);
+							}	
+
+							//optional output: for descriptive stat
+							String funcDesc = "outDesc <- DescriptiveStatistics(dataMeaOneStage, \"" + respvar[k] + "\", grp = NULL)";
+							rConnection.eval(funcDesc);
+
+							if (descriptiveStat) {
+								String outDescStat = "capture.output(cat(\"\nDESCRIPTIVE STATISTICS:\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+								String outDescStat2 = "capture.output(outDesc,file=\"" + outFileName + "\",append = TRUE)"; 
+
+								String runSuccessDescStat = rConnection.eval("class(outDesc)").asString();	
+								if (runSuccessDescStat != null && runSuccessDescStat.equals("try-error")) {	
+									System.out.println("desc stat: error");
+									String checkError = "msg <- trimStrings(strsplit(outDesc, \":\")[[1]])";
+									String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+									String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+									String checkError4 = "capture.output(cat(\"*** \nERROR in DescriptiveStatistics function:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+									rConnection.eval(checkError);
+									rConnection.eval(checkError2);
+									rConnection.eval(checkError3);
+									rConnection.eval(checkError4);
+								} 
+								else {
+									rConnection.eval(outDescStat);
+									rConnection.eval(outDescStat2);
+									rConnection.eval(outSpace);
+								}	
+							}
+
+							//optional output: Variance Components
+							if (varianceComponents) {
+								String outVarComp = "capture.output(cat(\"\nVARIANCE COMPONENTS TABLE:\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+								String outVarComp2 = "capture.output(meaOne2$output[[" + i + "]]$varcomp.table,file=\"" + outFileName + "\",append = TRUE)";
+								rConnection.eval(outVarComp);
+								rConnection.eval(outVarComp2);
+								rConnection.eval(outSpace);
+							}
+
+							//default output: Test Genotypic Effect
+							String outTestGeno1 = "capture.output(cat(\"\nTESTING FOR THE SIGNIFICANCE OF GENOTYPIC EFFECT USING -2 LOGLIKELIHOOD RATIO TEST:\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outTestGeno2 = "capture.output(cat(\"\nFormula for Model1: \", meaOne2$output[[" + i + "]]$formula1,\"\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outTestGeno3 = "capture.output(cat(\"Formula for Model2: \", meaOne2$output[[" + i + "]]$formula2,\"\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outTestGeno4 = "capture.output(meaOne2$output[[" + i + "]]$testsig.Geno,file=\"" + outFileName + "\",append = TRUE)";
+							rConnection.eval(outTestGeno1);
+							rConnection.eval(outTestGeno2);
+							rConnection.eval(outTestGeno3);
+							rConnection.eval(outTestGeno4);
+							rConnection.eval(outSpace);
+
+							//default output: Test Environment Effect
+							String outTestEnv1 = "capture.output(cat(\"\nTESTING FOR THE SIGNIFICANCE OF ENVIRONMENT EFFECT USING -2 LOGLIKELIHOOD RATIO TEST:\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outTestEnv2 = "capture.output(cat(\"\nFormula for Model1: \", meaOne2$output[[" + i + "]]$formula1,\"\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outTestEnv3 = "capture.output(cat(\"Formula for Model2: \", meaOne2$output[[" + i + "]]$formula3,\"\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outTestEnv4 = "capture.output(meaOne2$output[[" + i + "]]$testsig.Env,file=\"" + outFileName + "\",append = TRUE)";
+							rConnection.eval(outTestEnv1);
+							rConnection.eval(outTestEnv2);
+							rConnection.eval(outTestEnv3);
+							rConnection.eval(outTestEnv4);
+							rConnection.eval(outSpace);
+
+							//default output: Test GXE Effect
+							String outTestGenoEnv1 = "capture.output(cat(\"\nTESTING FOR THE SIGNIFICANCE OF GENOTYPE X ENVIRONMENT EFFECT USING -2 LOGLIKELIHOOD RATIO TEST:\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outTestGenoEnv2 = "capture.output(cat(\"\nFormula for Model1: \", meaOne2$output[[" + i + "]]$formula1,\"\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outTestGenoEnv3 = "capture.output(cat(\"Formula for Model2: \", meaOne2$output[[" + i + "]]$formula4,\"\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outTestGenoEnv4 = "capture.output(meaOne2$output[[" + i + "]]$testsig.GenoEnv,file=\"" + outFileName + "\",append = TRUE)";
+							rConnection.eval(outTestGenoEnv1);
+							rConnection.eval(outTestGenoEnv2);
+							rConnection.eval(outTestGenoEnv3);
+							rConnection.eval(outTestGenoEnv4);
+							rConnection.eval(outSpace);
+
+							//default output: Genotype X Environment Means
+							String outGenoEnv = "capture.output(cat(\"\nGENOTYPE X ENVIRONMENT MEANS:\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outGenoEnv2 = "capture.output(meaOne2$output[[" + i + "]]$wide.GenoEnv,file=\"" + outFileName + "\",append = TRUE)";
+							rConnection.eval(outGenoEnv);
+							rConnection.eval(outGenoEnv2);
+							rConnection.eval(outSpace);
+
+							//default output: Genotype Means
+							String outDescStat = "capture.output(cat(\"\nPREDICTED GENOTYPE MEANS:\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outDescStat2 = "capture.output(meaOne2$output[[" + i + "]]$means.Geno,file=\"" + outFileName + "\",append = TRUE)";
+							rConnection.eval(outDescStat);
+							rConnection.eval(outDescStat2);
+							rConnection.eval(outSpace);
+
+							//default output: EstHerit
+							String outEstHerit = "capture.output(cat(\"\nHERITABILITY:\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							String outEstHerit2 = "capture.output(meaOne2$output[[" + i + "]]$heritability,file=\""	+ outFileName + "\",append = TRUE)";
+							rConnection.eval(outEstHerit);
+							rConnection.eval(outEstHerit2);
+							rConnection.eval(outSpace);
+
+
+							//						//if levels of Geno and Env are recoded, display new code for genotype and environment levels
+							//						String recodedLevels = rConnection.eval("meaOne2$output[[" + i + "]]$recodedLevels").asBool().toString();
+							//						
+							//						System.out.println("recodedLevels: " + recodedLevels);
+							//						
+							//						if (recodedLevels.equals("TRUE")) {
+							//							String outLegends = "capture.output(cat(\"\nCODES USED IN GRAPHS:\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
+							//							String outLegends2 = "capture.output(meaOne2$output[[" + i + "]]$newCodingGeno,file=\"" + outFileName + "\",append = TRUE)";
+							//							String outLegends3 = "capture.output(meaOne2$output[[" + i + "]]$newCodingEnv,file=\"" + outFileName + "\",append = TRUE)";
+							//							rConnection.eval(outLegends);
+							//							rConnection.eval(outLegends2);
+							//							rConnection.eval(outSpace);
+							//							rConnection.eval(outLegends3);
+							//							rConnection.eval(outSpace);
+							//							rConnection.eval(outSpace);
+							//						} else {
+							//							rConnection.eval(outSpace);
+							//						}
+							//						
+							//						//create response plots
+							//						String responsePlot1 = "dataCoded <- meaOne2$output[[" + i + "]]$data";
+							//						String responsePlot2 = "nlevelsEnv <- meaOne2$output[[" + i + "]]$nlevelsEnv";
+							//						String responsePlot3 = "nlevelsGeno <- meaOne2$output[[" + i + "]]$nlevelsGeno";
+							//						String responsePlot4 = "resPlot1 <- try(GraphLine(data=dataCoded, outputPath=\"" + resultFolderPath + "\", yVars =c(\"" + respvar[k] + "\"), xVar =c(\"CodedGeno\"), lineVars =c(\"CodedEnv\"), mTitle =\"Response Plot of " + respvar[k] + "\", yAxisLab =c(\"" + respvar[k] + "\"), xAxisLab =\"" + genotype + "\", yMinValue = c(NA), yMaxValue = c(NA), axisLabelStyle = 2, byVar = NULL, plotCol = c(1:nlevelsEnv), showLineLabels =TRUE, showLeg = FALSE, boxed = TRUE, linePtTypes=rep(\"b\", nlevelsEnv), lineTypes=rep(1, nlevelsEnv), lineWidths=rep(1, nlevelsEnv), pointChars=rep(\" \", nlevelsEnv), pointCharSizes=rep(1, nlevelsEnv), multGraphs =FALSE), silent = TRUE)";
+							//						String responsePlot5 = "resPlot2 <- try(GraphLine(data=dataCoded, outputPath=\"" + resultFolderPath + "\", yVars =c(\"" + respvar[k] + "\"), xVar =c(\"CodedEnv\"), lineVars =c(\"CodedGeno\"), mTitle =\"Response Plot of " + respvar[k] + "\", yAxisLab =c(\"" + respvar[k] + "\"), xAxisLab =\"" + environment + "\", yMinValue = c(NA), yMaxValue = c(NA), axisLabelStyle = 2, byVar = NULL, plotCol = c(1:nlevelsGeno), showLineLabels =TRUE, showLeg = FALSE, boxed = TRUE, linePtTypes=rep(\"b\", nlevelsGeno), lineTypes=rep(1, nlevelsGeno), lineWidths=rep(1, nlevelsGeno), pointChars=rep(\" \", nlevelsGeno), pointCharSizes=rep(1, nlevelsGeno), multGraphs =FALSE), silent = TRUE)";
+							//						
+							//						System.out.println(responsePlot1);
+							//						System.out.println(responsePlot2);
+							//						System.out.println(responsePlot3);
+							//						System.out.println(responsePlot4);
+							//						System.out.println(responsePlot5);
+							//						
+							//						rConnection.eval(responsePlot1);
+							//						rConnection.eval(responsePlot2);
+							//						rConnection.eval(responsePlot3);
+							//						rConnection.eval(responsePlot4);
+							//						rConnection.eval(responsePlot5);
+							//						
+							//						String runSuccessPlot1 = rConnection.eval("class(resPlot1)").toString();
+							//						if (runSuccessPlot1 != null && runSuccessPlot1.equals("try-error")) {	
+							//							System.out.println("response plot geno: error");
+							//							String checkError = "msg <- trimStrings(strsplit(resPlot1, \":\")[[1]])";
+							//							String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+							//							String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+							//							String checkError4 = "capture.output(cat(\"*** \nERROR in GraphLine function (geno):\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+							//							rConnection.eval(checkError);
+							//							rConnection.eval(checkError2);
+							//							rConnection.eval(checkError3);
+							//							rConnection.eval(checkError4);
+							//						}
+							//						
+							//						String runSuccessPlot2 = rConnection.eval("class(resPlot2)").toString();
+							//						if (runSuccessPlot2 != null && runSuccessPlot2.equals("try-error")) {	
+							//							System.out.println("response plot env: error");
+							//							String checkError = "msg <- trimStrings(strsplit(resPlot2, \":\")[[1]])";
+							//							String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+							//							String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+							//							String checkError4 = "capture.output(cat(\"*** \nERROR in GraphLine function (env):\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+							//							rConnection.eval(checkError);
+							//							rConnection.eval(checkError2);
+							//							rConnection.eval(checkError3);
+							//							rConnection.eval(checkError4);
+							//						}
+
+							rConnection.eval(outSpace);	
+						}
+					}
+
+					//default output: save Genotype x Environment Means to a csv file
+					String checkGenoEnvMean = rConnection.eval("meaOne2$meansGenoEnvWarning").asString();
+					System.out.println("checkGenoEnvMean: " + checkGenoEnvMean);
+
+					if (checkGenoEnvMean.equals("empty")) {
+						System.out.println("Saving geno x env means not done.");
+					} else {
+						String funcSaveGEMeansCsv = "saveGEMeans <- try(write.table(meaOne2$means.GenoEnv.all,file =\"" + resultFolderPath + "GenoEnvMeans_random.csv\",sep=\",\",row.names=FALSE), silent=TRUE)";
+						System.out.println(funcSaveGEMeansCsv);
+						rConnection.eval(funcSaveGEMeansCsv);
+
+						String runSuccessSaveGEMeans = rConnection.eval("class(saveGEMeans)").asString();
+						if (runSuccessSaveGEMeans != null && runSuccessSaveGEMeans.equals("try-error")) {	
+							System.out.println("save GxE means: error");
+							String checkError = "msg <- trimStrings(strsplit(saveGEMeans, \":\")[[1]])";
+							String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+							String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+							String checkError4 = "capture.output(cat(\"*** \nERROR in saving genotype x environment means to a file:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+							rConnection.eval(checkError);
+							rConnection.eval(checkError2);
+							rConnection.eval(checkError3);
+							rConnection.eval(checkError4);
+						}
+
+					}
+
+					//default output: save Genotype Means to a csv file
+					String checkGenoMean = rConnection.eval("meaOne2$meansGenoWarning").asString();
+					System.out.println("checkGenoMean: " + checkGenoMean);
+
+					if (checkGenoMean.equals("empty")) {
+						System.out.println("Saving geno means not done.");
+					} else {
+						String funcSaveGMeansCsv = "saveGMeans <- try(write.table(meaOne2$means.Geno.all,file =\"" + resultFolderPath + "GenoMeans_random.csv\",sep=\",\",row.names=FALSE), silent=TRUE)";
+						System.out.println(funcSaveGMeansCsv);
+						rConnection.eval(funcSaveGMeansCsv);
+
+						String runSuccessSaveGMeans = rConnection.eval("class(saveGMeans)").asString();
+						if (runSuccessSaveGMeans != null && runSuccessSaveGMeans.equals("try-error")) {	
+							System.out.println("save G means: error");
+							String checkError = "msg <- trimStrings(strsplit(saveGMeans, \":\")[[1]])";
+							String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+							String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+							String checkError4 = "capture.output(cat(\"*** \nERROR in saving genotype means to a file:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+							rConnection.eval(checkError);
+							rConnection.eval(checkError2);
+							rConnection.eval(checkError3);
+							rConnection.eval(checkError4);
+						}
+					}
+
+					//optional output: diagnostic plots for genotype random
+					if (diagnosticPlot) {
+						String diagPlotsMea1SFunc = "diagPlotsMea1S <- tryCatch(graph.mea1s.diagplots(dataMeaOneStage, " + respvarVector + ", is.random = TRUE, meaOne2), error=function(err) \"notRun\")";
+						System.out.println(diagPlotsMea1SFunc);
+						rConnection.eval(diagPlotsMea1SFunc);
+
+						String runSuccessDiag = rConnection.eval("class(diagPlotsMea1S)").asString();
+						if (runSuccessDiag != null && runSuccessDiag.equals("try-error")) {	
+							System.out.println("diagnostic plot: error");
+							String checkError = "msg <- trimStrings(strsplit(diagPlotsMea1S, \":\")[[1]])";
+							String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+							String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+							String checkError4 = "capture.output(cat(\"*** \nERROR in creating diagnostic plot (fixed genotype):\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+							rConnection.eval(checkError);
+							rConnection.eval(checkError2);
+							rConnection.eval(checkError3);
+							rConnection.eval(checkError4);
+						}
+
+					}
+
+				} //end of else for if runSuccess
+			} // end of if random
+
+			//default output: save residuals to csv files
+			if (runningFixedSuccess & runningRandomSuccess) {
+				String residFileNameFixed = "residFileNameFixed <- paste(\"" + resultFolderPath + "\",\"residuals_fixed.csv\", sep=\"\")";
+				String residFileNameRandom = "residFileNameRandom <- paste(\"" + resultFolderPath + "\",\"residuals_random.csv\", sep=\"\")";
+				if ((genotypeFixed) & (genotypeRandom == false)) {
+					String runSsaResid1 = "resid_f <- try(GEOneStage_resid(meaOne1, " + respvarVector + ", is.genoRandom = FALSE), silent=TRUE)";
+					System.out.println(runSsaResid1);
+					rConnection.eval(runSsaResid1);
+
+					String runSuccessDiagPlots = rConnection.eval("class(resid_f)").asString();
+					if (runSuccessDiagPlots != null && runSuccessDiagPlots.equals("try-error")) {	
+						System.out.println("GEOneStage_resid (genotype fixed): error");
+						String checkError = "msg <- trimStrings(strsplit(resid_f, \":\")[[1]])";
+						String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+						String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+						String checkError4 = "capture.output(cat(\"*** \nERROR in GEOneStage_resid function:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+						rConnection.eval(checkError);
+						rConnection.eval(checkError2);
+						rConnection.eval(checkError3);
+						rConnection.eval(checkError4);
+					} else {
+						String checkResid1 = rConnection.eval("resid_f$ge1residWarning").asString();
+						System.out.println("checkResid1: " + checkResid1);
+						if (checkResid1.equals("empty")) {
+							System.out.println("Saving resid (fixed) not done.");
+						} else {
+							String func1SaveResidualsCsv = "saveResid <- try(write.table(resid_f$residuals, file = residFileNameFixed ,sep=\",\",row.names=FALSE), silent=TRUE)";
+							rConnection.eval(residFileNameFixed);
+							rConnection.eval(func1SaveResidualsCsv);
+
+							String runSuccessSaveResid = rConnection.eval("class(saveResid)").asString();
+							if (runSuccessSaveResid != null && runSuccessSaveResid.equals("try-error")) {	
+								System.out.println("save residuals: error");
+								String checkError = "msg <- trimStrings(strsplit(saveResid, \":\")[[1]])";
+								String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+								String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+								String checkError4 = "capture.output(cat(\"*** \nERROR in saving residuals to a file:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+								rConnection.eval(checkError);
+								rConnection.eval(checkError2);
+								rConnection.eval(checkError3);
+								rConnection.eval(checkError4);
+							}
+						}
+					}
+				}
+				else if ((genotypeFixed == false) & (genotypeRandom)) {
+					String runSsaResid2 = "resid_r <- try(GEOneStage_resid(meaOne2, " + respvarVector + ", is.genoRandom = TRUE), silent=TRUE)";
+					System.out.println(runSsaResid2);
+					rConnection.eval(runSsaResid2);
+
+					String runSuccessDiagPlots = rConnection.eval("class(resid_r)").asString();
+					if (runSuccessDiagPlots != null && runSuccessDiagPlots.equals("try-error")) {	
+						System.out.println("GEOneStage_resid (genotype random): error");
+						String checkError = "msg <- trimStrings(strsplit(resid_r, \":\")[[1]])";
+						String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+						String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+						String checkError4 = "capture.output(cat(\"*** \nERROR in GEOneStage_resid function:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+						rConnection.eval(checkError);
+						rConnection.eval(checkError2);
+						rConnection.eval(checkError3);
+						rConnection.eval(checkError4);
+					} else {
+						String checkResid1 = rConnection.eval("resid_r$ge1residWarning").asString();
+						System.out.println("checkResid1: " + checkResid1);
+						if (checkResid1.equals("empty")) {
+							System.out.println("Saving resid (random) not done.");
+						} else {
+							String func1SaveResidualsCsv = "saveResid <- try(write.table(resid_r$residuals, file = residFileNameRandom ,sep=\",\",row.names=FALSE), silent=TRUE)";
+							rConnection.eval(residFileNameRandom);
+							rConnection.eval(func1SaveResidualsCsv);
+
+							String runSuccessSaveResid = rConnection.eval("class(saveResid)").asString();
+							if (runSuccessSaveResid != null && runSuccessSaveResid.equals("try-error")) {	
+								System.out.println("save residuals: error");
+								String checkError = "msg <- trimStrings(strsplit(saveResid, \":\")[[1]])";
+								String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+								String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+								String checkError4 = "capture.output(cat(\"*** \nERROR in saving residuals to a file:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+								rConnection.eval(checkError);
+								rConnection.eval(checkError2);
+								rConnection.eval(checkError3);
+								rConnection.eval(checkError4);
+							}
+						}
+					}
+				}
+				else if ((genotypeFixed) & (genotypeRandom)) {
+					String runSsaResid1 = "resid_f <- try(GEOneStage_resid(meaOne1, " + respvarVector + ", is.genoRandom = FALSE), silent=TRUE)";
+					String runSsaResid2 = "resid_r <- try(GEOneStage_resid(meaOne2, " + respvarVector + ", is.genoRandom = TRUE), silent=TRUE)";
+					System.out.println(runSsaResid1);
+					System.out.println(runSsaResid2);
+					rConnection.eval(runSsaResid1);
+					rConnection.eval(runSsaResid2);
+
+					String runSuccessResidFixed = rConnection.eval("class(resid_f)").asString();
+					if (runSuccessResidFixed != null && runSuccessResidFixed.equals("try-error")) {	
+						System.out.println("GEOneStage_resid (genotype fixed): error");
+						String checkError = "msg <- trimStrings(strsplit(resid_f, \":\")[[1]])";
+						String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+						String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+						String checkError4 = "capture.output(cat(\"*** \nERROR in GEOneStage_resid function:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+						rConnection.eval(checkError);
+						rConnection.eval(checkError2);
+						rConnection.eval(checkError3);
+						rConnection.eval(checkError4);
+					} else {
+						String checkResid1 = rConnection.eval("resid_f$ge1residWarning").asString();
+						System.out.println("checkResid1: " + checkResid1);
+						if (checkResid1.equals("empty")) {
+							System.out.println("Saving resid (fixed) not done.");
+						} else {
+							String func1SaveResidualsCsv = "saveResid <- try(write.table(resid_f$residuals, file = residFileNameFixed ,sep=\",\",row.names=FALSE), silent=TRUE)";
+							rConnection.eval(residFileNameFixed);
+							rConnection.eval(func1SaveResidualsCsv);
+
+							String runSuccessSaveResid = rConnection.eval("class(saveResid)").asString();
+							if (runSuccessSaveResid != null && runSuccessSaveResid.equals("try-error")) {	
+								System.out.println("save residuals: error");
+								String checkError = "msg <- trimStrings(strsplit(saveResid, \":\")[[1]])";
+								String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+								String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+								String checkError4 = "capture.output(cat(\"*** \nERROR in saving residuals to a file:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+								rConnection.eval(checkError);
+								rConnection.eval(checkError2);
+								rConnection.eval(checkError3);
+								rConnection.eval(checkError4);
+							}
+						}
+					}
+
+					String runSuccessResidRandom = rConnection.eval("class(resid_r)").asString();
+					if (runSuccessResidRandom != null && runSuccessResidRandom.equals("try-error")) {	
+						System.out.println("GEOneStage_resid (genotype random): error");
+						String checkError = "msg <- trimStrings(strsplit(resid_r, \":\")[[1]])";
+						String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+						String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+						String checkError4 = "capture.output(cat(\"*** \nERROR in GEOneStage_resid function:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+						rConnection.eval(checkError);
+						rConnection.eval(checkError2);
+						rConnection.eval(checkError3);
+						rConnection.eval(checkError4);
+					} else {
+						String checkResid1 = rConnection.eval("resid_r$ge1residWarning").asString();
+						System.out.println("checkResid1: " + checkResid1);
+						if (checkResid1.equals("empty")) {
+							System.out.println("Saving resid (random) not done.");
+						} else {
+							String func1SaveResidualsCsv = "saveResid2 <- try(write.table(resid_r$residuals, file = residFileNameRandom ,sep=\",\",row.names=FALSE), silent=TRUE)";
+							rConnection.eval(residFileNameRandom);
+							rConnection.eval(func1SaveResidualsCsv);
+
+							String runSuccessSaveResid = rConnection.eval("class(saveResid2)").asString();
+							if (runSuccessSaveResid != null && runSuccessSaveResid.equals("try-error")) {	
+								System.out.println("save residuals: error");
+								String checkError = "msg <- trimStrings(strsplit(saveResid2, \":\")[[1]])";
+								String checkError2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
+								String checkError3 ="msg <- gsub(\"\\\"\", \"\", msg)";
+								String checkError4 = "capture.output(cat(\"*** \nERROR in saving residuals to a file:\\n  \",msg, \"\n***\n\n\", sep = \"\"), file=\"" + outFileName + "\",append = TRUE)";
+								rConnection.eval(checkError);
+								rConnection.eval(checkError2);
+								rConnection.eval(checkError3);
+								rConnection.eval(checkError4);
+							}
+						}
+					}
+				}
+			}
+
+			//boxplot and histogram
+			String withBox = "FALSE";
+			if (boxplotRawData) withBox = "TRUE";
+			String withHist = "FALSE";
+			if (histogramRawData) withHist = "TRUE";
+			String meaOut = "meaOne1";
+			if (genotypeFixed) meaOut = "meaOne1";
+			else if (genotypeRandom) meaOut = "meaOne2";
+
+			String boxHistMeaFunc = "boxHistMea <- tryCatch(graph.mea1s.boxhist(dataMeaOneStage, " + respvarVector + ", " + meaOut + ", box = \"" + withBox + "\", hist = \"" + withHist + "\"), error=function(err) \"notRun\")";
+			System.out.println(boxHistMeaFunc);
+			rConnection.eval(boxHistMeaFunc);
+
+			String runSuccessBoxHistMea = rConnection.eval("boxHistMea").toString();
+			//generate warning if error occurred	
+			if (runSuccessBoxHistMea != null && runSuccessBoxHistMea.equals("notRun")) {	
+				System.out.println("error");
+				rConnection.eval("capture.output(cat(\"\n***An error has occurred.***\n***Boxplot(s) and histogram(s) not created.***\n\"),file=\"" + outFileName + "\",append = TRUE)"); //append to output file?
+			}
+
+			rConnection.eval(outSpace); 
+			rConnection.eval(sep2);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			//			rConnection.close();
+			end();
+		}
+
+	}
+
 
 	public String[] getLevels(List<String> columnList, List<String[]> dataList,
 			String environment) {
@@ -1900,13 +3352,13 @@ public class RServeManager {
 		String respvar=param.getRespvar();
 		String trmt=param.getGenotype();
 		String replicate=param.getRep();
-		
-		
-		
+
+
+
 		try {
 			String readData = "dataRead <- read.csv(\"" + dataFileName.replace(BSLASH, FSLASH) + "\", header = TRUE, na.strings = c(\"NA\",\".\", \"\", \" \"), blank.lines.skip=TRUE, sep = \",\")";
 			String funcStmt = "result <- try(";
-//			String command = "OutlierDetection(data = \"dataRead\", var = "+ inputTransform.createRVector(respvar);
+			//			String command = "OutlierDetection(data = \"dataRead\", var = "+ inputTransform.createRVector(respvar);
 			String command = "OutlierDetection(data = \"dataRead\", var = \""+ respvar + "\"";
 			if (trmt != null) {
 				command = command + ", grp = \""+ trmt + "\"";
@@ -1934,32 +3386,32 @@ public class RServeManager {
 			rConnection.close();
 		}
 	}
-	
+
 	public void  testOutlierDetection(String outPutFolder, String dataInputFolder) {
-		
+
 		OutlierParametersModel param= new OutlierParametersModel();
 
 		String resultFolderName = outPutFolder.replace(BSLASH, FSLASH);
 		String dataFileName = dataInputFolder.replace(BSLASH, FSLASH) + "test.csv";
-		
-//		String resultFolderPath = resultFolderName.replace(BSLASH, FSLASH);
-//		String outFileName = outPutFolder.replace(BSLASH, FSLASH);
+
+		//		String resultFolderPath = resultFolderName.replace(BSLASH, FSLASH);
+		//		String outFileName = outPutFolder.replace(BSLASH, FSLASH);
 		dataFileName = dataFileName.replace(BSLASH, FSLASH);
 		//specify parameters
 		String respvar = "HT_CONT";
 		String genotype = "Designation";
 		String rep = "Blk";
-		
+
 		param.setResultFolderName(resultFolderName);
 		param.setDataFileName(dataFileName);
 		param.setRespvar(respvar);
 		param.setGenotype(genotype);
 		param.setRep(rep);
-		
-		
+
+
 		doOutlierDetection(param);
 	}
-	
+
 	public void doDesignAlpha(String path, String fieldBookName, Integer numTrmt, Integer blkSize, 
 			Integer rep, Integer trial, Integer rowPerBlk, Integer rowPerRep, Integer numFieldRow, String fieldOrder){
 		try{
@@ -2058,7 +3510,7 @@ public class RServeManager {
 		}
 		//return msg;
 	}
-	
+
 	public void doDesignAugmentedAlpha(String path, String fieldBookName, Integer numCheck, Integer numNew, 
 			String trmtName, Integer blkSize, Integer rep, Integer trial, Integer rowPerBlk, Integer rowPerRep, 
 			Integer numFieldRow, String fieldOrder, String trmtLabel, String checkTrmt, String newTrmt){
@@ -2718,7 +4170,7 @@ public class RServeManager {
 		}
 		//return msg;
 	}
-	
+
 	public void doDesignAugmentedLSD(String path, String fieldBookName, Integer repTrmt, Integer unrepTrmt, Integer fieldRow, 
 			Integer trial, String fieldOrder){
 		try{
@@ -2877,7 +4329,7 @@ public class RServeManager {
 			rConnection.close();
 		}
 	}
-	
+
 	public void testDesignAlpha(String outPutFolder) {
 		RandomizationParamModel param= new RandomizationParamModel();
 
@@ -2888,7 +4340,7 @@ public class RServeManager {
 		String fieldBookName = "fieldbookDesignAlphaLattice"; 		
 		//specify parameters
 		int design=1;
-		
+
 		Integer numTrmt = 70;
 		Integer blkSize = 14;
 		Integer rep = 2;
@@ -2915,5 +4367,14 @@ public class RServeManager {
 
 	}
 
+	public void end() {
+		// TODO Auto-generated method stub
+		try{
+			rConnection.close();
+			System.out.println("ended rserve connection");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+	}
 
 }
