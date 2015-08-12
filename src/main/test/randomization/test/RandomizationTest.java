@@ -16,16 +16,16 @@ public class RandomizationTest{
 
 	public static void main(String[] args){
 
-				//testRCBD0();
-				//testAugmentedRCB1();
-				//testAugmentedLatinSquare2();
-				//testAlphaLattice3();
-				//testRowColumn4();
-				//testLatinizedAlphaLattice5();
-				//testLatinizedRowColumn6();
+				testRCBD0();
+				testAugmentedRCB1();
+				testAugmentedLatinSquare2();
+				testAlphaLattice3();
+				testRowColumn4();
+				testLatinizedAlphaLattice5();
+				testLatinizedRowColumn6();
 				testPRep7();
-				//testAugmentedRowColumn8();
-				//testAugmentedAlpha9();
+				testAugmentedRowColumn8();
+				testAugmentedAlpha9();
 
 	}
 

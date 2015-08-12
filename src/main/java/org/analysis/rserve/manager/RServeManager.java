@@ -5,12 +5,17 @@ import java.util.List;
 
 import org.analysis.model.MultiTrialParametersModel;
 import org.analysis.model.OutlierParametersModel;
-import org.analysis.model.RandomizationParamModel;
 import org.analysis.model.SingleTrialParametersModel;
 import org.analysis.util.InputTransform;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
+
+/**
+ * This class contains connection to RServer and methods to  calling RPackages 
+ * 
+ * @author Alexander Cañeda
+ */ 
 
 public class RServeManager {
 	private RConnection rConnection;
@@ -25,6 +30,8 @@ public class RServeManager {
 	//	private static String OUTPUTFOLDER_PATH = System.getProperty("user.dir")+ System.getProperty("file.separator") + "sample_datasets" + System.getProperty("file.separator"); // Sessions.getCurrent().getWebApp().getRealPath("resultanalysis")+ System.getProperty("file.separator");
 	//	public static String DATA_PATH = System.getProperty("user.dir")+ System.getProperty("file.separator") + "sample_datasets" + System.getProperty("file.separator");
 
+
+	//Constructor to iniliazed RServe Connection
 	public RServeManager() {
 		try {
 			rConnection	= new RConnection();
@@ -37,6 +44,11 @@ public class RServeManager {
 		}
 	}
 
+
+	/*
+	 * Read data 
+	 * @param dataFileName 
+	 */
 	private void readData(String dataFileName){
 		String readData = "dataRead <- read.csv(\"" + dataFileName + "\", header = TRUE, na.strings = c(\"NA\",\".\",\"\"), blank.lines.skip=TRUE, sep = \",\")";
 		System.out.println(readData);
@@ -49,6 +61,14 @@ public class RServeManager {
 		//		rConnection.close();
 	}
 
+
+	/*
+	 * Get variable info by calling R
+	 * @param filename 
+	 * @param fileFormat- file format of the file either in csv,txt
+	 * @param separator 
+	 * return List of variable info: format- [variable:type]
+	 */
 	public ArrayList<String> getVariableInfo(String fileName, int fileFormat,String separator) {
 		String funcGetVarInfo;
 		ArrayList<String> toreturn=new ArrayList<String>();
@@ -84,220 +104,10 @@ public class RServeManager {
 		return toreturn;
 	}
 
-	public void  testSingleEnvironment(String outPutFolder, String dataInputFolder) {
-
-		SingleTrialParametersModel ssaModel = new SingleTrialParametersModel();
-
-		String resultFolderName = outPutFolder.replace(BSLASH, FSLASH);
-		String outFileName = outPutFolder.replace(BSLASH, FSLASH) + "SEA_output.txt";
-		String dataFileName = dataInputFolder.replace(BSLASH, FSLASH) + "SingleSite.csv";
-		String env="Site";
-		String respvars[] = {"HT_CONT"};
-		String[] environmentLevels={};
-		int design = 4;
-		String genotype = "Designation";
-		String block = "NULL";
-		String rep = "Rep";
-		String row = "Row";
-		String column = "Col";
-		boolean descriptiveStat = true; 
-		boolean varianceComponents = true;
-		boolean boxplotRawData = true;
-		boolean histogramRawData = true;
-		boolean heatmapResiduals = false;
-		String heatmapRow = "NULL";
-		String heatmapColumn = "NULL";
-		boolean diagnosticPlot = false;
-		boolean genotypeFixed = true;
-		boolean performPairwise = false;
-		String pairwiseAlpha = "0.05";
-		boolean compareControl = false;
-		boolean performAllPairwise = false;
-		boolean genotypeRandom = true;
-		boolean excludeControls = false;
-		boolean genoPhenoCorrelation = false;
-
-		ssaModel.setRespvars(respvars);
-		ssaModel.setResultFolderName(resultFolderName);
-		ssaModel.setOutFileName(outFileName);
-		ssaModel.setDataFileName(dataFileName);
-		ssaModel.setEnvironment(env);
-		ssaModel.setEnvironmentLevels(environmentLevels);
-		ssaModel.setDesign(design);
-		ssaModel.setGenotype(genotype);
-		ssaModel.setBlock(block);
-		ssaModel.setRep(rep);
-		ssaModel.setRow(row);
-		ssaModel.setColumn(column);
-		ssaModel.setDescriptiveStat(descriptiveStat);
-		ssaModel.setVarianceComponents(varianceComponents);
-		ssaModel.setBoxplotRawData(boxplotRawData);
-		ssaModel.setHistogramRawData(histogramRawData);
-		ssaModel.setHeatmapResiduals(heatmapResiduals);
-		ssaModel.setHeatmapRow(heatmapRow);
-		ssaModel.setHeatmapColumn(heatmapColumn);
-		ssaModel.setDiagnosticPlot(diagnosticPlot);
-		ssaModel.setGenotypeFixed(genotypeFixed);
-		ssaModel.setPerformPairwise(performPairwise);
-		ssaModel.setPairwiseAlpha(pairwiseAlpha);
-		ssaModel.setCompareControl(compareControl);
-		ssaModel.setPerformAllPairwise(performAllPairwise);
-		ssaModel.setGenotypeRandom(genotypeRandom);
-		ssaModel.setExcludeControls(excludeControls);
-		ssaModel.setGenoPhenoCorrelation(genoPhenoCorrelation);
-		//System.out.println(OUTPUTFOLDER_PATH);
 
 
 
-		doSingleEnvironmentAnalysis(ssaModel);
-	}
-
-
-	public void  testMultiEnvironment(String outPutFolder, String dataInputFolder) {
-
-		MultiTrialParametersModel msaModel = new MultiTrialParametersModel();
-
-		String resultFolderName = outPutFolder.replace(BSLASH, FSLASH);
-		String outFileName = outPutFolder.replace(BSLASH, FSLASH) + "MEA_output.txt";
-		String dataFileName = dataInputFolder.replace(BSLASH, FSLASH) + "SingleSite.csv";
-		String env="Site";
-		String respvars[] = {"HT_CONT"};
-		String[] environmentLevels={};
-		int design = 4;
-		String genotype = "Designation";
-		String block = "NULL";
-		String rep = "Rep";
-		String row = "Row";
-		String column = "Col";
-		boolean descriptiveStat = true; 
-		boolean varianceComponents = true;
-		boolean boxplotRawData = true;
-		boolean histogramRawData = true;
-		boolean heatmapResiduals = false;
-		String heatmapRow = "NULL";
-		String heatmapColumn = "NULL";
-		boolean diagnosticPlot = false;
-		boolean genotypeFixed = true;
-		boolean performPairwise = false;
-		String pairwiseAlpha = "0.05";
-		boolean compareControl = false;
-		boolean performAllPairwise = false;
-		boolean genotypeRandom = true;
-		boolean excludeControls = false;
-		boolean genoPhenoCorrelation = false;
-		boolean ammi= false;
-		boolean gge= false;
-		boolean stabilityFinlay= false;
-		boolean stabilityShukla= false;
-
-		msaModel.setRespvars(respvars);
-		msaModel.setResultFolderPath(resultFolderName);
-		msaModel.setOutFileName(outFileName);
-		msaModel.setDataFileName(dataFileName);
-		msaModel.setEnvironment(env);
-		msaModel.setEnvironmentLevels(environmentLevels);
-		msaModel.setDesign(design);
-		msaModel.setGenotype(genotype);
-		msaModel.setBlock(block);
-		msaModel.setRep(rep);
-		msaModel.setRow(row);
-		msaModel.setColumn(column);
-		msaModel.setDescriptiveStat(descriptiveStat);
-		msaModel.setVarianceComponents(varianceComponents);
-		msaModel.setBoxplotRawData(boxplotRawData);
-		msaModel.setHistogramRawData(histogramRawData);
-		msaModel.setDiagnosticPlot(diagnosticPlot);
-		msaModel.setGenotypeFixed(genotypeFixed);
-		msaModel.setPerformPairwise(performPairwise);
-		msaModel.setPairwiseAlpha(pairwiseAlpha);
-		msaModel.setCompareControl(compareControl);
-		msaModel.setPerformAllPairwise(performAllPairwise);
-		msaModel.setGenotypeRandom(genotypeRandom);
-		msaModel.setAmmi(ammi);
-		msaModel.setGge(gge);
-		msaModel.setStabilityFinlay(stabilityFinlay); 
-		msaModel.setStabilityShukla(stabilityShukla);
-
-
-		//System.out.println(OUTPUTFOLDER_PATH);
-
-		doMultiEnvironmentAnalysis(msaModel);
-	}
-
-	public void  testSingleEnvironmentPRef(String outPutFolder, String dataInputFolder) {
-
-		SingleTrialParametersModel ssaModel = new SingleTrialParametersModel();
-
-		String resultFolderName = outPutFolder.replace(BSLASH, FSLASH);
-		String outFileName = outPutFolder.replace(BSLASH, FSLASH) + "SEA_output.txt";
-		String dataFileName = dataInputFolder.replace(BSLASH, FSLASH) + "2013WSPYT_rawdata_prep.csv";
-		String env="NULL";
-		String[] environmentLevels={};
-		int design = 7;
-		String heatmapRow = "NULL";
-		String heatmapColumn = "NULL";
-		boolean performPairwise = false;
-		String pairwiseAlpha = "0.05";
-		boolean compareControl = false;
-		boolean performAllPairwise = false;
-		boolean genoPhenoCorrelation = false;
-
-
-		String[] respvars = {"Plotyield.Adj"}; 
-		String genotype = "ENTRY";
-		String row = "ROW";
-		String column = "COLUMN";
-		String environment = null;
-		boolean genotypeFixed = true;
-		boolean genotypeRandom = true; 
-		boolean excludeControls = false;
-		String[] controlLevels = null; // c("CIHERANG","CIHERANGSUB1","IRRI105","IRRI119", "IRRI154","IRRI168") 
-		boolean moransTest = false; // for BIMS always false
-		String[] spatialStruc = {"none", "CompSymm", "Gaus", "Exp", "Spher"}; // {"none", "CompSymm", "Gaus", "Exp", "Spher"}, for BIMS include the five choices, for standalone determine by the user
-		boolean descriptiveStat = true;
-		boolean varianceComponents = true; 
-		boolean boxplotRawData = true;
-		boolean histogramRawData = true;
-		boolean heatmapResiduals = true; 
-		boolean diagnosticPlot = true;
-
-		ssaModel.setRespvars(respvars);
-		ssaModel.setResultFolderName(resultFolderName);
-		ssaModel.setOutFileName(outFileName);
-		ssaModel.setDataFileName(dataFileName);
-		ssaModel.setEnvironment(environment);
-		ssaModel.setEnvironmentLevels(environmentLevels);
-		ssaModel.setDesign(design);
-		ssaModel.setGenotype(genotype);
-		ssaModel.setRow(row);
-		ssaModel.setColumn(column);
-		ssaModel.setDescriptiveStat(descriptiveStat);
-		ssaModel.setVarianceComponents(varianceComponents);
-		ssaModel.setBoxplotRawData(boxplotRawData);
-		ssaModel.setHistogramRawData(histogramRawData);
-		ssaModel.setHeatmapResiduals(heatmapResiduals);
-		ssaModel.setHeatmapRow(heatmapRow);
-		ssaModel.setHeatmapColumn(heatmapColumn);
-		ssaModel.setDiagnosticPlot(diagnosticPlot);
-		ssaModel.setGenotypeFixed(genotypeFixed);
-		ssaModel.setPerformPairwise(performPairwise);
-		ssaModel.setPairwiseAlpha(pairwiseAlpha);
-		ssaModel.setCompareControl(compareControl);
-		ssaModel.setPerformAllPairwise(performAllPairwise);
-		ssaModel.setGenotypeRandom(genotypeRandom);
-		ssaModel.setExcludeControls(excludeControls);
-		ssaModel.setGenoPhenoCorrelation(genoPhenoCorrelation);
-
-		ssaModel.setSpatialStruc(spatialStruc);
-		ssaModel.setControlLevels(controlLevels);
-		ssaModel.setMoransTest(moransTest);
-		//System.out.println(OUTPUTFOLDER_PATH);
-
-
-
-		doSingleEnvironmentAnalysisPRep(ssaModel);
-	}
-
+	/*This methods execute R to Single Trial Analysis */
 	public void doSingleEnvironmentAnalysis(SingleTrialParametersModel ssaModel) {
 
 		String resultFolderPath = ssaModel.getResultFolderName().replace(BSLASH, FSLASH);
@@ -618,7 +428,7 @@ public class RServeManager {
 								String outAnovaTable3 = "model1b <- lmer(formula(ssa1$output[[" + i + "]]$site[[" + j + "]]$formula1), data = ssa1$output[[" + i + "]]$site[[" + j + "]]$data, REML = T)";
 								String outAnovaTable4 = "a.table <- anova(model1b)";
 								String outAnovaTable5 = "pvalue <- formatC(as.numeric(format(a.table[1,6], scientific=FALSE)), format=\"f\")";
-								String outAnovaTable6 = "a.table<-cbind(round(a.table[,1:5], digits=4),pvalue)";
+								String outAnovaTable6 = "a.table<-cbind(round(a.table[,c(\"NumDF\",\"Sum Sq\", \"Mean Sq\", \"F.value\", \"DenDF\")], digits=4),pvalue)";//"a.table<-cbind(round(a.table[,1:5], digits=4),pvalue)"; 
 								String outAnovaTable7 = "colnames(a.table)<-c(\"Df\", \"Sum Sq\", \"Mean Sq\", \"F value\", \"Denom\", \"Pr(>F)\")";
 								String outAnovaTable8 = "capture.output(cat(\"Analysis of Variance Table with Satterthwaite Denominator Df\n\"),file=\"" + outFileName + "\",append = TRUE)";
 								String outAnovaTable9 = "capture.output(a.table,file=\"" + outFileName + "\",append = TRUE)";
@@ -1106,7 +916,7 @@ public class RServeManager {
 									String outAnovaTable3 = "model2b <- lmer(formula(ssa2$output[[" + i + "]]$site[[" + j + "]]$formula1), data = ssa2$output[[" + i + "]]$site[[" + j + "]]$data, REML = T)";
 									String outAnovaTable4 = "a.table <- anova(model2b)";
 									String outAnovaTable5 = "pvalue <- formatC(as.numeric(format(a.table[1,6], scientific=FALSE)), format=\"f\")";
-									String outAnovaTable6 = "a.table<-cbind(round(a.table[,1:5], digits=4),pvalue)";
+									String outAnovaTable6 ="a.table<-cbind(round(a.table[,c(\"NumDF\",\"Sum Sq\", \"Mean Sq\", \"F.value\", \"DenDF\")], digits=4),pvalue)";// "a.table<-cbind(round(a.table[,1:5], digits=4),pvalue)";
 									String outAnovaTable7 = "colnames(a.table)<-c(\"Df\", \"Sum Sq\", \"Mean Sq\", \"F value\", \"Denom\", \"Pr(>F)\")";
 									String outAnovaTable8 = "capture.output(cat(\"Analysis of Variance Table with Satterthwaite Denominator Df\n\"),file=\"" + outFileName + "\",append = TRUE)";
 									String outAnovaTable9 = "capture.output(a.table,file=\"" + outFileName + "\",append = TRUE)";
@@ -1737,7 +1547,7 @@ public class RServeManager {
 		}
 	}
 
-
+	/*This methods execute R to run SingleTrial Analysis in PRep Design*/
 	public void doSingleEnvironmentAnalysisPRep(SingleTrialParametersModel ssaModel){
 		String resultFolderPath = ssaModel.getResultFolderName().replace(BSLASH, FSLASH);
 		String outFileName = ssaModel.getOutFileName().replace(BSLASH, FSLASH);
@@ -1924,29 +1734,38 @@ public class RServeManager {
 
 
 
-	public void test() {
-		// TODO Auto-generated method stub
-		try {
-			rConnection.eval("cars <- c(1, 3, 6, 4, 9)");
-			rConnection.eval("pdf(\"E:/cars3.pdf\")");
-			rConnection.eval("plot(cars)");
-			//			rConnection.eval("dev.off()");
 
-			rConnection.close();
-		} catch (RserveException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	/* This method get the level in the dataset
+	 * @param columnList - List of column in the dataset
+	 * @param dataList - list of data
+	 * 
+	 */
+	public String[] getLevels(List<String> columnList, List<String[]> dataList,
+			String environment) {
+		// TODO Auto-generated method stub
+		int envtColumn = 0;
+		for (int i = 0; i < columnList.size(); i++) {
+			if (columnList.get(i).equals(environment)) {
+				envtColumn = i;
+			}
 		}
-	}
 
+		ArrayList<String> envts = new ArrayList<String>();
+		for (int j = 0; j <dataList.size(); j++) {
+			String level = dataList.get(j)[envtColumn];
+			if (!envts.contains(level)&& !level.isEmpty()) {
+				envts.add(level);
+			}
+		}
 
-	private String getDisplayName(String dataFileName) {
-		// TODO Auto-generated method stub
-		String[] newFile = dataFileName.split(FSLASH);
-		String displayName=newFile[newFile.length-2] + FSLASH + newFile[newFile.length-1];
-		System.out.println(displayName);
-		return displayName ;
+		String[] envtLevels = new String[envts.size()];
+		for (int k = 0; k < envts.size(); k++) {
+			envtLevels[k] = (String) envts.get(k);
+		}
+
+		return envtLevels;
 	}
+	
 
 	public void doMultiEnvironmentAnalysis(MultiTrialParametersModel msa) {
 		// This function is for DMAS with contrast analysis, ammi ang gge analysis
@@ -3319,33 +3138,9 @@ public class RServeManager {
 	}
 
 
-	public String[] getLevels(List<String> columnList, List<String[]> dataList,
-			String environment) {
-		// TODO Auto-generated method stub
-		int envtColumn = 0;
-		for (int i = 0; i < columnList.size(); i++) {
-			if (columnList.get(i).equals(environment)) {
-				envtColumn = i;
-			}
-		}
-
-		ArrayList<String> envts = new ArrayList<String>();
-		for (int j = 0; j <dataList.size(); j++) {
-			String level = dataList.get(j)[envtColumn];
-			if (!envts.contains(level)&& !level.isEmpty()) {
-				envts.add(level);
-			}
-		}
-
-		String[] envtLevels = new String[envts.size()];
-		for (int k = 0; k < envts.size(); k++) {
-			envtLevels[k] = (String) envts.get(k);
-		}
-
-		return envtLevels;
-	}
 
 
+	/* This method call R to run outlierdection */
 	public void doOutlierDetection(OutlierParametersModel param ) {
 		String dataFileName=param.getDataFileName();
 		String outputPath=param.getResultFolderName();
@@ -3387,31 +3182,8 @@ public class RServeManager {
 		}
 	}
 
-	public void  testOutlierDetection(String outPutFolder, String dataInputFolder) {
 
-		OutlierParametersModel param= new OutlierParametersModel();
-
-		String resultFolderName = outPutFolder.replace(BSLASH, FSLASH);
-		String dataFileName = dataInputFolder.replace(BSLASH, FSLASH) + "test.csv";
-
-		//		String resultFolderPath = resultFolderName.replace(BSLASH, FSLASH);
-		//		String outFileName = outPutFolder.replace(BSLASH, FSLASH);
-		dataFileName = dataFileName.replace(BSLASH, FSLASH);
-		//specify parameters
-		String respvar = "HT_CONT";
-		String genotype = "Designation";
-		String rep = "Blk";
-
-		param.setResultFolderName(resultFolderName);
-		param.setDataFileName(dataFileName);
-		param.setRespvar(respvar);
-		param.setGenotype(genotype);
-		param.setRep(rep);
-
-
-		doOutlierDetection(param);
-	}
-
+	/*This methods execute R to run Alpha Lattice*/
 	public void doDesignAlpha(String path, String fieldBookName, Integer numTrmt, Integer blkSize, 
 			Integer rep, Integer trial, Integer rowPerBlk, Integer rowPerRep, Integer numFieldRow, String fieldOrder){
 		try{
@@ -3511,9 +3283,11 @@ public class RServeManager {
 		//return msg;
 	}
 
+
+	/*This methods execute R to run AugmentedAlpha*/
 	public void doDesignAugmentedAlpha(String path, String fieldBookName, Integer numCheck, Integer numNew, 
 			String trmtName, Integer blkSize, Integer rep, Integer trial, Integer rowPerBlk, Integer rowPerRep, 
-			Integer numFieldRow, String fieldOrder, String trmtLabel, String checkTrmt, String newTrmt){
+			Integer numFieldRow, String fieldOrder, String trmtLabel, String[] checkTrmt, String[] newTrmt){
 		try{
 			//defining the R statements for randomization for Alpha Lattice
 			rscriptCommand = new StringBuilder();
@@ -3544,12 +3318,12 @@ public class RServeManager {
 			if (checkTrmt == null) {
 				command = command + ", checkTrmt = NULL";
 			} else {
-				command = command + ", checkTrmt = \""+ checkTrmt +"\"";
+				command = command + ", checkTrmt = "+ inputTransform.createRVector(checkTrmt);
 			}
 			if (newTrmt == null) {
 				command = command + ", newTrmt = NULL";
 			} else {
-				command = command + ", newtrmt = \""+ newTrmt +"\"";
+				command = command + ", newtrmt = "+ inputTransform.createRVector(newTrmt);
 			}
 			command = command + ", file = \""+ CSVOutput +"\")";
 			funcRandomize = funcRandomize + command + ", silent = TRUE)";
@@ -3618,7 +3392,7 @@ public class RServeManager {
 
 	public void doDesignAugmentedRowColumn(String path, String fieldBookName, Integer numCheck, Integer numNew,
 			String trmtName, Integer rep, Integer trial, Integer rowblkPerRep, Integer rowPerRowblk, 
-			Integer numFieldRow, String fieldOrder, String trmtLabel, String checkTrmt, String newTrmt){
+			Integer numFieldRow, String fieldOrder, String trmtLabel, String[] checkTrmt, String[] newTrmt){
 
 		try{
 			//defining the R statements for randomization for Alpha Lattice
@@ -3645,12 +3419,12 @@ public class RServeManager {
 			if (checkTrmt == null) {
 				command = command + ", checkTrmt = NULL";
 			} else {
-				command = command + ", checkTrmt = \""+ checkTrmt +"\"";
+				command = command + ", checkTrmt = "+ inputTransform.createRVector(checkTrmt);
 			}
 			if (newTrmt == null) {
 				command = command + ", newTrmt = NULL";
 			} else {
-				command = command + ", newTrmt = \""+ newTrmt +"\"";
+				command = command + ", newtrmt = "+ inputTransform.createRVector(newTrmt);
 			}
 			command = command + ", file = \""+ CSVOutput +"\")";
 			funcRandomize = funcRandomize + command + ", silent = TRUE)";
@@ -3908,9 +3682,10 @@ public class RServeManager {
 
 	public void doDesignPRep(String path, String fieldBookName, String[] trmtGrpName, Integer[] numTrmtPerGrp, 
 			Integer[] trmtRepPerGrp, String trmtName, Integer blk, Integer trial, Integer rowPerBlk, Integer numFieldRow, 
-			String fieldOrder, String trmtLabel, String trmtListPerGrp){
+			String fieldOrder, String trmtLabel, String[] trmtListPerGrp){
 
 		try{
+			//defining the R statements for randomization for Alpha Lattice
 			//defining the R statements for randomization for Alpha Lattice
 			rscriptCommand = new StringBuilder();
 			String CSVOutput = path + fieldBookName + ".csv";
@@ -3921,8 +3696,8 @@ public class RServeManager {
 			String funcRandomize = "result <- try(";
 			String command = "designPRep(trmtPerGrp = "+ inputTransform.createRList(trmtGrpName, numTrmtPerGrp);
 			command = command + ", trmtRepPerGrp = "+ inputTransform.createRNumVector(trmtRepPerGrp);
-			command = command + ", trmtName = \""+ trmtName  +"\", blk = "+ blk +", trial = "+ trial;
-			command = command + ", rowPerBlk = "+ rowPerBlk +", numFieldRow = "+ numFieldRow;
+			command = command + ", trmtName = \""+ trmtName  +"\", trial = "+ trial;
+			command = command + ", numFieldRow = "+ numFieldRow;
 			if (fieldOrder == "Plot Order") {
 				command = command + ", serpentine = FALSE";
 			} else {
@@ -3936,7 +3711,7 @@ public class RServeManager {
 			if (trmtListPerGrp == null) {
 				command = command + ", trmtListPerGrp = NULL";
 			} else {
-				command = command + ", trmtListPerGrp = \""+ trmtListPerGrp + "\"";
+				command = command + ", trmtListPerGrp = "+ inputTransform.createRVector(trmtListPerGrp);
 			}
 
 			command = command + ", file = \""+ CSVOutput +"\")";
@@ -3957,7 +3732,7 @@ public class RServeManager {
 				String errorMsg1 = "msg <- trimStrings(strsplit(result, \":\")[[1]])";
 				String errorMsg2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
 				String errorMsg3 = "msg <- gsub(\"\\\"\", \"\", msg)";
-				String errorMsg4 = "cat(\"Error in designAlphaLattice:\\n\",msg, sep = \"\")";
+				String errorMsg4 = "cat(\"Error in designPRep:\\n\",msg, sep = \"\")";
 
 				System.out.println(errorMsg1);
 				System.out.println(errorMsg2);
@@ -3988,6 +3763,7 @@ public class RServeManager {
 			rConnection.eval(sinkOut);
 
 			rscriptCommand.append(command+"\n");
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally{
@@ -4088,6 +3864,7 @@ public class RServeManager {
 			Integer rowPerRep, Integer numFieldRow, String fieldOrder){
 
 		try{
+
 			//defining the R statements for randomization for Row-Column Design
 			rscriptCommand = new StringBuilder();
 			String CSVOutput = path + fieldBookName + ".csv";
@@ -4099,6 +3876,8 @@ public class RServeManager {
 			String funcRandomize = "result <- try(";
 			String command = "designRowColumn(list(EntryNo = c(1: "+ numTrmt +"))";
 			command = command + ", r = "+ rep +", trial = "+ trial;
+			//			command = command + ", rowblkPerRep = "+ rowblkPerRep +", rowPerRowblk = "+ rowPerRowblk;
+			//			command = command + ", colblkPerRep = "+ colblkPerRep +", numFieldRow = "+ numFieldRow;
 			command = command + ", rowPerRep = "+ rowPerRep +", numFieldRow = "+ numFieldRow;
 			if (fieldOrder == "Plot Order") {
 				command = command + ", serpentine = FALSE, file = \""+ CSVOutput +"\")";
@@ -4135,34 +3914,21 @@ public class RServeManager {
 				rConnection.eval(errorMsg4);
 			} 
 			else {
-				//			String checkOutput = "if (nrow(result$fieldbook) != 0) {\n";
-				//			checkOutput = checkOutput + "    cat(\"\\nLayout for Row-Column Design:\",\"\\n\\n\")\n";
-				//			checkOutput = checkOutput + "    for (i in (1:length(result$layout))) { \n";
-				//			checkOutput = checkOutput + "          printLayout(result$layout[[i]], result$plotNum, RowLabel = rownames(result$layout[[i]]), ColLabel = colnames(result$layout[[i]]), title = paste(\"Trial = \", i, sep = \"\"))\n";
-				//			checkOutput = checkOutput + "          cat(\"\\n\")\n";
-				//			checkOutput = checkOutput + "    }\n";
-				//			checkOutput = checkOutput + "    cat(\"\\n\",\"**Note: Cells contain plot numbers on top, treatments/entries below\")\n";
-				//			checkOutput = checkOutput + "}";
-
-				Integer colPerRep = numTrmt/rowPerRep;
 
 				String checkOutput = "for (i in (1:length(result$layout))) {\n";
 				checkOutput = checkOutput + "     png(filename = paste(\"" + LayoutOutput + "_Trial\",i,\".png\", sep = \"\")) \n";
 				checkOutput = checkOutput + "     des.plot(result$layout[[i]], col = 8, new = TRUE, label = TRUE, ";
-				checkOutput = checkOutput + "     chtdiv = 3, bdef = cbind("+ rowPerRep+", "+ colPerRep +"), bwd = 4, bcol = 4, ";
+				//				checkOutput = checkOutput + "     chtdiv = 3, bdef = cbind("+ rowPerRowblk +", "+ colPerColblk +"), bwd = 4, bcol = 4, ";
+				checkOutput = checkOutput + "     chtdiv = 3, bwd = 4, bcol = 4, ";
 				checkOutput = checkOutput + "     cstr = paste(\"Layout for Trial \",i,\": \\n\\nFieldCol\", sep = \"\"), rstr = \"FieldRow\")\n";
+				//				checkOutput = checkOutput + "     des.plot(result$layout[[i]], col = 8, new = FALSE, label = TRUE, ";
+				//				checkOutput = checkOutput + "     chtdiv = 3, bdef = cbind("+ rowblkPerRep*rowPerRowblk +", "+ colblkPerRep*colPerColblk +"), bwd = 4)\n";
 				checkOutput = checkOutput + "     dev.off() \n";
 				checkOutput = checkOutput + "}";
 
 				System.out.println(checkOutput);
 				rConnection.eval(checkOutput);
 			}
-
-			String sinkOut = "sink()";
-			System.out.println(sinkOut);
-			rConnection.eval(sinkOut);
-
-			rscriptCommand.append(command+"\n");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally{
@@ -4171,24 +3937,49 @@ public class RServeManager {
 		//return msg;
 	}
 
-	public void doDesignAugmentedLSD(String path, String fieldBookName, Integer repTrmt, Integer unrepTrmt, Integer fieldRow, 
-			Integer trial, String fieldOrder){
+	/*This methods execute R to run Latin Square Design*/
+	public void doDesignAugmentedLSD(String path, String fieldBookName, Integer numCheck, Integer numNew, String trmtName,
+			Integer trial, Integer numFieldRow, String fieldOrder, String trmtLabel, String[] checkTrmt, String[] newTrmt){
 		try{
+
 			//defining the R statements for randomization for augmented design in Latin Square Design
 			rscriptCommand = new StringBuilder();
 			String CSVOutput = path + fieldBookName + ".csv";
-			String TxtOuptut = path + fieldBookName + ".txt";
+			String TxtOutput = path + fieldBookName + ".txt";
+			//			String LayoutOutput = path + fieldBookName;
 
-			String sinkIn = "sink(\"" + TxtOuptut + "\")";
+			String sinkIn = "sink(\"" + TxtOutput + "\")";
 			String pkgIntro = "cat(\"Result of Randomization\\n\",date(),\"\\n\\n\\n\", sep = \"\")";
 			String funcRandomize = "result <- try(";
-			String command = "designAugmentedLSD(check = "+ repTrmt +", newTrmt = "+ unrepTrmt;
-			command = command + ", trial = "+ trial + ", numFieldRow = "+ fieldRow;
-			if (fieldOrder == "Plot Order") {
-				command = command + ", serpentine = FALSE, file = \""+ CSVOutput +"\")";
+			String command = "designAugmentedLSD(numCheck = "+ numCheck +", numNew = "+ numNew;
+			if (trmtName == null) {
+				command = command + ", trmtName = NULL"; 
 			} else {
-				command = command + ", serpentine = TRUE, file = \""+ CSVOutput +"\")";
+				command = command + ", trmtName = \""+ trmtName +"\"";
 			}
+			command = command + ", trial = "+ trial + ", numFieldRow = "+ numFieldRow;
+			if (fieldOrder == "Plot Order") {
+				command = command + ", serpentine = FALSE";
+			} else {
+				command = command + ", serpentine = TRUE";
+			}
+			if (trmtLabel == null) {
+				command = command + ", trmtLabel = NULL";
+			} else {
+				command = command + ", trmtLabel = \""+ trmtLabel +"\"";
+			}
+			if (checkTrmt == null) {
+				command = command + ", checkTrmt = NULL";
+			} else {
+				command = command + ", checkTrmt = "+ inputTransform.createRVector(checkTrmt);
+			}
+			if (newTrmt == null) {
+				command = command + ", newTrmt = NULL";
+			} else {
+				command = command + ", newTrmt = "+ inputTransform.createRVector(newTrmt);
+			}
+			command = command + ", file = \""+ CSVOutput +"\")";
+
 			funcRandomize = funcRandomize + command + ", silent = TRUE)";
 
 			System.out.println(sinkIn);
@@ -4201,9 +3992,9 @@ public class RServeManager {
 			rConnection.eval(funcRandomize);
 
 			//save sorted to csv file
-			//		String sortFile = "write.csv(result$fieldbook[order(result$fieldbook$Trial, result$fieldbook$PlotNum),], file = \""+ CSVOutput +"\", row.names = FALSE)";
-			//		System.out.println(sortFile);
-			//		rEngine.eval(sortFile);
+			//			String sortFile = "write.csv(result$fieldbook[order(result$fieldbook$Trial, result$fieldbook$PlotNum),], file = \""+ CSVOutput +"\", row.names = FALSE)";
+			//			System.out.println(sortFile);
+			//			rEngine.eval(sortFile);
 
 
 			String runSuccessCommand = rConnection.eval("class(result)").asString();
@@ -4223,19 +4014,31 @@ public class RServeManager {
 				rConnection.eval(errorMsg3);
 				rConnection.eval(errorMsg4);
 			} 
-			else {
-				String checkOutput = "if (nrow(result$fieldbook) != 0) {\n";
-				checkOutput = checkOutput + "    cat(\"\\nLayout for Augmented Latin Square Design:\",\"\\n\\n\")\n";
-				checkOutput = checkOutput + "    for (i in (1:length(result$layout))) { \n";
-				checkOutput = checkOutput + "          printLayout(result$layout[[i]], result$plotNum[[i]], RowLabel = rownames(result$layout[[i]]), ColLabel = colnames(result$layout[[i]]), title = paste(\"Trial = \", i, sep = \"\"))\n";
-				checkOutput = checkOutput + "          cat(\"\\n\")\n";
-				checkOutput = checkOutput + "    }\n";
-				checkOutput = checkOutput + "    cat(\"\\n\",\"**Note: Cells contain plot numbers on top, treatments/entries below\")\n";
-				checkOutput = checkOutput + "}";
-
-				System.out.println(checkOutput);
-				rConnection.eval(checkOutput);
-			}
+			//			else {
+			//				String checkOutput = "if (nrow(result$fieldbook) != 0) {\n";
+			//				checkOutput = checkOutput + "    cat(\"\\nLayout for Augmented Latin Square Design:\",\"\\n\\n\")\n";
+			//				checkOutput = checkOutput + "    for (i in (1:length(result$layout))) { \n";
+			//				checkOutput = checkOutput + "          printLayout(result$layout[[i]], result$plotNum[[i]], RowLabel = rownames(result$layout[[i]]), ColLabel = colnames(result$layout[[i]]), title = paste(\"Trial = \", i, sep = \"\"))\n";
+			//				checkOutput = checkOutput + "          cat(\"\\n\")\n";
+			//				checkOutput = checkOutput + "    }\n";
+			//				checkOutput = checkOutput + "    cat(\"\\n\",\"**Note: Cells contain plot numbers on top, treatments/entries below\")\n";
+			//				checkOutput = checkOutput + "}";
+			//				
+			////				String checkOutput = "for (i in (1:length(result$layout))) {\n";
+			////				checkOutput = checkOutput + "     png(filename = paste(\"" + LayoutOutput + "_Trial\",i,\".png\", sep = \"\")) \n";
+			////				checkOutput = checkOutput + "     des.plot(result$layout[[i]], col = 8, new = TRUE, label = TRUE, ";
+			////				checkOutput = checkOutput + "     chtdiv = 3, bdef = cbind("+ rowPerBlk+", "+ colPerBlk +"), bwd = 4, bcol = 4, ";
+			////				checkOutput = checkOutput + "     cstr = paste(\"Layout for Trial \",i,\": \\n\\nFieldCol\", sep = \"\"), rstr = \"FieldRow\")\n";
+			////				checkOutput = checkOutput + "     des.plot(result$layout[[i]], col = 7, new = FALSE, label = TRUE, ";
+			////				checkOutput = checkOutput + "     chtdiv = 3, bdef = cbind("+ rowPerRep+", "+ colPerRep +"), bwd = 4)\n";
+			////				checkOutput = checkOutput + "     dev.off() \n";
+			////				checkOutput = checkOutput + "}";
+			//				
+			//				System.out.println(checkOutput);
+			//				rEngine.eval(checkOutput);
+			//				
+			//				
+			//			}
 
 			String sinkOut = "sink()";
 			System.out.println(sinkOut);
@@ -4243,7 +4046,7 @@ public class RServeManager {
 
 			rscriptCommand.append(command+"\n");
 
-			System.out.println("reached end.");
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally{
@@ -4252,24 +4055,46 @@ public class RServeManager {
 		//return msg;
 	}
 
-	public void doDesignAugmentedRCB(String path, String fieldBookName, Integer repTrmt, Integer unrepTrmt, Integer Blk, Integer fieldRow, 
-			Integer trial, String fieldOrder){
+	/*This methods execute R to run RCBD*/
+	public void doDesignAugmentedRCB(String path, String fieldBookName,  Integer numCheck, Integer numNew, Integer Blk, Integer numFieldRow, 
+			Integer trial, String fieldOrder,Integer rowPerBlk,String trmtName, String trmtLabel,String[] checkTrmt,String[] newTrmt){
 		try{
 			//defining the R statements for randomization for augmented design in Latin Square Design
 			rscriptCommand = new StringBuilder();
 			String CSVOutput = path + fieldBookName + ".csv";
-			String TxtOuptut = path + fieldBookName + ".txt";
+			String TxtOutput = path + fieldBookName + ".txt";
 
-			String sinkIn = "sink(\"" + TxtOuptut + "\")";
+			String sinkIn = "sink(\"" + TxtOutput + "\")";
 			String pkgIntro = "cat(\"Result of Randomization\\n\",date(),\"\\n\\n\\n\", sep = \"\")";
 			String funcRandomize = "result <- try(";
-			String command = "designAugmentedRCB(checkTrmt = "+ repTrmt +", newTrmt = "+ unrepTrmt + ", r = "+ Blk;
-			command = command + ", trial = "+ trial + ", numFieldRow = "+ fieldRow;
-			if (fieldOrder == "Plot Order") {
-				command = command + ", serpentine = FALSE, file = \""+ CSVOutput +"\")";
+			String command = "designAugmentedRCB(numCheck = "+ numCheck +", numNew = "+ numNew;
+			if (trmtName == null) {
+				command = command + ", trmtName = NULL"; 
 			} else {
-				command = command + ", serpentine = TRUE, file = \""+ CSVOutput +"\")";
+				command = command + ", trmtName = \""+ trmtName +"\"";
 			}
+			command = command + ", r = "+ Blk +", trial = "+ trial + ", rowPerBlk = "+ rowPerBlk +" , numFieldRow = "+ numFieldRow;
+			if (fieldOrder == "Plot Order") {
+				command = command + ", serpentine = FALSE";
+			} else {
+				command = command + ", serpentine = TRUE";
+			}
+			if (trmtLabel == null) {
+				command = command + ", trmtLabel = NULL";
+			} else {
+				command = command + ", trmtLabel = \""+ trmtLabel +"\"";
+			}
+			if (checkTrmt == null) {
+				command = command + ", checkTrmt = NULL";
+			} else {
+				command = command + ", checkTrmt = "+ inputTransform.createRVector(checkTrmt);
+			}
+			if (newTrmt == null) {
+				command = command + ", newTrmt = NULL";
+			} else {
+				command = command + ", newTrmt = "+ inputTransform.createRVector(newTrmt);
+			}
+			command = command + ", file = \""+ CSVOutput +"\")";
 			funcRandomize = funcRandomize + command + ", silent = TRUE)";
 
 			System.out.println(sinkIn);
@@ -4279,6 +4104,7 @@ public class RServeManager {
 
 			rConnection.eval(sinkIn);
 			rConnection.eval(pkgIntro);
+
 			rConnection.eval(funcRandomize);
 
 			//save sorted to csv file
@@ -4291,9 +4117,10 @@ public class RServeManager {
 				String errorMsg1 = "msg <- trimStrings(strsplit(result, \":\")[[1]])";
 				String errorMsg2 = "msg <- trimStrings(paste(strsplit(msg, \"\\n\")[[length(msg)]], collapse = \" \"))";
 				String errorMsg3 = "msg <- gsub(\"\\\"\", \"\", msg)";
-				String errorMsg4 = "cat(\"Error in designAugmentedRCBD:\\n\",msg, sep = \"\")";
+				String errorMsg4 = "cat(\"Error in designAugmentedRCB:\\n\",msg, sep = \"\")";
 
 				System.out.println(errorMsg1);
+				System.out.println(errorMsg2);
 				System.out.println(errorMsg3);
 				System.out.println(errorMsg4);
 
@@ -4330,41 +4157,12 @@ public class RServeManager {
 		}
 	}
 
-	public void testDesignAlpha(String outPutFolder) {
-		RandomizationParamModel param= new RandomizationParamModel();
-
-		String resultFolder = outPutFolder.replace(BSLASH, FSLASH);
-		//supply path where the output will be saved
-
-		//supply the fieldbook name specified by the user
-		String fieldBookName = "fieldbookDesignAlphaLattice"; 		
-		//specify parameters
-		int design=1;
-
-		Integer numTrmt = 70;
-		Integer blkSize = 14;
-		Integer rep = 2;
-		Integer trial = 3;
-		Integer rowPerBlk = 14;
-		Integer rowPerRep = 14;
-		Integer numFieldRow = 28;
-		String fieldOrder = "Serpentine";
-
-		param.setFieldBookName(fieldBookName);
-		param.setDesign(design);
-		param.setResultFolder(resultFolder);
-		param.setNumTrmt(numTrmt);
-		param.setBlkSize(blkSize);
-		param.setRep(rep);
-		param.setTrial(trial);
-		param.setRowPerBlk(rowPerBlk);
-		param.setRowPerRep(rowPerRep);
-		param.setNumFieldRow(numFieldRow);
-		param.setFieldOrder(fieldOrder);
-
-		doDesignAlpha(param.getResultFolder(),param.getFieldBookName(), param.getNumTrmt(), param.getBlkSize(),param.getRep(),param.getTrial(),
-				param.getRowPerBlk(), param.getRowPerRep(),param.getNumFieldRow(),param.getFieldOrder());
-
+	private String getDisplayName(String dataFileName) {
+		// TODO Auto-generated method stub
+		String[] newFile = dataFileName.split(FSLASH);
+		String displayName=newFile[newFile.length-2] + FSLASH + newFile[newFile.length-1];
+		System.out.println(displayName);
+		return displayName ;
 	}
 
 	public void end() {
@@ -4376,5 +4174,75 @@ public class RServeManager {
 			e.printStackTrace();
 		} 
 	}
+	
+	public void  testMultiEnvironment(String outPutFolder, String dataInputFolder) {
 
+		MultiTrialParametersModel msaModel = new MultiTrialParametersModel();
+
+		String resultFolderName = outPutFolder.replace(BSLASH, FSLASH);
+		String outFileName = outPutFolder.replace(BSLASH, FSLASH) + "MEA_output.txt";
+		String dataFileName = dataInputFolder.replace(BSLASH, FSLASH) + "SingleSite.csv";
+		String env="Site";
+		String respvars[] = {"HT_CONT"};
+		String[] environmentLevels={};
+		int design = 4;
+		String genotype = "Designation";
+		String block = "NULL";
+		String rep = "Rep";
+		String row = "Row";
+		String column = "Col";
+		boolean descriptiveStat = true; 
+		boolean varianceComponents = true;
+		boolean boxplotRawData = true;
+		boolean histogramRawData = true;
+		boolean heatmapResiduals = false;
+		String heatmapRow = "NULL";
+		String heatmapColumn = "NULL";
+		boolean diagnosticPlot = false;
+		boolean genotypeFixed = true;
+		boolean performPairwise = false;
+		String pairwiseAlpha = "0.05";
+		boolean compareControl = false;
+		boolean performAllPairwise = false;
+		boolean genotypeRandom = true;
+		boolean excludeControls = false;
+		boolean genoPhenoCorrelation = false;
+		boolean ammi= false;
+		boolean gge= false;
+		boolean stabilityFinlay= false;
+		boolean stabilityShukla= false;
+
+		msaModel.setRespvars(respvars);
+		msaModel.setResultFolderPath(resultFolderName);
+		msaModel.setOutFileName(outFileName);
+		msaModel.setDataFileName(dataFileName);
+		msaModel.setEnvironment(env);
+		msaModel.setEnvironmentLevels(environmentLevels);
+		msaModel.setDesign(design);
+		msaModel.setGenotype(genotype);
+		msaModel.setBlock(block);
+		msaModel.setRep(rep);
+		msaModel.setRow(row);
+		msaModel.setColumn(column);
+		msaModel.setDescriptiveStat(descriptiveStat);
+		msaModel.setVarianceComponents(varianceComponents);
+		msaModel.setBoxplotRawData(boxplotRawData);
+		msaModel.setHistogramRawData(histogramRawData);
+		msaModel.setDiagnosticPlot(diagnosticPlot);
+		msaModel.setGenotypeFixed(genotypeFixed);
+		msaModel.setPerformPairwise(performPairwise);
+		msaModel.setPairwiseAlpha(pairwiseAlpha);
+		msaModel.setCompareControl(compareControl);
+		msaModel.setPerformAllPairwise(performAllPairwise);
+		msaModel.setGenotypeRandom(genotypeRandom);
+		msaModel.setAmmi(ammi);
+		msaModel.setGge(gge);
+		msaModel.setStabilityFinlay(stabilityFinlay); 
+		msaModel.setStabilityShukla(stabilityShukla);
+
+
+		//System.out.println(OUTPUTFOLDER_PATH);
+
+		doMultiEnvironmentAnalysis(msaModel);
+	}
 }
