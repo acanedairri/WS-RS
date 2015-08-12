@@ -27,8 +27,5 @@ public class RserveStatus {
 			e.printStackTrace();
 			return msg;
 		}
-
 	}
-
-	
 }
