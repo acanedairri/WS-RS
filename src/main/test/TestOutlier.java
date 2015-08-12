@@ -21,8 +21,8 @@ public class TestOutlier {
 			System.out.println(json);
 
 			Client c = ClientBuilder.newClient();
-//			WebTarget target= c.target("http://172.29.4.166:8080/WS-RS/rest/SingleTrial/outlier");
-			WebTarget target= c.target("http://localhost:8080/WS-RS/rest/SingleTrial/outlier");
+			WebTarget target= c.target("http://172.29.4.166:8080/WS-RS/rest/SingleTrial/outlier");
+//			WebTarget target= c.target("http://localhost:8080/WS-RS/rest/SingleTrial/outlier");
 			Response response = target.request().post(Entity.json(json));
 
 			if (response.getStatus() != 200) {

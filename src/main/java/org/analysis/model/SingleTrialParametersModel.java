@@ -3,7 +3,50 @@ package org.analysis.model;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * This class contains setter/getters parameters used in randomization
+ * 
+ * @author Alexander Cañeda
+ * 
+ *		username			System generated based on user login to BIMS
+		resultFolderName	Folder name of analysis results files
+		dataHeader			Column header of the dataset
+		data				Dataset
+		env					Environment variable label
+		Respvars			Response variable
+		design					0 - Randomized Complete Block Design (RCB)
+								1 - Augmented RCB
+								2 - Augmented Latin Square
+								3 - Alpha-Lattice
+								4 - Row-Column
+								5 - Latinized Alpha-Lattice and
+								6 - Latinized Row-Column
+		genotype			Genotype variable label in BIMS, required for all designs
+		genotypeFixed		If true, genotype is considered as a fixed factor
+		genotypeRandom		If true, genotype is considered as a random factor
+		block				NULL or Block  variable label in BIMS, required for RCB and Augmented RCB
+		rep					NULL or Rep variable label in BIMS,  required for alpha lattice, Latinized alpha lattice, row-column design and Latinized row column
+		row					NULL or Row variable label in BIMS, required for augmented Latin square, row-column design and Latinized row column
+		column				NULL or Column variable label in BIMS, required for augmented Latin square, row-column design and Latinized row column
+		performPairwise		If true, pairwise mean comparisons will be performed; for genotype considered as a fixed factor
+		pairwiseAlpha		NULL or if performPairwise is true, value of the level of significance for performing pairwise mean comparisons; for genotype considered as a fixed factor
+		compareControl		If true, pairwise mean comparison will be performed only on the control level(s) versus the rest of the genotype levels. The user should specify the control level(s) in the controlLevels field ; for genotype considered as a fixed factor
+		controlLevels		Control levels (among the genotypes)
+		performAllPairwise	If true, pairwise mean comparison will be performed on all genotypes. This option is not recommended when the number of genotype levels is very large. For now, PBTools only executes this option if the number of genotype levels is at most fifteen; for genotype considered as a fixed factor
+		excludeControls		If true and the design is RCB, Alpha-Lattice or Row-Column, the user should specify the control level(s) to exclude in the controlLevels field. If true and the design is Augmented RCB or Augmented Latin Square, PBTools will automatically identify the replicated genotypes and set these as controls; for genotype considered as a random factor
+		controlLevels		Control levels (among the genotypes)
+		genoPhenoCorrelation	If true, genotypic and phenotypic correlations are computed for all pairs of response variables; only possible if there are two or more response variables specified
+		descriptiveStat		If true, a summary table with number of missing observations, mean and standard deviation will be displayed.
+		varianceComponents	If true, a table with the variance estimates of some model components will be displayed.
+		heatmapResiduals	If true, heatmap is generated. User should specify the row and column variables in the heatmapRow and heatmapColumn fields.
+		heatmapRow			NULL or name of the variable to be placed in the rows of the heatmap, if heatmapResiduals is true
+		heatmapColumn		NULL or name of the variable to be placed in the columns of the heatmap, if heatmapResiduals is true
+		boxplotRawData		If true, a boxplot of the raw data is created
+		histogramRawData	If true, a histogram of the raw data is created
+		diagnosticPlot		If true, diagnostic plots are generated
 
+
+ */ 
 
 public class SingleTrialParametersModel {
 	

@@ -2,6 +2,14 @@ package org.analysis.model;
 
 import java.util.List;
 
+/**
+ * This class contains model for data in JSON format
+ * 
+ * @author Alexander Cañeda
+ * 
+ * 
+ */
+
 public class CsvToJsonModel {
 	
 	private String[] dataHeader;

@@ -2,6 +2,11 @@ package org.analysis.model;
 
 import java.util.List;
 
+/**
+ * This class contains setter/getters parameters of Single Trial result data
+ * 
+ * @author Alexander Cañeda
+ */ 
 public class SingleTrialResultModel {
 	
 	private String AnalyticalWebServiceVersion="AWS 1.0";

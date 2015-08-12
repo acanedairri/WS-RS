@@ -2,6 +2,13 @@ package org.analysis.model;
 
 import java.util.List;
 
+/**
+ * This class contains setter/getters parameters used in Outlier detection
+ * 
+ * @author Alexander Cañeda
+ * 
+ */
+
 public class OutlierParametersModel {
 	
 	private String resultFolderName;

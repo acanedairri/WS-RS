@@ -23,8 +23,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.analysis.model.CsvToJsonModel;
-import org.analysis.model.RandomizationParamModel;
 import org.analysis.model.FileResourceModel;
+import org.analysis.model.RandomizationParamModel;
 import org.analysis.rserve.manager.RServeManager;
 import org.analysis.util.FileUtilities;
 
@@ -65,7 +65,7 @@ public class Randomization  implements Runnable {
 	@Path("/run")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces("application/json")
-	public String postDesignAlphaLattice(String json){
+	public String postRandomized(String json){
 		String toreturn="";
 		String msg;
 		try{
@@ -85,8 +85,22 @@ public class Randomization  implements Runnable {
 	}
 
 
+	/* This method validate json input data for single trial */
 	private String validateInputSingleTrial(String json) {
 		// TODO Auto-generated method stub
+		
+		RandomizationParamModel paramsRandomization=new RandomizationParamModel(); 	
+		Gson jsonInput= new Gson();
+		RandomizationParamModel param=jsonInput.fromJson(json, RandomizationParamModel.class);
+		StringBuffer errorMsg= new StringBuffer();
+		if(param.getDesign()==0){ //RCBD
+			if(param.getBlk() < 2){
+				errorMsg.append("The minimum value of the number of block is equal to 2 \n");
+			}
+			
+
+			
+		}
 		return "";
 	}
 
@@ -102,15 +116,14 @@ public class Randomization  implements Runnable {
 				rserve.doDesignRCBD(param.getPath(),param.getFieldBookName(), param.getFactorName(),param.getFactorID(), param.getFactorLevel()
 						,param.getBlk(), param.getTrial(),param.getNumFieldRow(), param.getRowPerBlk(),param.getFieldOrder());
 			}else if(param.getDesign()==1){ // Augmented RCB
-				rserve.doDesignAugmentedRCB(param.getPath(),param.getFieldBookName(), param.getNumCheck(),param.getNumNew(),param.getBlk(), param.getFieldRow(), param.getTrial(),param.getFieldOrder());
+				rserve.doDesignAugmentedRCB(param.getPath(),param.getFieldBookName(), param.getNumCheck(),param.getNumNew(),param.getBlk(), param.getFieldRow(), param.getTrial(),param.getFieldOrder(),param.getRowPerBlk(),null,null,null,null);
 			}else if(param.getDesign()==2){ // Augmented Latin Square
-				rserve.doDesignAugmentedLSD(param.getPath(),param.getFieldBookName(),param.getNumCheck(),param.getNumNew(), param.getFieldRow(), param.getTrial(),param.getFieldOrder());
+				rserve.doDesignAugmentedLSD(param.getPath(),param.getFieldBookName(),param.getNumCheck(),param.getNumNew(),param.getTrmtName(),param.getTrial(),param.getNumFieldRow(),param.getFieldOrder(),param.getTrmtLabel(),param.getChecktrmt(),param.getNewTrmt());
 			}else if(param.getDesign()==3){ // Alpha Lattice
 				rserve.doDesignAlpha(param.getPath(),param.getFieldBookName(), param.getNumTrmt(), param.getBlkSize(),param.getRep(),param.getTrial(),
 						param.getRowPerBlk(), param.getRowPerRep(),param.getNumFieldRow(),param.getFieldOrder());
 			}else if(param.getDesign()==4){ // Row Column
 				rserve.doDesignRowColumn(param.getPath(), param.getFieldBookName(), param.getNumTrmt(),param.getRep(),param.getTrial(),param.getRowPerRep(),param.getNumFieldRow(),param.getFieldOrder());
-
 			}else if(param.getDesign()==5){ // Latinized Alpha Lattice
 				rserve.doDesignLatinizedAlpha(param.getPath(), param.getFieldBookName(),param.getNumTrmt(),param.getBlkSize(),param.getRep(), param.getTrial(), param.getNumFieldRow(),param.getFieldOrder());
 
@@ -157,6 +170,11 @@ public class Randomization  implements Runnable {
 
 	}
 
+	
+	/* This methods assemble the parameter in jsonn format
+	 * to Randomization Model Class 
+	*/
+	
 	private RandomizationParamModel assembleParameters(String json) {
 
 		RandomizationParamModel param=new RandomizationParamModel(); 	
@@ -196,15 +214,47 @@ public class Randomization  implements Runnable {
 			param.setFieldRow(jsonField.getFieldRow());
 			param.setTrial(jsonField.getTrial());
 			param.setFieldOrder(jsonField.getFieldOrder());
+			param.setRowPerBlk(jsonField.getRowPerBlk());
 
 		}else if(jsonField.getDesign()==2){ // Augmented Latin Square
-
+			//String path, String fieldBookName, Integer numCheck, Integer numNew, String trmtName,
+			
+			//Integer trial, Integer numFieldRow, String fieldOrder, String trmtLabel, String[] checkTrmt, String[] newTrmt
+			
 			param.setNumCheck(jsonField.getNumCheck());
 			param.setNumNew(jsonField.getNumNew());
-			param.setFieldRow(jsonField.getFieldRow());
+			param.setTrmtName(jsonField.getTrmtName());
+			param.setNumFieldRow(jsonField.getNumFieldRow());
 			param.setTrial(jsonField.getTrial());
 			param.setFieldOrder(jsonField.getFieldOrder());
+			
+/*			if(!(jsonField.getTrmtLabel().equals("NULL"))){
+				param.setTrmtLabel(jsonField.getTrmtLabel());
+				
+			}else{
+				param.setTrmtLabel(null);
+			}
 
+			if(!(jsonField.getChecktrmt().equals("NULL"))){
+				param.setChecktrmt(jsonField.getChecktrmt());
+				
+			}else{
+				param.setChecktrmt(null);
+
+			}
+
+			if(!(jsonField.getNewTrmt().equals("NULL"))){
+				param.setNewTrmt(jsonField.getNewTrmt());
+			}else{
+				param.setNewTrmt(null);
+			}*/
+			
+			param.setTrmtLabel(null);
+			param.setChecktrmt(null);
+			param.setNewTrmt(null);
+
+			
+			
 		}else if(jsonField.getDesign()==3){ // Alpha Lattice
 
 			param.setNumTrmt(jsonField.getNumTrmt());
@@ -279,25 +329,37 @@ public class Randomization  implements Runnable {
 			param.setNumFieldRow(jsonField.getNumFieldRow());
 			param.setFieldOrder(jsonField.getFieldOrder());
 
-			if(jsonField.getTrmtLabel().equals("NULL")){
-				param.setTrmtLabel(null);
-			}else{
+/*			if(!(jsonField.getTrmtLabel().equals("NULL"))){
 				param.setTrmtLabel(jsonField.getTrmtLabel());
+				
+			}else{
+				param.setTrmtLabel(null);
 			}
 
-			if(jsonField.getChecktrmt().equals("NULL")){
-				param.setChecktrmt(null);
-			}else{
+			if(!(jsonField.getChecktrmt().equals("NULL"))){
 				param.setChecktrmt(jsonField.getChecktrmt());
+				
+			}else{
+				param.setChecktrmt(null);
+
 			}
 
-			if(jsonField.getNewTrmt().equals("NULL")){
-				param.setNewTrmt(null);
-			}else{
+			if(!(jsonField.getNewTrmt().equals("NULL"))){
 				param.setNewTrmt(jsonField.getNewTrmt());
-			}
+			}else{
+				param.setNewTrmt(null);
+			}*/
+			
+			param.setTrmtLabel(null);
+			param.setChecktrmt(null);
+			param.setNewTrmt(null);
 
 		}else if(jsonField.getDesign()==9){ // Augmented Alpha{
+			
+	/*		String path, String fieldBookName, Integer numCheck, Integer numNew, 
+			String trmtName, Integer blkSize, Integer rep, Integer trial, Integer rowPerBlk, Integer rowPerRep, 
+			Integer numFieldRow, String fieldOrder, String trmtLabel, String[] checkTrmt, String[] newTrmt*/
+			
 
 			param.setNumCheck(jsonField.getNumCheck());
 			param.setNumNew(jsonField.getNumNew()); 
@@ -309,25 +371,40 @@ public class Randomization  implements Runnable {
 			param.setRowPerRep(jsonField.getRowPerRep());
 			param.setNumFieldRow(jsonField.getNumFieldRow());
 			param.setFieldOrder(jsonField.getFieldOrder());
-			param.setTrmtLabel(jsonField.getTrmtLabel());
+		
 
-			if(jsonField.getChecktrmt().equals("NULL")){
-				param.setChecktrmt(null);
+/*			if(!(jsonField.getTrmtLabel().equals("NULL"))){
+				param.setTrmtLabel(jsonField.getTrmtLabel());
+				
 			}else{
+				param.setTrmtLabel(null);
+			}
+
+			if(!(jsonField.getChecktrmt().equals("NULL"))){
 				param.setChecktrmt(jsonField.getChecktrmt());
-			}
-
-			if(jsonField.getNewTrmt().equals("NULL")){
-				param.setNewTrmt(null);
+				
 			}else{
-				param.setNewTrmt(jsonField.getNewTrmt());
+				param.setChecktrmt(null);
+
 			}
 
+			if(!(jsonField.getNewTrmt().equals("NULL"))){
+				param.setNewTrmt(jsonField.getNewTrmt());
+			}else{
+				param.setNewTrmt(null);
+			}*/
+			
+			param.setTrmtLabel(null);
+			param.setChecktrmt(null);
+			param.setNewTrmt(null);
 		}
 
 
 		return param;
 	}
+	
+	/* This method create folder in the output folder of the WS
+	 */
 
 	private String createOutputFolder(@Context ServletContext ctx,String name){
 		String path = null;
@@ -347,7 +424,7 @@ public class Randomization  implements Runnable {
 	}
 
 
-	
+
 	@GET
 	@Path("getResultFiles/{foldername}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -355,7 +432,7 @@ public class Randomization  implements Runnable {
 	public Response getResultFiles(@PathParam("foldername") String name) {
 		String toreturn = null;
 		try{
-			
+
 			FileUtilities fUtil= new FileUtilities();
 			FileResourceModel fileList = fUtil.fetchOutputFolderFileResources(ctx,name);
 			Gson gson = new Gson();
@@ -377,8 +454,8 @@ public class Randomization  implements Runnable {
 		return Response.status(320).entity(toreturn).build();
 
 	}
-	
-	
+
+
 	@GET
 	@Path("getResultCsvToJson/{folder}/{filename}")
 	@Consumes("text/plain")

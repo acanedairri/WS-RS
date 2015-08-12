@@ -2,6 +2,15 @@ package org.analysis.model;
 
 import java.util.List;
 
+/**
+ * This class contains model to handle value of folder and list of 
+ * files created by the webservice
+ * 
+ * @author Alexander Cañeda
+ * 
+ * 
+ */
+
 public class FileResourceModel {
 	
 	String folderResource;

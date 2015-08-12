@@ -1,5 +1,40 @@
 package org.analysis.model;
 
+/**
+ * This class contains setter/getters parameters used in randomization
+ * 
+ * @author Alexander Cañeda
+ * 
+		resultFolder:	Folder name of the randomization output files
+		design:    		Index number of the study design (0 to 9)
+		blk:	 		Number of Block
+		blkSize: 		Block size
+		checkTrmt		Levels of Check Treatment, default value=”NULL”
+		factorLevel		Number of Treatments
+		factorName		Name of Treatment
+		fieldBookName	Field Book Filename
+		fieldOrder		Field Book Order -     Options : Serpentine  or Plot Order
+		fieldRow		Total Number of Fieldrow in Experimental Design
+		numCheck		Number of Checks
+		numFieldRow		Number of Field Rows
+		numNew			Number of New Treatment
+		numTrmt			Number of Treatment
+		numTrmtPerGrp	Number of Treatment per Group
+		rep				Number of Replicates
+		rowBlkPerRep	Number or Blocks per Replicate
+		rowPerBlk		Number of Row per Block
+		rowPerRep		Number of Row per Replicate
+		rowPerRowBlk	Number of Row per Row Block
+		trial			Number of Trials
+		trmtGrpName		Name of Group Treatment
+		trmtLabel		Name of Treatment
+		trmtListPerGrp	Level of Treatment per Group
+		trmtName		Name of Treatment
+		trmtRepPerGrp	Number of Replicate per Group
+
+ *
+ */
+
 public class RandomizationParamModel {
 	
 	String resultFolder;
@@ -22,11 +57,11 @@ public class RandomizationParamModel {
 	int unrepTrmt;
 	String trmtName;
 	String trmtLabel;
-	String checktrmt;
-	String newTrmt;
+	String[] checktrmt;
+	String[] newTrmt;
 	String fieldOrder;
 	String fieldBookName;
-	String trmtListPerGrp;
+	String[] trmtListPerGrp;
 	String[] trmtGrpName;
 	String[] factorName;
 	String[] factorID;
@@ -139,16 +174,18 @@ public class RandomizationParamModel {
 	public void setTrmtLabel(String trmtLabel) {
 		this.trmtLabel = trmtLabel;
 	}
-	public String getChecktrmt() {
+
+	
+	public String[] getChecktrmt() {
 		return checktrmt;
 	}
-	public void setChecktrmt(String checktrmt) {
+	public void setChecktrmt(String[] checktrmt) {
 		this.checktrmt = checktrmt;
 	}
-	public String getNewTrmt() {
+	public String[] getNewTrmt() {
 		return newTrmt;
 	}
-	public void setNewTrmt(String newTrmt) {
+	public void setNewTrmt(String[] newTrmt) {
 		this.newTrmt = newTrmt;
 	}
 	public String getFieldOrder() {
@@ -163,10 +200,11 @@ public class RandomizationParamModel {
 	public void setFieldBookName(String fieldBookName) {
 		this.fieldBookName = fieldBookName;
 	}
-	public String getTrmtListPerGrp() {
+	
+	public String[] getTrmtListPerGrp() {
 		return trmtListPerGrp;
 	}
-	public void setTrmtListPerGrp(String trmtListPerGrp) {
+	public void setTrmtListPerGrp(String[] trmtListPerGrp) {
 		this.trmtListPerGrp = trmtListPerGrp;
 	}
 	public String[] getTrmtGrpName() {

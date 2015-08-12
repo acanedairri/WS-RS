@@ -167,8 +167,8 @@ public class TestWS {
 
 			
 
-			params.setUserAccount("lina");
-			params.setAnalysisResultFolder("lina");
+			params.setUserAccount("user1");
+			params.setAnalysisResultFolder("SingleTrialTest");
 			params.setDataHeader(dataHeader);
 			params.setData(data);
 			
@@ -213,9 +213,9 @@ public class TestWS {
 			System.out.println(json);
 
 			Client c = ClientBuilder.newClient();
-//			WebTarget target= c.target("http://172.29.4.166:8080/WS-RS/rest/SingleTrial/run");
-//			WebTarget target= c.target("http://localhost:8080/WS-RS/rest/SingleTrial/run");
-			WebTarget target= c.target("http://localhost:8080/WS-RS/rest/SingleTrial/analyze");
+			WebTarget target= c.target("http://52.74.63.249:8080/WS-RS/rest/SingleTrial/analyze");
+//			WebTarget target= c.target("http://52.74.63.249:8080/WS-RS/rest/SingleTrial/run");
+//			WebTarget target= c.target("http://localhost:8080/WS-RS/rest/SingleTrial/analyze");
 			Response response = target.request().post(Entity.json(json));
 
 			if (response.getStatus() != 200) {

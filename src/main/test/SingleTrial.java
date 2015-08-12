@@ -19,7 +19,7 @@ import org.analysis.rserve.manager.RServeManager;
 import com.google.gson.Gson;
 
 
-@Path("/SingleTrial")
+@Path("/SingleTrialTest")
 public class SingleTrial {
 
 	@Context
@@ -72,7 +72,7 @@ public class SingleTrial {
 		String toreturn="";
 		try{
 			assembleParameters(json);
-			RServeManager rserve= new RServeManager();
+			RServeManagerTest rserve= new RServeManagerTest();
 			rserve.testSingleEnvironment(outputFolderPath,dataFolderPath);
 			fileList=getOutputFolderFileResources(ctx,ssModel.getAnalysisResultFolder());
 			Gson gson = new Gson();

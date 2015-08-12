@@ -37,8 +37,8 @@ import org.analysis.model.CsvToJsonModel;
 import org.analysis.model.FileResourceModel;
 import org.analysis.model.OutlierFileResourceModel;
 import org.analysis.model.OutlierParametersModel;
-import org.analysis.model.SingleTrialResultModel;
 import org.analysis.model.SingleTrialParametersModel;
+import org.analysis.model.SingleTrialResultModel;
 import org.analysis.rserve.manager.RServeManager;
 import org.analysis.util.FileUtilities;
 
@@ -77,134 +77,11 @@ public class SingleTrial  implements Runnable{
 
 	}
 
-
-	@GET
-	@Path("/{name}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces("application/json")
-	public Response testGetSingleTrial(@PathParam("name") String name) {
-		String toreturn = null;
-		try{
-			String realpath=ctx.getRealPath("/");
-			outputFolderPath=createOutputFolder(ctx,name);
-			dataFolderPath=realpath+separator+"temp"+separator;
-			RServeManager rserve= new RServeManager();
-			rserve.testSingleEnvironment(outputFolderPath,dataFolderPath);
-			FileResourceModel singleTrialFileResourceModel = fetchOutputFolderFileResources(name);
-			Gson gson = new Gson();
-			toreturn=gson.toJson(singleTrialFileResourceModel);
-
-		}catch(Exception e){
-
-		}
-		return Response.status(320).entity(toreturn).build();
-
-	}
-
-	@GET
-	@Path("PRep/{name}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces("application/json")
-	public Response testGetSingleTrialPRep(@PathParam("name") String name) {
-		String toreturn = null;
-		try{
-			String realpath=ctx.getRealPath("/");
-			outputFolderPath=createOutputFolder(ctx,name);
-			dataFolderPath=realpath+separator+"temp"+separator;
-			RServeManager rserve= new RServeManager();
-			rserve.testSingleEnvironmentPRef(outputFolderPath,dataFolderPath);
-			FileResourceModel singleTrialFileResourceModel = fetchOutputFolderFileResources(name);
-			Gson gson = new Gson();
-			toreturn=gson.toJson(singleTrialFileResourceModel);
-
-		}catch(Exception e){
-
-		}
-		return Response.status(320).entity(toreturn).build();
-
-	}
-
-	@GET
-	@Path("outlier/{name}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces("application/json")
-	public Response testGetOutlierDetection(@PathParam("name") String name) {
-		String toreturn = null;
-		OutlierFileResourceModel toreturnObject=new OutlierFileResourceModel();
-		try{
-			String realpath=ctx.getRealPath("/");
-			outputFolderPath=createOutputFolder(ctx,name);
-			dataFolderPath=realpath+separator+"temp"+separator;
-			RServeManager rserve= new RServeManager();
-			rserve.testOutlierDetection(outputFolderPath,dataFolderPath);
-
-			toreturnObject=fetchOutlierFileResources(name);
-
-			String path=null;
-			String filenameOutlier="Outlier.csv";
-
-
-			path= realpath+separator+"output"+separator+name+separator;
-
-			dataFolderPath=path+separator;
-			String dataFileNameOutlier = dataFolderPath.replace(BSLASH, FSLASH) + filenameOutlier;
-			BufferedReader readerOutlier = new BufferedReader(new FileReader(dataFileNameOutlier));
-
-			String line = null;
-			Scanner scanner = null;
-			int index = 0;
-			int hindex=0;
-			ArrayList<String> headerArray = new ArrayList<String>();
-			List<String[]> dataRow=new ArrayList<String[]>();
-
-
-			// read summary stats
-			while ((line = readerOutlier.readLine()) != null) {
-
-				scanner = new Scanner(line);
-				scanner.useDelimiter(",");
-				ArrayList<String> rowDataArray = new ArrayList<String>();
-
-
-				List<String> s= new ArrayList<String>(); 
-				while (scanner.hasNext()) {
-					String data = scanner.next();
-					if(hindex==0){
-						headerArray.add(data.replace("\"", ""));
-						System.out.println(data.replace("\"", ""));
-					}else{
-						rowDataArray.add(data.replace("\"", ""));
-					}
-
-					index++;
-				}
-				if(hindex==0){
-					String[] header= new String[headerArray.size()];
-					header=headerArray.toArray(header);
-					toreturnObject.setDataHeader(header);
-				}else{
-					String[] rowData= new String[rowDataArray.size()];
-					rowData=rowDataArray.toArray(rowData);
-					dataRow.add(rowData);
-				}
-				hindex=1;
-				index = 0;
-			}
-			toreturnObject.setData(dataRow);
-			Gson gson = new Gson();
-			toreturn=gson.toJson(toreturnObject);
-
-
-		}catch(Exception e){
-
-		}
-
-
-		return Response.status(320).entity(toreturn).build();
-
-	}
-
-
+	
+	/* This method return the result in Json format the output of analaysis
+	 * 
+	 */
+	
 	@GET
 	@Path("getResult/{folder}")
 	@Consumes("text/plain")
@@ -406,7 +283,11 @@ public class SingleTrial  implements Runnable{
 
 	}
 
-
+	/* This method return result of CSV file in Json format 
+	 * @param: folder - folder resources of the file
+	 * @param filename - name of the csv file 
+	 * 
+	 */
 	@GET
 	@Path("getResultCsvToJson/{folder}/{filename}")
 	@Consumes("text/plain")
@@ -631,9 +512,10 @@ public class SingleTrial  implements Runnable{
 
 		try{
 
-			long startTime=System.nanoTime();
+			
 			RServeManager rserve= new RServeManager();
 			SingleTrialParametersModel param=assembleSingleTrialParameters(json);
+			long startTime=System.nanoTime();
 			if(param.getDesign()==7){
 				rserve.doSingleEnvironmentAnalysisPRep(param);
 			}else{
@@ -875,6 +757,10 @@ public class SingleTrial  implements Runnable{
 	}
 
 
+	/* This method create folder in the output directory of the webapp where the result 
+	 * will be saved
+	 * @param  name : name of the folder to be created
+	 */
 	private String createOutputFolder(@Context ServletContext ctx,String name){
 		String path = null;
 		try{
@@ -893,6 +779,8 @@ public class SingleTrial  implements Runnable{
 	}
 
 
+	/* This method fetch the files in specific folder in the  output folder  
+	 */
 	public FileResourceModel fetchOutputFolderFileResources(String name){
 		String path = null;
 		FileResourceModel fileResourceModel= new FileResourceModel();
@@ -944,6 +832,10 @@ public class SingleTrial  implements Runnable{
 		return fileResourceModel;
 	}
 
+	
+	/* This method assemble parameter of the outlier
+	 * @param json- parameters in json string
+	 */
 	private void assembleOutlierParameters(String json){
 		Gson jsonInput= new Gson();
 		OutlierParametersModel jsonField=jsonInput.fromJson(json, OutlierParametersModel.class);
@@ -970,7 +862,10 @@ public class SingleTrial  implements Runnable{
 
 
 	}
-
+	
+	/* This method assemble parameters of the single trial to SingleTrialParametersModel 
+	 * @param json- parameters in json string
+	 */
 	private SingleTrialParametersModel assembleSingleTrialParameters(String json){
 
 		SingleTrialParametersModel paramsSingleTrial=new SingleTrialParametersModel(); 	
