@@ -353,7 +353,7 @@ public class MultiTrial  implements Runnable{
 			String realpath=ctx.getRealPath("/");
 			path= realpath+separator+"output"+separator+folder+separator;
 			dataFolderPath=path+separator;
-			dataFileName = dataFolderPath.replace(BSLASH, FSLASH) + "SEA_output.txt";
+			dataFileName = dataFolderPath.replace(BSLASH, FSLASH) + "MEA_output.txt";
 			BufferedReader reader = new BufferedReader(new FileReader(dataFileName));
 			String line = null;
 			List<String> sedArray = new ArrayList<String>();
