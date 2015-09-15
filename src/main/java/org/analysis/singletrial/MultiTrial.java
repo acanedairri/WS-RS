@@ -212,15 +212,15 @@ public class MultiTrial  implements Runnable{
 	//	}
 	//
 
-
 	@GET
 	@Path("exportAsZip/{folder}")
 	@Consumes("text/plain")
 	@Produces("application/zip")
 	public Response exportAsZip(@PathParam("folder") String folder) {
 		
-		HttpServletResponse response = getServletRespos;
-		String toreturn = "";
+//		HttpServletResponse response = (HttpServletResponse) Executions.getCurrent().getNativeResponse();
+//		String toreturn = "";
+		byte[] zip;
 		String path = ctx.getRealPath("/");
 		try {
 			File directory = new File(path);
@@ -235,7 +235,7 @@ public class MultiTrial  implements Runnable{
 				// Call the zipFiles method for creating a zip stream.
 				//
 				
-				byte[] zip = zipFiles(directory, files);
+				zip = zipFiles(directory, files);
 
 				//
 				// Sends the response back to the user / browser. The
@@ -244,18 +244,18 @@ public class MultiTrial  implements Runnable{
 				// the browser to show a dialog that will let user 
 				// choose what action will he do to the sent content.
 				
-				ServletOutputStream sos = response.getOutputStream();
-                response.setContentType("application/zip");
-                response.setHeader("Content-Disposition", "attachment; filename=\"AnalysisResult.ZIP\"");
- 
-                sos.write(zip);
-                sos.flush();
+//				ServletOutputStream sos = response.getOutputStream();
+//                response.setContentType("application/zip");
+//                response.setHeader("Content-Disposition", "attachment; filename=\"AnalysisResult.ZIP\"");
+// 
+//                sos.write(zip);
+//                sos.flush();
 			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		return Response.status(320).entity(toreturn).build();
+		return Response.status(320).entity(zip).build();
 	}
 
 	 /**
