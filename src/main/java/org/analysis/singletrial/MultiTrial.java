@@ -1,10 +1,13 @@
 package org.analysis.singletrial;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,9 +20,13 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -101,109 +108,186 @@ public class MultiTrial  implements Runnable{
 
 	}
 
-//	@GET
-//	@Path("PRep/{name}")
-//	@Consumes(MediaType.APPLICATION_JSON)
-//	@Produces("application/json")
-//	public Response testGetMultiTrialPRep(@PathParam("name") String name) {
-//		String toreturn = null;
-//		try{
-//			String realpath=ctx.getRealPath("/");
-//			outputFolderPath=createOutputFolder(ctx,name);
-//			dataFolderPath=realpath+separator+"temp"+separator;
-//			RServeManager rserve= new RServeManager();
-//			rserve.testMultiEnvironmentPRef(outputFolderPath,dataFolderPath);
-//			FileResourceModel singleTrialFileResourceModel = fetchOutputFolderFileResources(name);
-//			Gson gson = new Gson();
-//			toreturn=gson.toJson(singleTrialFileResourceModel);
-//
-//		}catch(Exception e){
-//
-//		}
-//		return Response.status(320).entity(toreturn).build();
-//
-//	}
-//
-//	@GET
-//	@Path("outlier/{name}")
-//	@Consumes(MediaType.APPLICATION_JSON)
-//	@Produces("application/json")
-//	public Response testGetOutlierDetection(@PathParam("name") String name) {
-//		String toreturn = null;
-//		OutlierFileResourceModel toreturnObject=new OutlierFileResourceModel();
-//		try{
-//			String realpath=ctx.getRealPath("/");
-//			outputFolderPath=createOutputFolder(ctx,name);
-//			dataFolderPath=realpath+separator+"temp"+separator;
-//			RServeManager rserve= new RServeManager();
-//			rserve.testOutlierDetection(outputFolderPath,dataFolderPath);
-//
-//			toreturnObject=fetchOutlierFileResources(name);
-//
-//			String path=null;
-//			String filenameOutlier="Outlier.csv";
-//
-//
-//			path= realpath+separator+"output"+separator+name+separator;
-//
-//			dataFolderPath=path+separator;
-//			String dataFileNameOutlier = dataFolderPath.replace(BSLASH, FSLASH) + filenameOutlier;
-//			BufferedReader readerOutlier = new BufferedReader(new FileReader(dataFileNameOutlier));
-//
-//			String line = null;
-//			Scanner scanner = null;
-//			int index = 0;
-//			int hindex=0;
-//			ArrayList<String> headerArray = new ArrayList<String>();
-//			List<String[]> dataRow=new ArrayList<String[]>();
-//
-//
-//			// read summary stats
-//			while ((line = readerOutlier.readLine()) != null) {
-//
-//				scanner = new Scanner(line);
-//				scanner.useDelimiter(",");
-//				ArrayList<String> rowDataArray = new ArrayList<String>();
-//
-//
-//				List<String> s= new ArrayList<String>(); 
-//				while (scanner.hasNext()) {
-//					String data = scanner.next();
-//					if(hindex==0){
-//						headerArray.add(data.replace("\"", ""));
-//						System.out.println(data.replace("\"", ""));
-//					}else{
-//						rowDataArray.add(data.replace("\"", ""));
-//					}
-//
-//					index++;
-//				}
-//				if(hindex==0){
-//					String[] header= new String[headerArray.size()];
-//					header=headerArray.toArray(header);
-//					toreturnObject.setDataHeader(header);
-//				}else{
-//					String[] rowData= new String[rowDataArray.size()];
-//					rowData=rowDataArray.toArray(rowData);
-//					dataRow.add(rowData);
-//				}
-//				hindex=1;
-//				index = 0;
-//			}
-//			toreturnObject.setData(dataRow);
-//			Gson gson = new Gson();
-//			toreturn=gson.toJson(toreturnObject);
-//
-//
-//		}catch(Exception e){
-//
-//		}
-//
-//
-//		return Response.status(320).entity(toreturn).build();
-//
-//	}
-//
+	//	@GET
+	//	@Path("PRep/{name}")
+	//	@Consumes(MediaType.APPLICATION_JSON)
+	//	@Produces("application/json")
+	//	public Response testGetMultiTrialPRep(@PathParam("name") String name) {
+	//		String toreturn = null;
+	//		try{
+	//			String realpath=ctx.getRealPath("/");
+	//			outputFolderPath=createOutputFolder(ctx,name);
+	//			dataFolderPath=realpath+separator+"temp"+separator;
+	//			RServeManager rserve= new RServeManager();
+	//			rserve.testMultiEnvironmentPRef(outputFolderPath,dataFolderPath);
+	//			FileResourceModel singleTrialFileResourceModel = fetchOutputFolderFileResources(name);
+	//			Gson gson = new Gson();
+	//			toreturn=gson.toJson(singleTrialFileResourceModel);
+	//
+	//		}catch(Exception e){
+	//
+	//		}
+	//		return Response.status(320).entity(toreturn).build();
+	//
+	//	}
+	//
+	//	@GET
+	//	@Path("outlier/{name}")
+	//	@Consumes(MediaType.APPLICATION_JSON)
+	//	@Produces("application/json")
+	//	public Response testGetOutlierDetection(@PathParam("name") String name) {
+	//		String toreturn = null;
+	//		OutlierFileResourceModel toreturnObject=new OutlierFileResourceModel();
+	//		try{
+	//			String realpath=ctx.getRealPath("/");
+	//			outputFolderPath=createOutputFolder(ctx,name);
+	//			dataFolderPath=realpath+separator+"temp"+separator;
+	//			RServeManager rserve= new RServeManager();
+	//			rserve.testOutlierDetection(outputFolderPath,dataFolderPath);
+	//
+	//			toreturnObject=fetchOutlierFileResources(name);
+	//
+	//			String path=null;
+	//			String filenameOutlier="Outlier.csv";
+	//
+	//
+	//			path= realpath+separator+"output"+separator+name+separator;
+	//
+	//			dataFolderPath=path+separator;
+	//			String dataFileNameOutlier = dataFolderPath.replace(BSLASH, FSLASH) + filenameOutlier;
+	//			BufferedReader readerOutlier = new BufferedReader(new FileReader(dataFileNameOutlier));
+	//
+	//			String line = null;
+	//			Scanner scanner = null;
+	//			int index = 0;
+	//			int hindex=0;
+	//			ArrayList<String> headerArray = new ArrayList<String>();
+	//			List<String[]> dataRow=new ArrayList<String[]>();
+	//
+	//
+	//			// read summary stats
+	//			while ((line = readerOutlier.readLine()) != null) {
+	//
+	//				scanner = new Scanner(line);
+	//				scanner.useDelimiter(",");
+	//				ArrayList<String> rowDataArray = new ArrayList<String>();
+	//
+	//
+	//				List<String> s= new ArrayList<String>(); 
+	//				while (scanner.hasNext()) {
+	//					String data = scanner.next();
+	//					if(hindex==0){
+	//						headerArray.add(data.replace("\"", ""));
+	//						System.out.println(data.replace("\"", ""));
+	//					}else{
+	//						rowDataArray.add(data.replace("\"", ""));
+	//					}
+	//
+	//					index++;
+	//				}
+	//				if(hindex==0){
+	//					String[] header= new String[headerArray.size()];
+	//					header=headerArray.toArray(header);
+	//					toreturnObject.setDataHeader(header);
+	//				}else{
+	//					String[] rowData= new String[rowDataArray.size()];
+	//					rowData=rowDataArray.toArray(rowData);
+	//					dataRow.add(rowData);
+	//				}
+	//				hindex=1;
+	//				index = 0;
+	//			}
+	//			toreturnObject.setData(dataRow);
+	//			Gson gson = new Gson();
+	//			toreturn=gson.toJson(toreturnObject);
+	//
+	//
+	//		}catch(Exception e){
+	//
+	//		}
+	//
+	//
+	//		return Response.status(320).entity(toreturn).build();
+	//
+	//	}
+	//
+
+
+	@GET
+	@Path("exportAsZip/{folder}")
+	@Consumes("text/plain")
+	@Produces("application/zip")
+	public Response exportAsZip(@PathParam("folder") String folder) {
+		
+		HttpServletResponse response = getServletRespos;
+		String toreturn = "";
+		String path = ctx.getRealPath("/");
+		try {
+			File directory = new File(path);
+			String[] files = directory.list();
+
+			//
+			// Checks to see if the directory contains some files.
+			//
+			if (files != null && files.length > 0) {
+
+				//
+				// Call the zipFiles method for creating a zip stream.
+				//
+				
+				byte[] zip = zipFiles(directory, files);
+
+				//
+				// Sends the response back to the user / browser. The
+				// content for zip file type is "application/zip". We
+				// also set the content disposition as attachment for
+				// the browser to show a dialog that will let user 
+				// choose what action will he do to the sent content.
+				
+				ServletOutputStream sos = response.getOutputStream();
+                response.setContentType("application/zip");
+                response.setHeader("Content-Disposition", "attachment; filename=\"AnalysisResult.ZIP\"");
+ 
+                sos.write(zip);
+                sos.flush();
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Response.status(320).entity(toreturn).build();
+	}
+
+	 /**
+     * Compress the given directory with all its files.
+     */
+    private byte[] zipFiles(File directory, String[] files) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ZipOutputStream zos = new ZipOutputStream(baos);
+        byte bytes[] = new byte[2048];
+ 
+        for (String fileName : files) {
+            FileInputStream fis = new FileInputStream(directory.getPath() + 
+            		System.getProperty("file.separator") + fileName);
+            BufferedInputStream bis = new BufferedInputStream(fis);
+ 
+            zos.putNextEntry(new ZipEntry(fileName));
+ 
+            int bytesRead;
+            while ((bytesRead = bis.read(bytes)) != -1) {
+                zos.write(bytes, 0, bytesRead);
+            }
+            zos.closeEntry();
+            bis.close();
+            fis.close();
+        }
+        zos.flush();
+        baos.flush();
+        zos.close();
+        baos.close();
+ 
+        return baos.toByteArray();
+    }
 
 	@GET
 	@Path("getResult/{folder}")
@@ -634,11 +718,11 @@ public class MultiTrial  implements Runnable{
 			long startTime=System.nanoTime();
 			RServeManager rserve= new RServeManager();
 			MultiTrialParametersModel param=assembleMultiTrialParameters(json);
-//			if(param.getDesign()==7){
-//				rserve.doMultiEnvironmentAnalysisPRep(param);
-//			}else{
-				rserve.doMultiEnvironmentAnalysis(param);
-//			}
+			//			if(param.getDesign()==7){
+			//				rserve.doMultiEnvironmentAnalysisPRep(param);
+			//			}else{
+			rserve.doMultiEnvironmentAnalysis(param);
+			//			}
 			long elapsedTime = System.nanoTime() - startTime;
 			String elapsedTimeResult=((double) elapsedTime / 1000000000) + " sec";
 			System.out.println("#####" + ": Elapsed Time = " + elapsedTime + " ns = " + ((double) elapsedTime / 1000000000) + " sec");
@@ -1018,7 +1102,7 @@ public class MultiTrial  implements Runnable{
 		paramsMultiTrial.setStabilityFinlay(jsonField.isStabilityFinlay());
 		paramsMultiTrial.setStabilityShukla(jsonField.isStabilityShukla());
 		paramsMultiTrial.setGge(jsonField.isGge());
-		
+
 		paramsMultiTrial.setControlLevels(jsonField.getControlLevels());
 		paramsMultiTrial.setGenotypeLevels(jsonField.getGenotypeLevels());
 
@@ -1027,10 +1111,10 @@ public class MultiTrial  implements Runnable{
 			paramsMultiTrial.setControlLevels(null);
 			paramsMultiTrial.setEnvironment(null);
 		}
-		
-//		
-//		paramsMultiTrial.setMoransTest(false);
-//		paramsMultiTrial.setSpatialStruc(spatialStruc);
+
+		//		
+		//		paramsMultiTrial.setMoransTest(false);
+		//		paramsMultiTrial.setSpatialStruc(spatialStruc);
 
 
 		System.out.println("Data Header :" +Arrays.toString(jsonField.getDataHeader()));

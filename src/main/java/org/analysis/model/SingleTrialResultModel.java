@@ -19,10 +19,6 @@ public class SingleTrialResultModel {
 	private String[] sed;
 	private double heritability;
 	
-
-
-	
-	
 	public String getElapsedtime() {
 		return elapsedtime;
 	}
@@ -77,12 +73,4 @@ public class SingleTrialResultModel {
 	public void setHeritability(double heritability) {
 		this.heritability = heritability;
 	}
-	
-	
-	
-	
-	
-
-
-
 }
